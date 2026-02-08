@@ -1,0 +1,684 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - CB4UHost{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Container */
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    /* Dashboard Header */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 2rem 0;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: 'Orbitron', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: textGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes textGlow {
+        0%, 100% { filter: brightness(1); }
+        50% { filter: brightness(1.3); }
+    }
+
+    .dashboard-header h1 i {
+        filter: drop-shadow(0 0 10px var(--glow-blue));
+    }
+    
+    .btn-new {
+        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px var(--glow-blue);
+        border: 1px solid var(--primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-new::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.7s ease;
+    }
+    
+    .btn-new:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px var(--glow-cyan);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+
+    .btn-new:hover::before {
+        left: 100%;
+    }
+    
+    /* Alert Messages */
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .alert-error {
+        background: rgba(255, 0, 128, 0.1);
+        color: #fca5a5;
+        border: 1px solid rgba(255, 0, 128, 0.3);
+    }
+
+    .alert-error::before {
+        content: '⚠️';
+        font-size: 1.2rem;
+    }
+    
+    .alert-success {
+        background: rgba(0, 255, 183, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(0, 255, 183, 0.3);
+    }
+
+    .alert-success::before {
+        content: '✓';
+        font-size: 1.2rem;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--success);
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: rgba(0, 217, 255, 0.05);
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 128, 255, 0.1);
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary), var(--primary), var(--accent));
+        box-shadow: 0 0 10px var(--glow-blue);
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover::after {
+        opacity: 1;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px var(--glow-blue);
+        border-color: var(--primary);
+        background: rgba(0, 217, 255, 0.1);
+    }
+    
+    .stat-card h3 {
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stat-card .stat-icon {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        font-size: 3rem;
+        opacity: 0.1;
+        color: var(--primary);
+        z-index: 0;
+    }
+    
+    /* Posts Table */
+    .posts-table {
+        background: rgba(0, 217, 255, 0.05);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        box-shadow: 0 5px 20px var(--glow-blue);
+    }
+    
+    .table-header {
+        padding: 1.5rem 2rem;
+        background: rgba(0, 217, 255, 0.05);
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .table-header h2 {
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--light);
+    }
+
+    .table-header h2 i {
+        color: var(--primary);
+        filter: drop-shadow(0 0 5px var(--glow-blue));
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        padding: 1rem 1.5rem;
+        text-align: left;
+    }
+    
+    th {
+        background: rgba(0, 217, 255, 0.05);
+        color: var(--gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+    }
+    
+    tr {
+        border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        transition: all 0.2s;
+    }
+    
+    tbody tr:hover {
+        background: rgba(0, 217, 255, 0.1);
+    }
+    
+    .post-title {
+        font-weight: 600;
+        color: var(--light);
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    .status-published {
+        background: rgba(0, 255, 183, 0.2);
+        color: var(--success);
+        border: 1px solid rgba(0, 255, 183, 0.3);
+    }
+    
+    .status-draft {
+        background: rgba(255, 184, 0, 0.2);
+        color: var(--warning);
+        border: 1px solid rgba(255, 184, 0, 0.3);
+    }
+    
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-edit {
+        background: rgba(0, 217, 255, 0.2);
+        color: var(--primary);
+        border: 1px solid rgba(0, 217, 255, 0.3);
+    }
+    
+    .btn-edit:hover {
+        box-shadow: 0 4px 12px var(--glow-blue);
+        background: rgba(0, 217, 255, 0.3);
+    }
+    
+    .btn-delete {
+        background: rgba(255, 0, 128, 0.2);
+        color: var(--danger);
+        border: 1px solid rgba(255, 0, 128, 0.3);
+    }
+    
+    .btn-delete:hover {
+        box-shadow: 0 4px 12px rgba(255, 0, 128, 0.3);
+        background: rgba(255, 0, 128, 0.3);
+    }
+    
+    .no-posts {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--gray);
+    }
+    
+    .no-posts i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+        color: var(--primary);
+        filter: drop-shadow(0 0 10px var(--glow-blue));
+    }
+    
+    .no-posts h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--light);
+    }
+
+    .no-posts p {
+        color: var(--gray);
+    }
+
+    /* View Count */
+    .view-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: var(--gray);
+    }
+
+    .view-count i {
+        color: var(--primary);
+    }
+
+    /* Category Badge */
+    .category-badge {
+        color: var(--primary);
+        font-weight: 500;
+    }
+
+    .category-uncategorized {
+        color: var(--gray);
+        font-style: italic;
+    }
+
+    /* Logout Button in Navbar */
+    .btn-logout {
+        background: rgba(255, 0, 128, 0.2);
+        color: var(--danger);
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 1px solid rgba(255, 0, 128, 0.3);
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-logout:hover {
+        background: rgba(255, 0, 128, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255, 0, 128, 0.3);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2rem;
+        }
+
+        .btn-new {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    /* Loading Animation */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(0, 217, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--primary);
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Additional Navbar Styles for Dashboard */
+    .navbar-menu-dashboard {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .navbar-menu-dashboard .navbar-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .navbar-menu-dashboard .navbar-link:hover {
+        color: var(--primary);
+        text-shadow: 0 0 10px var(--glow-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Additional navbar items for dashboard -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbarMenu = document.querySelector('.navbar-menu');
+        if (navbarMenu) {
+            // Add dashboard-specific links
+            const dashboardLinks = `
+                <li><a href="{{ url_for('blog_list') }}" class="navbar-link">
+                    <i class="fas fa-globe"></i> View Blog
+                </a></li>
+                <li><a href="{{ url_for('admin_logout') }}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a></li>
+            `;
+            navbarMenu.insertAdjacentHTML('beforeend', dashboardLinks);
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+        </h1>
+        <a href="{{ url_for('admin_login', post_id=None) }}" class="btn-new">
+            <i class="fas fa-plus"></i> New Post
+        </a>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-file-alt stat-icon"></i>
+            <h3>Total Posts</h3>
+            <div class="stat-value">{{ stats.total_posts }}</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-check-circle stat-icon"></i>
+            <h3>Published</h3>
+            <div class="stat-value">{{ stats.published_posts }}</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-edit stat-icon"></i>
+            <h3>Drafts</h3>
+            <div class="stat-value">{{ stats.draft_posts }}</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-eye stat-icon"></i>
+            <h3>Total Views</h3>
+            <div class="stat-value">{{ stats.total_views }}</div>
+        </div>
+    </div>
+    
+    <div class="posts-table">
+        <div class="table-header">
+            <h2>
+                <i class="fas fa-list"></i>
+                All Blog Posts
+            </h2>
+        </div>
+        
+        {% if posts %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Views</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td>
+                            <div class="post-title">{{ post.title }}</div>
+                        </td>
+                        <td>
+                            {% if post.category %}
+                                <span class="category-badge">{{ post.category }}</span>
+                            {% else %}
+                                <span class="category-uncategorized">Uncategorized</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge {% if post.published %}status-published{% else %}status-draft{% endif %}">
+                                {% if post.published %}
+                                    <i class="fas fa-check"></i> Published
+                                {% else %}
+                                    <i class="fas fa-clock"></i> Draft
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="view-count">
+                                <i class="fas fa-eye"></i>
+                                {{ post.views }}
+                            </span>
+                        </td>
+                        <td style="color: var(--gray);">
+                            {{ post.created_at.strftime('%b %d, %Y') }}
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a href="/admin/blog/edit/{{ post.id }}" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form method="POST" action="/admin/blog/delete/{{ post.id }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+                                    <button type="submit" class="btn-action btn-delete">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-posts">
+            <i class="fas fa-inbox"></i>
+            <h3>No blog posts yet</h3>
+            <p>Click "New Post" above to create your first blog post!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Auto-hide alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'all 0.3s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+    
+    // Confirm delete with better UX
+    document.querySelectorAll('form[action*="delete"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const postTitle = this.closest('tr').querySelector('.post-title').textContent;
+            if (!confirm(`Are you sure you want to delete "${postTitle}"?\n\nThis action cannot be undone.`)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Add smooth transitions to table rows
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.style.transition = 'all 0.3s ease';
+    });
+</script>
+{% endblock %}

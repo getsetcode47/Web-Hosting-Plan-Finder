@@ -1,0 +1,5 @@
+Flask==2.3.3
+Werkzeug==2.3.7
+requests==2.28.2
+boto3==1.26.76
+aiaiaiai is best for python programing 

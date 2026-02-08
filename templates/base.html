@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CB4UHost - Find Your Perfect Hosting Solution{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00D9FF;
+            --secondary: #0080FF;
+            --accent: #00FFFF;
+            --dark: #0A0E27;
+            --darker: #050814;
+            --bg-pure-black: #000000;
+            --light: #E0F7FF;
+            --text-white: #FFFFFF;
+            --text-silver: #D1D5DB;
+            --text-gray: #9CA3AF;
+            --gray: #8B9DC3;
+            --success: #00FFB7;
+            --info: #00D9FF;
+            --warning: #FFB800;
+            --danger: #FF0080;
+            --border-radius: 12px;
+            --glow-blue: rgba(0, 217, 255, 0.4);
+            --glow-cyan: rgba(0, 255, 255, 0.3);
+            --cyan-accent: #00F0FF;
+            --cyan-glow: rgba(0, 240, 255, 0.15);
+            --border-line: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-pure-black);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 128, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(0, 217, 255, 0.15) 0%, transparent 50%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Tech Grid Pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* Navigation - W-Tech Style */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-line);
+            padding: 1.5rem 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-container a {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            color: var(--text-white);
+        }
+
+        .logo span {
+            color: var(--cyan-accent);
+            text-shadow: 0 0 30px var(--cyan-glow);
+        }
+
+        .logo-divider {
+            width: 2px;
+            height: 30px;
+            background: var(--border-line);
+        }
+
+        .platform-name {
+            font-size: 1rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 45px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-silver);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan-accent);
+        }
+
+        .nav-links a.active {
+            color: var(--cyan-accent);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--cyan-accent);
+            box-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        .nav-cta {
+            background: var(--cyan-accent) !important;
+            color: var(--bg-pure-black) !important;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px var(--cyan-glow);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--cyan-accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid var(--border-line);
+            padding: 4rem 0 1.5rem;
+            margin-top: 5rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        .footer-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 6%;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-white);
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .footer-section p {
+            color: var(--text-silver);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-silver);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+            text-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 217, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 8px 20px var(--glow-blue);
+        }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-line);
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-bottom a:hover {
+            text-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 100;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 183, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-success::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--success);
+            color: var(--bg-pure-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .alert-error {
+            background: rgba(255, 0, 128, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-error::before {
+            content: '⚠';
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 5%;
+            }
+
+            .nav-links {
+                gap: 30px;
+            }
+
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 5%;
+                flex-wrap: wrap;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+            }
+
+            .logo-divider {
+                display: none;
+            }
+
+            .platform-name {
+                font-size: 0.85rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 2rem 5%;
+                border-bottom: 1px solid var(--border-line);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: 1rem 0;
+                border-bottom: 1px solid var(--border-line);
+            }
+
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+
+            .nav-links a.active::after {
+                bottom: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+            }
+
+            .nav-cta {
+                margin-top: 1rem;
+                text-align: center;
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 1.5rem;
+                right: 5%;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .platform-name {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo-container">
+            <a href="{{ url_for('home') }}" style="text-decoration: none; display: flex; align-items: center; gap: 20px;">
+                <div class="logo">W-<span>Tech</span></div>
+                <div class="logo-divider"></div>
+                <div class="platform-name">Cb4uhost Platform</div>
+            </a>
+        </div>
+        <div class="nav-links" id="navbarMenu">
+            <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
+            
+            <a href="{{ url_for('calculator') }}" class="{% if request.endpoint == 'calculator' %}active{% endif %}">Compare Plans</a>
+            <a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About Us</a>
+            <a href="{{ url_for('blog_list') }}" class="{% if request.endpoint == 'blog_list' or request.endpoint == 'blog_detail' %}active{% endif %}">Blog</a>
+            <a href="https://forms.gle/RShPW1FsPu1wQND88" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contact</a>
+            {% block extra_menu_items %}{% endblock %}
+            <a href="{{ url_for('calculator') }}" class="nav-cta">Get Started</a>
+        </div>
+        <button class="mobile-menu-btn" id="mobileMenuToggle">☰</button>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>W-Tech</h3>
+                    <p>Cb4uhost Platform - Your trusted partner in finding the perfect hosting solution. Compare prices from top providers and make informed decisions with our comprehensive hosting calculator.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        <li><a href="{{ url_for('calculator') }}">Compare Plans</a></li>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('blog_list') }}">Blog</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('calculator') }}">Shared Hosting</a></li>
+                        <li><a href="{{ url_for('calculator') }}">VPS Hosting</a></li>
+                        <li><a href="{{ url_for('calculator') }}">Cloud Hosting</a></li>
+                        <li><a href="{{ url_for('calculator') }}">Dedicated Servers</a></li>
+                        <li><a href="{{ url_for('calculator') }}">Price Comparison</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-envelope"></i> info@cb4uhost.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra, IN</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 W-Tech Cb4uhost Platform. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navbarMenu = document.getElementById('navbarMenu');
+
+        if (mobileMenuToggle && navbarMenu) {
+            mobileMenuToggle.addEventListener('click', function() {
+                navbarMenu.classList.toggle('active');
+                
+                // Change icon
+                const icon = this.textContent;
+                this.textContent = icon === '☰' ? '✕' : '☰';
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = event.target.closest('nav');
+                if (!isClickInsideNav && navbarMenu.classList.contains('active')) {
+                    navbarMenu.classList.remove('active');
+                    mobileMenuToggle.textContent = '☰';
+                }
+            });
+
+            // Close menu when clicking on a link
+            const navLinksItems = navbarMenu.querySelectorAll('a:not(.nav-cta)');
+            navLinksItems.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        navbarMenu.classList.remove('active');
+                        mobileMenuToggle.textContent = '☰';
+                    }
+                });
+            });
+        }
+
+        // Auto-hide flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'all 0.3s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
