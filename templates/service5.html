@@ -700,15 +700,247 @@
             box-shadow: 0 10px 40px rgba(0, 240, 255, 0.5);
         }
 
-        /* Mobile Menu Button */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--cyan-accent);
-            font-size: 1.5rem;
-            cursor: pointer;
+    
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--cyan-accent);
+        font-size: clamp(1.4rem, 5vw, 1.8rem);
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+        z-index: 1001;
+    }
+ 
+    .mobile-menu-btn:hover {
+        transform: scale(1.1);
+    }
+ 
+    /* Mobile Menu Overlay */
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        max-width: 400px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.98);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid var(--border-line);
+        padding: 2rem;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: -20px 0 60px rgba(0, 240, 255, 0.15);
+    }
+ 
+    .mobile-menu.active {
+        right: 0;
+    }
+ 
+    /* Mobile Menu Close Button */
+    .mobile-close-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        color: var(--cyan-accent);
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+    }
+ 
+    .mobile-close-btn:hover {
+        transform: rotate(90deg) scale(1.1);
+    }
+ 
+    /* Mobile Menu Links */
+    .mobile-menu-links {
+        margin-top: 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+ 
+    .mobile-menu-links > a,
+    .mobile-menu-links .mobile-dropdown-toggle {
+        display: block;
+        color: var(--text-silver);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-line);
+        transition: all 0.3s ease;
+    }
+ 
+    .mobile-menu-links > a:hover,
+    .mobile-menu-links .mobile-dropdown-toggle:hover {
+        color: var(--cyan-accent);
+        padding-left: 0.75rem;
+    }
+ 
+    /* Mobile Dropdown */
+    .mobile-nav-dropdown {
+        border-bottom: 1px solid var(--border-line);
+    }
+ 
+    .mobile-dropdown-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        color: var(--text-silver);
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+ 
+    .mobile-dropdown-toggle:hover {
+        color: var(--cyan-accent);
+    }
+ 
+    .mobile-dropdown-toggle i {
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+    }
+ 
+    .mobile-nav-dropdown.active .mobile-dropdown-toggle i {
+        transform: rotate(180deg);
+    }
+ 
+    .mobile-dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+ 
+    .mobile-nav-dropdown.active .mobile-dropdown-content {
+        max-height: 500px;
+    }
+ 
+    .mobile-dropdown-content a {
+        display: block;
+        color: var(--text-gray);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        padding: 0.85rem 0 0.85rem 1.25rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+ 
+    .mobile-dropdown-content a::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--cyan-accent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+ 
+    .mobile-dropdown-content a:hover {
+        color: var(--cyan-accent);
+        padding-left: 1.75rem;
+    }
+ 
+    .mobile-dropdown-content a:hover::before {
+        opacity: 1;
+    }
+ 
+    /* Mobile CTA */
+    .mobile-cta {
+        margin-top: 2rem;
+    }
+ 
+    .mobile-cta .nav-cta {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+ 
+    /* Backdrop Overlay */
+    .mobile-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 999;
+        backdrop-filter: blur(4px);
+    }
+ 
+    .mobile-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+    }
+ 
+    /* ========================================== */
+    /* RESPONSIVE BREAKPOINTS */
+    /* ========================================== */
+    
+    /* Tablet - Hide some elements */
+    @media (max-width: 1024px) {
+        .logo-container {
+            gap: 0.75rem;
         }
+        
+        .nav-links {
+            gap: 1.5rem;
+        }
+        
+        .platform-name {
+            display: none;
+        }
+        
+        .logo-divider {
+            display: none;
+        }
+    }
+ 
+    /* Mobile - Show hamburger menu */
+    @media (max-width: 768px) {
+        nav {
+            padding: 1rem 4%;
+        }
+        
+        .nav-links {
+            display: none;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo-container {
+            flex-wrap: nowrap;
+        }
+    }
+ 
+    /* Small mobile - Further adjustments */
+    @media (max-width: 480px) {
+        .mobile-menu {
+            max-width: 100%;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+        }
+    }
+
 
         /* Hero Section with Cloud */
         .hero {
@@ -1626,8 +1858,24 @@
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
-
-
+ 
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close-btn">&times;</button>
+    
+        <div class="mobile-menu-links">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('service1') }}">Cloud & Infrastructure</a>
+            <a href="{{ url_for('service2') }}">Migration</a>
+            <a href="{{ url_for('service3') }}">Managed</a>
+            <a href="{{ url_for('service4') }}">Security</a>
+            <a href="{{ url_for('service5') }}">Transformation</a>
+            <a href="{{ url_for('home') }}#why-us">Why Us</a>
+    
+            <div class="mobile-cta">
+                <a href="{{ url_for('calculator') }}" class="nav-cta">Get Started</a>
+            </div>
+        </div>
+    </div>
 <!-- Navigation -->
 <nav>
     <div class="logo-container">
@@ -1658,9 +1906,10 @@
         <a href="{{ url_for('calculator') }}" class="nav-cta">Get Started</a>
     </div>
     
-    <button class="mobile-menu-btn">☰</button>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        ☰
+    </button>
 </nav>
-
 
     <header class="hero">
         <div class="hero-badge">Next-Generation Technology</div>
@@ -1909,5 +2158,30 @@
             <a href="https://forms.gle/RShPW1FsPu1wQND88" class="cta-button">Start Your Transformation →</a>
         </div>
     </main>
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeBtn = document.querySelector('.mobile-close-btn');
+        
+        // Toggle menu
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+        });
+        
+        // Close button
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        }
+        
+        // Close when clicking link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+        
+            </script>
 </body>
 </html>

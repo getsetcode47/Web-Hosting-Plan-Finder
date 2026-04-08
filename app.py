@@ -5,6 +5,19 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this-in-production'
 
+from flask_sitemap import Sitemap
+
+sitemap = Sitemap(app=app)
+
+@sitemap.register_generator
+def sitemap_pages():
+    yield 'home', {}
+    yield 'calculator', {}
+    yield 'about', {}
+    yield 'blog_list', {}
+    yield 'contact', {}
+    # Add all your routes
+
 # Hosting plans data (Shared Hosting)
 # Hosting plans data
 hosting_data = {
@@ -1105,6 +1118,11 @@ def service4():
 @app.route('/service5')
 def service5():
     return render_template('service5.html')
+
+# # Add route in app.py
+# @app.route('/robots.txt')
+# def robots():
+#     return send_from_directory('static', 'robots.txt')
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():

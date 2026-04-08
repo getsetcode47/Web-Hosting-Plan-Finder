@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add to base.html <head> -->
+    <link rel="canonical" href="{{ request.url }}">
     <title>{% block title %}CB4UHost - Find Your Perfect Hosting Solution{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -535,20 +537,14 @@
                 <div class="footer-section">
                     <h3>Services</h3>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('calculator') }}">Shared Hosting</a></li>
-                        <li><a href="{{ url_for('calculator') }}">VPS Hosting</a></li>
-                        <li><a href="{{ url_for('calculator') }}">Cloud Hosting</a></li>
-                        <li><a href="{{ url_for('calculator') }}">Dedicated Servers</a></li>
-                        <li><a href="{{ url_for('calculator') }}">Price Comparison</a></li>
+                        <li><a href="{{ url_for('service1') }}">Shared Hosting</a></li>
+                        <li><a href="{{ url_for('service2') }}">VPS Hosting</a></li>
+                        <li><a href="{{ url_for('service3') }}">Cloud Hosting</a></li>
+                        <li><a href="{{ url_for('service4') }}">Dedicated Servers</a></li>
+                        <li><a href="{{ url_for('service5') }}">Price Comparison</a></li>
                     </ul>
                 </div>
-                <div class="footer-section">
-                    <h3>Contact Info</h3>
-                    <p><i class="fas fa-envelope"></i> info@cb4uhost.com</p>
-                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra, IN</p>
-                </div>
-            </div>
+
             <div class="footer-bottom">
                 <p>&copy; 2025 W-Tech Cb4uhost Platform. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
             </div>
