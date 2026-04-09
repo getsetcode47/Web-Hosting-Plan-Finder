@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5P5QDGT5');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - W-Tech | Enterprise Hosting Solutions & IT Services</title>
@@ -2219,7 +2227,280 @@
             letter-spacing: 2px;
             font-weight: 600;
         }
+/* Footer */
+footer {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid var(--border-line);
+            padding: 60px 5% 30px;
+            position: relative;
+            z-index: 1;
+        }
 
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto 50px;
+        }
+
+        .footer-brand .logo {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-brand p {
+            color: var(--text-silver);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .footer-social a {
+            width: 42px;
+            height: 42px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--border-line);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyan-accent);
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--cyan-accent);
+            color: var(--bg-pure-black);
+            transform: translateY(-4px);
+        }
+
+        .footer-section h3 {
+            color: var(--text-white);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .footer-section a {
+            color: var(--text-silver);
+            line-height: 2;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: var(--cyan-accent);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-line);
+            max-width: 1300px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-bottom p {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom a {
+            color: var(--cyan-accent);
+            text-decoration: none;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: var(--cyan-accent);
+        }
+
+        /* Desktop Breakpoint */
+        @media (min-width: 1025px) {
+            .process-grid::before {
+                display: block;
+            }
+
+            .category-card.featured {
+                grid-template-columns: auto 1fr;
+                gap: 60px;
+            }
+
+            .category-card.featured .category-icon {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        /* Mobile Breakpoint */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 4%;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .platform-name {
+                font-size: 0.75rem;
+            }
+
+            .logo-divider {
+                height: 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero {
+                padding: 40px 5% 30px;
+                min-height: 90vh;
+            }
+
+            .hero-content {
+                margin-top: 20px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .hero-stats {
+                gap: 30px;
+                margin-top: 40px;
+            }
+
+            .stat-item {
+                min-width: auto;
+                flex: 1 1 calc(50% - 15px);
+            }
+
+            .section {
+                margin-bottom: 60px;
+            }
+
+            .container {
+                padding: 0 5% 60px;
+            }
+
+            .categories-grid,
+            .features-grid,
+            .testimonials-grid {
+                gap: 20px;
+            }
+
+            .category-card,
+            .feature-card,
+            .testimonial-card {
+                padding: 30px;
+            }
+
+            .cta-section {
+                padding: 40px 25px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .cta-button {
+                width: 100%;
+            }
+
+            .footer-content {
+                gap: 30px;
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+
+            .trusted-logos {
+                gap: 20px;
+            }
+
+            .process-section {
+                padding: 60px 0;
+            }
+        }
+
+        /* Very Small Mobile */
+        @media (max-width: 480px) {
+            .logo-container {
+                gap: 8px;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .platform-name {
+                display: none;
+            }
+
+            .logo-divider {
+                display: none;
+            }
+
+            .stat-item {
+                flex: 1 1 100%;
+            }
+        }
         /* Trusted By Section */
         .trusted-section {
             padding: 80px 5%;
@@ -2998,6 +3279,11 @@
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5P5QDGT5"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -3013,6 +3299,7 @@
         <div class="nav-links">
             <a href="{{ url_for('home') }}">Home</a>
                     <!-- Services Dropdown -->
+                    <a href="{{ url_for('calculator') }}">Compare Plans</a>
         <div class="nav-dropdown">
             <a href="{{ url_for('home') }}#services" class="dropdown-toggle">
                 Services <i class="fas fa-chevron-down"></i>
@@ -3403,69 +3690,70 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-brand">
-                <div class="logo">W-<span>Tech</span></div>
-                <p>Cb4uhost is W-Tech's flagship platform for hosting comparison and comprehensive IT services. See before you host.</p>
-                <div class="footer-social">
-                    <a href="#" aria-label="LinkedIn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                            <rect x="2" y="9" width="4" height="12"></rect>
-                            <circle cx="4" cy="4" r="2"></circle>
-                        </svg>
-                    </a>
-                    <a href="#" aria-label="Twitter">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                        </svg>
-                    </a>
-                    <a href="#" aria-label="GitHub">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3>Services</h3>
-                <a href="cloud-infrastructure.html">Cloud Strategy</a>
-                <a href="migration-services.html">Migration Services</a>
-                <a href="managed-services.html">Managed Services</a>
-                <a href="security-compliance.html">Security & Compliance</a>
-                <a href="digital-transformation.html">Digital Transformation</a>
-            </div>
-
-            <div class="footer-section">
-                <h3>Company</h3>
-                <a href="about.html">About W-Tech</a>
-                <a href="#">Our Team</a>
-                <a href="#">Careers</a>
-                <a href="#">Blog</a>
-                <a href="https://forms.gle/RShPW1FsPu1wQND88">Contact Us</a>
-            </div>
-
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <a href="#">Hosting Comparison</a>
-                <a href="#">Documentation</a>
-                <a href="#">Case Studies</a>
-                <a href="#">FAQs</a>
-                <a href="#">Support</a>
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-brand">
+            <div class="logo">W-<span>Tech</span></div>
+            <p>Cb4uhost is W-Tech's flagship platform for hosting comparison and comprehensive IT services. See before you host.</p>
+            <div class="footer-social">
+                <a href="#" aria-label="LinkedIn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+                <a href="#" aria-label="Twitter">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                </a>
+                <a href="#" aria-label="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </a>
             </div>
         </div>
 
-        <div class="footer-bottom">
-            <p>© 2025 W-Tech. All rights reserved. Powered by <a href="#">Cb4uhost</a></p>
-            <div class="footer-legal">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Cookie Policy</a>
-            </div>
+        <div class="footer-section">
+            <h3>Services</h3>
+            <a href="{{ url_for('calculator') }}">Cloud Strategy</a>
+            <a href="{{ url_for('calculator') }}">Migration Services</a>
+            <a href="{{ url_for('calculator') }}">Managed Services</a>
+            <a href="{{ url_for('calculator') }}">Security & Compliance</a>
+            <a href="{{ url_for('calculator') }}">Digital Transformation</a>
         </div>
-    </footer>
+
+        <div class="footer-section">
+            <h3>Company</h3>
+            <a href="{{ url_for('about') }}">About W-Tech</a>
+            <a href="{{ url_for('about') }}">Our Team</a>
+            <a href="{{ url_for('about') }}">Careers</a>
+            <a href="{{ url_for('blog_list') }}">Blog</a>
+            <a href="https://forms.gle/RShPW1FsPu1wQND88">Contact Us</a>
+        </div>
+
+        <div class="footer-section">
+            <h3>Resources</h3>
+            <a href="{{ url_for('calculator') }}">Hosting Comparison</a>
+            <a href="{{ url_for('calculator') }}">Documentation</a>
+            <a href="{{ url_for('blog_list') }}">Case Studies</a>
+            <a href="{{ url_for('about') }}">FAQs</a>
+            <a href="https://forms.gle/RShPW1FsPu1wQND88">Support</a>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2025 W-Tech. All rights reserved. Powered by <a href="{{ url_for('home') }}">Cb4uhost</a></p>
+        <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Cookie Policy</a>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>

@@ -890,11 +890,30 @@ cloud_hosting_data = {
 # Buy Links
 buy_links = {
     'hostinger': {
-        'Single': 'https://www.hostinger.in/web-hosting',
-        'Premium': 'https://www.hostinger.in/web-hosting'
+        'Single': 'https://www.hostinger.com/web-hosting',
+        'Premium': 'https://www.hostinger.com/web-hosting',
+        'Cloud Startup':'https://www.hostinger.com/web-hosting',
+        'Business':'https://www.hostinger.com/web-hosting'
     },
     'bluehost': {
-        'Shared': 'https://www.bluehost.in/hosting/shared'
+        'Shared': 'https://www.bluehost.in/hosting/shared',
+        'Dedicated':'https://www.bluehost.in/hosting/shared'
+    },
+    'namecheap':{
+        'Stellar':'https://www.namecheap.com/hosting/shared/',
+        'Stellar Plus':'https://www.namecheap.com/hosting/shared/',
+        'Stellar Business':'https://www.namecheap.com/hosting/shared/'
+    },
+    'bigrock':{
+    'Starter':'https://www.bigrock.in/web-hosting/linux-hosting',
+    'Pro':'https://www.bigrock.in/web-hosting/linux-hosting',
+    'Ultimate':'https://www.bigrock.in/web-hosting/linux-hosting'
+    },
+    'goddady':{
+        'Deluxe':'https://www.godaddy.com/en-in/hosting/web-hosting',
+        'Economy':'https://www.godaddy.com/en-in/hosting/web-hosting'
+        'https://www.godaddy.com/en-in/hosting/web-hosting'
+        'https://www.godaddy.com/en-in/hosting/web-hosting'
     }
 }
 
@@ -904,14 +923,17 @@ vps_buy_links = {
     },
     'bluehost': {
         'Enhanced NVMe 8': 'https://www.bluehost.in/hosting/vps'
+    },
+    'namecheap':{
+    'Quasar':'https://www.namecheap.com/hosting/vps/'
     }
 }
 
 dedicated_buy_links = {
     'bigrock': {
-        'Mach-1 SSD': 'https://www.bigrock.in/dedicated-server-hosting',
-        'Mach-2 SSD': 'https://www.bigrock.in/dedicated-server-hosting',
-        'Mach-3 SSD': 'https://www.bigrock.in/dedicated-server-hosting'
+        'Mach-1 SSD': 'https://www.bigrock.in/managed-dedicated-server',
+        'Mach-2 SSD': 'https://www.bigrock.in/managed-dedicated-server',
+        'Mach-3 SSD': 'https://www.bigrock.in/managed-dedicated-server'
     },
     'bluehost': {
         'Standard NVMe 32': 'https://www.bluehost.in/hosting/dedicated',
@@ -1098,24 +1120,23 @@ def about():
     """About Us page"""
     return render_template('about.html')
 
-@app.route('/service1')
+@app.route('/Cloud_&_Infrastructure_Strategy')
 def service1():
-
     return render_template('service1.html')
 
-@app.route('/service2')
+@app.route('/Migration_Services')
 def service2():
     return render_template('service2.html')
 
-@app.route('/service3')
+@app.route('/Managed_Services')
 def service3():
     return render_template('service3.html')
 
-@app.route('/service4')
+@app.route('/Digital_Security_&_Compliance')
 def service4():
     return render_template('service4.html')
 
-@app.route('/service5')
+@app.route('/Digital_Transformation_&_Future-Proofing')
 def service5():
     return render_template('service5.html')
 

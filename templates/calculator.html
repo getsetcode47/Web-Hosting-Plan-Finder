@@ -5,1134 +5,276 @@
 {% block extra_css %}
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
-    
-    /* Global Variables */
     :root {
-        --bg-pure-black: #000000;
-        --cyan-accent: #00F0FF;
-        --cyan-glow: rgba(0, 240, 255, 0.15);
-        --text-white: #FFFFFF;
-        --text-silver: #D1D5DB;
-        --text-gray: #9CA3AF;
-        --border-line: rgba(255, 255, 255, 0.08);
-        --hostinger: #00D9FF;
-        --bluehost: #0080FF;
-        --godaddy: #00FFFF;
-        --bigrock: #00FFB7;
-        --namecheap: #0080FF;
-    }
-    
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        background: var(--bg-pure-black);
-        color: var(--text-white);
-        line-height: 1.7;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-    }
-
-    /* Background Grid */
-    .bg-grid {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-        background-size: 70px 70px;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    /* Floating Glow Orbs */
-    .orb {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(100px);
-        opacity: 0.12;
-        pointer-events: none;
-        z-index: 0;
-        animation: float 30s ease-in-out infinite;
-    }
-
-    .orb-1 {
-        width: 500px;
-        height: 500px;
-        background: var(--cyan-accent);
-        top: -250px;
-        right: -150px;
-    }
-
-    .orb-2 {
-        width: 400px;
-        height: 400px;
-        background: var(--cyan-accent);
-        bottom: -200px;
-        left: -150px;
-        animation-delay: -15s;
-    }
-
-    .orb-3 {
-        width: 350px;
-        height: 350px;
-        background: var(--cyan-accent);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        animation-delay: -10s;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        50% { transform: translate(50px, -50px) scale(1.15); }
-    }
-
-    /* Header Section */
-    .header {
-        position: relative;
-        text-align: center;
-        padding: clamp(2.5rem, 8vw, 6rem) 5% clamp(1.5rem, 5vw, 4rem);
-        z-index: 1;
-        overflow: hidden;
-        margin-bottom: clamp(1.5rem, 5vw, 4rem);
-    }
-
-    .header h1 {
-        font-size: clamp(1.8rem, 8vw, 5rem);
-        font-weight: 900;
-        margin-bottom: 0.75rem;
-        letter-spacing: -1.5px;
-        color: var(--text-white);
-        text-shadow: 0 0 30px rgba(0,255,255,0.3);
-        line-height: 1.1;
-    }
-
-    .header h1 span {
-        color: var(--cyan-accent);
-        text-shadow: 0 0 40px var(--cyan-glow);
-    }
-
-    .header p {
-        font-size: clamp(0.9rem, 2.5vw, 1.4rem);
-        color: var(--text-silver);
-        max-width: 900px;
-        margin: 0 auto;
-        font-weight: 300;
-        line-height: 1.6;
-        padding: 0 1rem;
-    }
-
-    /* Container */
-    .container {
-        max-width: 1300px;
-        margin: 0 auto;
-        padding: 0 4%;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Error Message */
-    .error-message {
-        background: rgba(255, 0, 128, 0.1);
-        border-left: 4px solid #FF0080;
-        border: 1px solid rgba(255, 0, 128, 0.3);
-        color: #FF0080;
-        padding: clamp(0.85rem, 2vw, 1rem);
-        border-radius: 12px;
-        margin-bottom: 1.25rem;
-        animation: slideIn 0.3s ease;
-        font-size: clamp(0.85rem, 2vw, 0.95rem);
-    }
-    
-    @keyframes slideIn {
-        from { transform: translateY(-10px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Form Container */
-    .form-container {
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid var(--border-line);
-        border-radius: clamp(18px, 5vw, 35px);
-        padding: clamp(1.5rem, 5vw, 3.5rem);
-        margin-bottom: clamp(1.5rem, 5vw, 4rem);
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 25px 70px rgba(0, 240, 255, 0.15);
-    }
-
-    .form-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at top left, var(--cyan-glow) 0%, transparent 60%);
-        opacity: 0.4;
-        pointer-events: none;
-    }
-
-    .form-title {
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
-        margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
-        font-weight: 900;
-        color: var(--text-white);
-        position: relative;
-        z-index: 1;
-        text-align: center;
-        letter-spacing: -1px;
-    }
-
-    /* Form sections */
-    .form-section {
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 1;
-    }
-
-    .form-section.hidden {
-        display: none;
-    }
-
-    /* Hosting Type Selector */
-    .hosting-type-selector {
-        margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
-        position: relative;
-        z-index: 1;
-    }
-
-    .type-options {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
-        gap: clamp(0.75rem, 3vw, 1.5rem);
-    }
-
-    .type-option {
-        cursor: pointer;
-        position: relative;
-    }
-
-    .type-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .type-card {
-        background: rgba(0, 0, 0, 0.5);
-        border: 2px solid var(--border-line);
-        border-radius: clamp(15px, 4vw, 28px);
-        padding: clamp(1.25rem, 4vw, 2.25rem);
-        text-align: center;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        min-height: clamp(120px, 20vw, 140px);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .type-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at top left, var(--cyan-glow) 0%, transparent 60%);
-        opacity: 0;
-        transition: opacity 0.5s ease;
-    }
-
-    .type-card:hover::before {
-        opacity: 1;
-    }
-
-    .type-card i {
-        font-size: clamp(1.8rem, 6vw, 2.8rem);
-        color: var(--cyan-accent);
-        margin-bottom: clamp(0.5rem, 2vw, 1rem);
-        transition: all 0.3s ease;
-        filter: drop-shadow(0 0 12px var(--cyan-glow));
-    }
-
-    .type-card h3 {
-        font-size: clamp(0.95rem, 3vw, 1.3rem);
-        margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
-        font-weight: 900;
-        color: var(--text-white);
-        line-height: 1.2;
-    }
-
-    .type-card p {
-        font-size: clamp(0.75rem, 2vw, 0.95rem);
-        color: var(--text-silver);
-        line-height: 1.3;
-    }
-
-    .type-option input[type="radio"]:checked + .type-card,
-    .type-option.active .type-card {
-        background: rgba(0, 240, 255, 0.1);
-        border-color: var(--cyan-accent);
-        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.25);
-    }
-
-    .type-option input[type="radio"]:checked + .type-card i,
-    .type-option.active .type-card i {
-        color: var(--cyan-accent);
-        transform: scale(1.08);
-    }
-
-    .type-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.25);
-        border-color: var(--cyan-accent);
-    }
-
-    /* Custom Plan Toggle */
-    .custom-plan-toggle {
-        margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
-        text-align: center;
-        position: relative;
-        z-index: 1;
-    }
-
-    .toggle-container {
-        display: inline-flex;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-        position: relative;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        padding: 0.5rem;
-    }
-
-    .toggle-slider {
-        position: relative;
-        display: inline-block;
-        width: 56px;
-        height: 30px;
-        background: rgba(0, 240, 255, 0.1);
-        border-radius: 30px;
-        transition: all 0.3s ease;
-        border: 2px solid var(--border-line);
-        flex-shrink: 0;
-    }
-
-    .toggle-slider::before {
-        content: "";
-        position: absolute;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: var(--text-silver);
-        top: 2px;
-        left: 2px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .toggle-container input {
-        display: none;
-    }
-
-    .toggle-container input:checked + .toggle-slider {
-        background: var(--cyan-accent);
-        border-color: var(--cyan-accent);
-        box-shadow: 0 0 25px var(--cyan-glow);
-    }
-
-    .toggle-container input:checked + .toggle-slider::before {
-        transform: translateX(26px);
-        background: var(--bg-pure-black);
-        box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    }
-
-    .toggle-label {
-        font-size: clamp(0.9rem, 2.5vw, 1.05rem);
-        font-weight: 600;
-        color: var(--text-white);
-    }
-
-    /* Form Grid */
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-        gap: clamp(1.25rem, 3vw, 2.25rem);
-        position: relative;
-        z-index: 1;
-    }
-
-    .form-group {
-        margin-bottom: 0;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 0.85rem;
-        font-weight: 600;
-        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-        color: var(--text-white);
-    }
-
-    .form-label i {
-        color: var(--cyan-accent);
-        margin-right: 0.5rem;
-        filter: drop-shadow(0 0 8px var(--cyan-glow));
-        font-size: 0.9em;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: clamp(0.85rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-line);
-        border-radius: 12px;
-        color: var(--text-white);
-        font-size: clamp(0.9rem, 2vw, 1rem);
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--cyan-accent);
-        box-shadow: 0 0 18px var(--cyan-glow);
-        background: rgba(0, 240, 255, 0.05);
-    }
-
-    /* Range Inputs */
-    .range-container {
-        position: relative;
-        padding-top: 0;
-    }
-
-    input[type="range"] {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 7px;
-        background: rgba(0, 240, 255, 0.1);
-        border-radius: 4px;
-        outline: none;
-        border: 1px solid var(--border-line);
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 22px;
-        height: 22px;
-        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
-        border-radius: 50%;
-        cursor: pointer;
-        border: 2px solid var(--bg-pure-black);
-        box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
-    }
-
-    input[type="range"]::-moz-range-thumb {
-        width: 22px;
-        height: 22px;
-        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
-        border-radius: 50%;
-        cursor: pointer;
-        border: 2px solid var(--bg-pure-black);
-        box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
-    }
-
-    .range-inputs {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .manual-input {
-        width: clamp(65px, 18vw, 85px);
-        padding: clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px);
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-line);
-        border-radius: 10px;
-        color: var(--text-white);
-        font-size: clamp(0.8rem, 2vw, 0.9rem);
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-
-    .manual-input:focus {
-        outline: none;
-        border-color: var(--cyan-accent);
-        box-shadow: 0 0 12px var(--cyan-glow);
-    }
-
-    .manual-input:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-    }
-
-    .manual-input.enabled {
-        border-color: var(--cyan-accent);
-        box-shadow: 0 0 12px var(--cyan-glow);
-    }
-
-    .range-value {
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        color: var(--cyan-accent);
-        font-weight: 700;
-        text-shadow: 0 0 18px var(--cyan-glow);
-    }
-
-    /* Checkbox Group */
-    .checkbox-group {
-        display: flex;
-        gap: clamp(1rem, 3vw, 1.75rem);
-        flex-wrap: wrap;
-        margin-top: 0.85rem;
-    }
-
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        gap: 0.5rem;
-    }
-
-    .checkbox-container input[type="checkbox"] {
-        appearance: none;
-        width: 22px;
-        height: 22px;
-        min-width: 22px;
-        background: rgba(0, 0, 0, 0.5);
-        border: 2px solid var(--border-line);
-        border-radius: 6px;
-        position: relative;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        flex-shrink: 0;
-    }
-
-    .checkbox-container input[type="checkbox"]:hover {
-        background: rgba(0, 240, 255, 0.1);
-        border-color: var(--cyan-accent);
-    }
-
-    .checkbox-container input[type="checkbox"]:checked {
-        background: var(--cyan-accent);
-        border-color: var(--cyan-accent);
-        box-shadow: 0 0 18px var(--cyan-glow);
-    }
-
-    .checkbox-container input[type="checkbox"]:checked::after {
-        content: "✓";
-        position: absolute;
-        color: var(--bg-pure-black);
-        font-size: 15px;
-        font-weight: 900;
-        left: 3px;
-        top: 0px;
-    }
-
-    .checkbox-container label {
-        font-size: clamp(0.85rem, 2vw, 0.95rem);
-        color: var(--text-silver);
-        font-weight: 500;
-        cursor: pointer;
-    }
-
-    /* Button */
-    .btn {
-        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
-        color: var(--bg-pure-black);
-        border: none;
-        padding: clamp(0.95rem, 3vw, 1.2rem) clamp(2rem, 6vw, 3.25rem);
-        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-        font-weight: 900;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.4s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.4);
-        position: relative;
-        overflow: hidden;
-        letter-spacing: 0.5px;
-        width: 100%;
-        max-width: 380px;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.6s ease;
-    }
-
-    .btn:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 20px 60px rgba(0, 240, 255, 0.6);
-    }
-
-    .btn:hover::before {
-        left: 100%;
-    }
-
-    .btn:active {
-        transform: translateY(-2px);
-    }
-
-    .btn-icon {
-        margin-right: 0.5rem;
-        font-size: clamp(1rem, 2.5vw, 1.2rem);
-    }
-
-    .btn-container {
-        margin-top: clamp(1.75rem, 4vw, 2.75rem);
-        text-align: center;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Loading State */
-    .loading-btn.loading .btn-text {
-        visibility: hidden;
-    }
-
-    .loading-btn.loading::after {
-        content: "";
-        position: absolute;
-        width: 22px;
-        height: 22px;
-        border: 3px solid rgba(0, 0, 0, 0.3);
-        border-radius: 50%;
-        border-top-color: var(--bg-pure-black);
-        animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Loader */
-    .loader {
-        text-align: center;
-        padding: clamp(2rem, 5vw, 3.5rem);
-        position: relative;
-        z-index: 1;
-    }
-
-    .spinner {
-        width: 55px;
-        height: 55px;
-        border: 4px solid rgba(0, 240, 255, 0.2);
-        border-left-color: var(--cyan-accent);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1.5rem;
-    }
-
-    .loader p {
-        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-        color: var(--text-silver);
-    }
-
-    /* Results Section */
-    .results-container {
-        animation: fadeIn 0.5s ease;
-        position: relative;
-        z-index: 1;
-        margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(25px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .results-header {
-        margin-bottom: clamp(2rem, 5vw, 3.5rem);
-        text-align: center;
-    }
-
-    .results-title {
-        font-size: clamp(1.8rem, 6vw, 4rem);
-        margin-bottom: 1.25rem;
-        font-weight: 900;
-        color: var(--text-white);
-        letter-spacing: -1.5px;
-        text-shadow: 0 0 35px rgba(0,255,255,0.35);
-        line-height: 1.1;
-    }
-
-    .results-title::after {
-        content: "";
-        display: block;
-        width: clamp(60px, 10vw, 80px);
-        height: 3px;
-        background: linear-gradient(90deg, var(--cyan-accent), transparent);
-        margin: 1rem auto 0;
-        border-radius: 2px;
-        box-shadow: 0 0 18px var(--cyan-glow);
-    }
-
-    .results-header p {
-        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-        color: var(--text-silver);
-        max-width: 700px;
-        margin: 0 auto;
-        padding: 0 1rem;
-        line-height: 1.6;
-    }
-
-    /* Best Plan Card */
-    .best-plan {
-        background: linear-gradient(135deg, rgba(0, 255, 183, 0.05), rgba(0, 240, 255, 0.05));
-        border: 2px solid rgba(0, 255, 183, 0.3);
-        border-radius: clamp(18px, 5vw, 35px);
-        padding: clamp(1.75rem, 5vw, 3.5rem);
-        margin-bottom: clamp(2rem, 5vw, 3.5rem);
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 25px 70px rgba(0, 240, 255, 0.25);
-    }
-
-    .best-plan::before {
-        content: "BEST MATCH";
-        position: absolute;
-        top: 18px;
-        right: -42px;
-        background: linear-gradient(135deg, #00FFB7, var(--cyan-accent));
-        color: var(--bg-pure-black);
-        padding: clamp(0.3rem, 1vw, 0.4rem) clamp(2.5rem, 5vw, 3rem);
-        font-size: clamp(0.6rem, 1.5vw, 0.7rem);
-        font-weight: 900;
-        letter-spacing: 1.5px;
-        transform: rotate(45deg);
-        box-shadow: 0 4px 18px rgba(0, 255, 183, 0.4);
-    }
-
-    .best-plan-header {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-        margin-bottom: 1.75rem;
-    }
-
-    .best-plan-provider {
-        font-size: clamp(1rem, 3vw, 1.25rem);
-        font-weight: 700;
-        color: #00FFB7;
-        text-transform: capitalize;
-        text-shadow: 0 0 18px rgba(0, 255, 183, 0.4);
-    }
-
-    .best-plan-name {
-        font-size: clamp(1.4rem, 5vw, 2.1rem);
-        font-weight: 900;
-        margin-bottom: 0.5rem;
-        color: var(--text-white);
-        line-height: 1.2;
-    }
-
-    .best-plan-price-container {
-        display: flex;
-        align-items: baseline;
-        gap: 0.85rem;
-        flex-wrap: wrap;
-    }
-
-    .best-plan-price {
-        font-size: clamp(1.8rem, 7vw, 2.8rem);
-        font-weight: 900;
-        color: #00FFB7;
-        text-shadow: 0 0 28px rgba(0, 255, 183, 0.4);
-    }
-
-    .best-plan-original {
-        font-size: clamp(1rem, 3vw, 1.25rem);
-        color: var(--text-gray);
-        text-decoration: line-through;
-    }
-
-    .best-plan-savings {
-        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-        color: #FFB800;
-        font-weight: 700;
-    }
-
-    .best-plan-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-        gap: clamp(0.85rem, 3vw, 1.75rem);
-        margin-top: 1.75rem;
-    }
-
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-    }
-
-    .detail-icon {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-        border-radius: 50%;
-        background: rgba(0, 255, 183, 0.2);
-        color: #00FFB7;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.95rem;
-        font-weight: 900;
-        border: 2px solid #00FFB7;
-        box-shadow: 0 0 18px rgba(0, 255, 183, 0.25);
-        flex-shrink: 0;
-    }
-
-    .detail-item div {
-        font-size: clamp(0.85rem, 2.5vw, 1rem);
-        color: var(--text-silver);
-        line-height: 1.4;
-    }
-
-    .best-for {
-        margin-top: 1.25rem;
-        padding-top: 1.25rem;
-        border-top: 1px solid var(--border-line);
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        color: var(--text-silver);
-        line-height: 1.5;
-    }
-
-    .best-for strong {
-        color: #00FFB7;
-        font-weight: 700;
-    }
-
-    /* Buy Now Buttons */
-    .buy-now-container {
-        margin-top: 1.75rem;
-        text-align: center;
-    }
-
-    .buy-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(45deg, #00FFB7, var(--cyan-accent));
-        color: var(--bg-pure-black);
-        padding: clamp(0.95rem, 3vw, 1.2rem) clamp(2rem, 6vw, 3.25rem);
-        border-radius: 50px;
-        font-weight: 900;
-        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-        text-decoration: none;
-        transition: all 0.4s ease;
-        box-shadow: 0 12px 40px rgba(0, 255, 183, 0.4);
-        letter-spacing: 0.5px;
-        width: 100%;
-        max-width: 330px;
-    }
-
-    .buy-btn:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 20px 60px rgba(0, 255, 183, 0.6);
-    }
-
-    .buy-btn .btn-icon {
-        margin-right: 0.5rem;
-    }
-
-    /* Plan Cards */
-    .plan-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-        gap: clamp(1.25rem, 3vw, 2.25rem);
-        margin-top: 1.75rem;
-    }
-
-    .plan-card {
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-line);
-        border-radius: clamp(18px, 4vw, 28px);
-        padding: clamp(1.4rem, 4vw, 2.25rem);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .plan-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-        box-shadow: 0 0 18px currentColor;
-    }
-
-    .plan-card.hostinger::before { background-color: var(--hostinger); }
-    .plan-card.bluehost::before { background-color: var(--bluehost); }
-    .plan-card.godaddy::before { background-color: var(--godaddy); }
-    .plan-card.bigrock::before { background-color: var(--bigrock); }
-    .plan-card.namecheap::before { background-color: var(--namecheap); }
-
-    .plan-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 22px 55px rgba(0, 240, 255, 0.28);
-        background: rgba(0, 240, 255, 0.05);
-        border-color: var(--cyan-accent);
-    }
-
-    .plan-provider {
-        margin-bottom: 0.85rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .provider-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-    }
-
-    .provider-icon {
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        color: var(--bg-pure-black);
-        font-weight: 900;
-        font-size: 0.85rem;
-        box-shadow: 0 0 18px currentColor;
-        flex-shrink: 0;
-    }
-
-    .hostinger-icon { background-color: var(--hostinger); }
-    .bluehost-icon { background-color: var(--bluehost); }
-    .godaddy-icon { background-color: var(--godaddy); }
-    .bigrock-icon { background-color: var(--bigrock); }
-    .namecheap-icon { background-color: var(--namecheap); }
-
-    .provider-logo span {
-        text-transform: capitalize;
-        font-weight: 700;
-        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-        color: var(--text-white);
-    }
-
-    .plan-name {
-        font-size: clamp(1.2rem, 3.5vw, 1.5rem);
-        font-weight: 900;
-        margin: 0.85rem 0;
-        color: var(--text-white);
-        line-height: 1.3;
-    }
-
-    .plan-price-container {
-        display: flex;
-        align-items: baseline;
-        gap: 0.65rem;
-        margin-bottom: 1.25rem;
-        flex-wrap: wrap;
-    }
-
-    .plan-price {
-        font-size: clamp(1.5rem, 5vw, 1.9rem);
-        font-weight: 900;
-        color: var(--cyan-accent);
-        text-shadow: 0 0 18px var(--cyan-glow);
-    }
-
-    .plan-original {
-        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
-        color: var(--text-gray);
-        text-decoration: line-through;
-    }
-
-    .plan-features {
-        list-style: none;
-        margin-bottom: 1.25rem;
-    }
-
-    .plan-feature {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 0.65rem;
-        color: var(--text-silver);
-        font-size: clamp(0.85rem, 2vw, 0.95rem);
-        gap: 0.5rem;
-        line-height: 1.4;
-    }
-
-    .feature-icon {
-        color: var(--cyan-accent);
-        font-size: 0.95rem;
-        font-weight: 900;
-        flex-shrink: 0;
-        margin-top: 2px;
-    }
-
-    .card-buy-now {
-        margin-top: 1.25rem;
-        text-align: center;
-    }
-
-    .card-buy-btn {
-        display: inline-block;
-        background: rgba(0, 240, 255, 0.1);
-        color: var(--cyan-accent);
-        padding: clamp(0.65rem, 2vw, 0.75rem) clamp(1.5rem, 4vw, 2rem);
-        border-radius: 28px;
-        font-size: clamp(0.9rem, 2vw, 0.95rem);
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        width: 100%;
-        max-width: 230px;
-    }
-
-    .card-buy-btn:hover {
-        background: rgba(0, 240, 255, 0.2);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 28px rgba(0, 240, 255, 0.28);
-    }
-
-    .card-buy-btn i {
-        margin-left: 0.4rem;
-    }
-
-    /* Badges */
-    .vps-badge, .cloud-badge, .dedicated-badge {
-        display: inline-block;
-        padding: clamp(0.25rem, 1vw, 0.3rem) clamp(0.7rem, 2vw, 0.85rem);
-        border-radius: 18px;
-        font-size: clamp(0.65rem, 2vw, 0.75rem);
-        font-weight: 700;
-        box-shadow: 0 0 18px currentColor;
-        white-space: nowrap;
-    }
-
-    .vps-badge {
-        background: linear-gradient(45deg, var(--cyan-accent), #00A8E8);
-        color: var(--bg-pure-black);
-    }
-
-    .cloud-badge {
-        background: linear-gradient(45deg, var(--cyan-accent), #00D9FF);
-        color: var(--bg-pure-black);
-    }
-
-    .dedicated-badge {
-        background: linear-gradient(45deg, #00FFB7, var(--cyan-accent));
-        color: var(--bg-pure-black);
-    }
-
-    .vps-card, .cloud-card, .dedicated-card {
-        border-left: 4px solid var(--cyan-accent);
-    }
-
-    /* No Results */
-    .no-results {
-        text-align: center;
-        padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.75rem, 4vw, 2.75rem);
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-line);
-        border-radius: clamp(18px, 5vw, 35px);
-    }
-
-    .no-results h3 {
-        font-size: clamp(1.4rem, 5vw, 1.9rem);
-        margin-bottom: 0.85rem;
-        color: #FFB800;
-        font-weight: 900;
-        line-height: 1.2;
-    }
-
-    .no-results p {
-        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-        color: var(--text-silver);
-        line-height: 1.5;
-    }
-
-    /* Mobile Optimizations */
-    @media (max-width: 768px) {
-        .orb {
-            width: 280px !important;
-            height: 280px !important;
-            filter: blur(80px);
-            opacity: 0.1;
-        }
-
-        .type-options {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .best-plan::before {
-            font-size: 0.55rem;
-            padding: 0.25rem 2.25rem;
-            top: 15px;
-        }
-
-        .form-grid {
-            gap: 1.25rem;
-        }
-
-        .checkbox-group {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .plan-cards {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .type-options {
-            grid-template-columns: 1fr;
-        }
-
-        .range-inputs {
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .container {
-            padding: 0 3%;
-        }
-
-        .best-plan-header {
-            gap: 1rem;
-        }
-    }
-
-    /* Prevent horizontal scroll */
-    html, body {
-        max-width: 100%;
-        overflow-x: hidden;
+        --bg-pure-black:#000; --cyan-accent:#00F0FF; --cyan-glow:rgba(0,240,255,0.15);
+        --text-white:#FFF; --text-silver:#D1D5DB; --text-gray:#9CA3AF;
+        --border-line:rgba(255,255,255,0.08); --hostinger:#00D9FF; --bluehost:#0080FF;
+        --godaddy:#00FFFF; --bigrock:#00FFB7; --namecheap:#0080FF;
+        --success-green:#00FFB7; --warning-yellow:#FFB800; --error-red:#FF0080;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{max-width:100%;overflow-x:hidden;}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-pure-black);color:var(--text-white);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+    .bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,240,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,0.02) 1px,transparent 1px);background-size:70px 70px;z-index:0;pointer-events:none;}
+    .orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.12;pointer-events:none;z-index:0;animation:float 30s ease-in-out infinite;}
+    .orb-1{width:500px;height:500px;background:var(--cyan-accent);top:-250px;right:-150px;}
+    .orb-2{width:400px;height:400px;background:var(--cyan-accent);bottom:-200px;left:-150px;animation-delay:-15s;}
+    .orb-3{width:350px;height:350px;background:var(--cyan-accent);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-10s;}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(50px,-50px) scale(1.15);}}
+
+    .header{position:relative;text-align:center;padding:clamp(2.5rem,8vw,6rem) 5% clamp(1.5rem,5vw,4rem);z-index:1;overflow:hidden;margin-bottom:clamp(1.5rem,5vw,4rem);}
+    .header h1{font-size:clamp(1.8rem,8vw,5rem);font-weight:900;margin-bottom:.75rem;letter-spacing:-1.5px;color:var(--text-white);text-shadow:0 0 30px rgba(0,255,255,.3);line-height:1.1;}
+    .header h1 span{color:var(--cyan-accent);text-shadow:0 0 40px var(--cyan-glow);}
+    .header p{font-size:clamp(.9rem,2.5vw,1.4rem);color:var(--text-silver);max-width:900px;margin:0 auto;font-weight:300;line-height:1.6;padding:0 1rem;}
+
+    .container{max-width:1300px;margin:0 auto;padding:0 4%;position:relative;z-index:1;}
+    .error-message{background:rgba(255,0,128,.1);border-left:4px solid #FF0080;border:1px solid rgba(255,0,128,.3);color:#FF0080;padding:clamp(.85rem,2vw,1rem);border-radius:12px;margin-bottom:1.25rem;animation:slideIn .3s ease;font-size:clamp(.85rem,2vw,.95rem);}
+    @keyframes slideIn{from{transform:translateY(-10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+    .form-container{background:rgba(0,0,0,.6);border:1px solid var(--border-line);border-radius:clamp(18px,5vw,35px);padding:clamp(1.5rem,5vw,3.5rem);margin-bottom:clamp(1.5rem,5vw,4rem);position:relative;overflow:hidden;box-shadow:0 25px 70px rgba(0,240,255,.15);}
+    .form-container::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at top left,var(--cyan-glow) 0%,transparent 60%);opacity:.4;pointer-events:none;}
+    .form-title{font-size:clamp(1.5rem,5vw,2.5rem);margin-bottom:clamp(1.5rem,5vw,2.5rem);font-weight:900;color:var(--text-white);position:relative;z-index:1;text-align:center;letter-spacing:-1px;}
+
+    .form-section{transition:all .3s ease;position:relative;z-index:1;}
+    .form-section.hidden{display:none;}
+    .hosting-type-selector{margin-bottom:clamp(1.5rem,4vw,2.5rem);position:relative;z-index:1;}
+    .type-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:clamp(.75rem,3vw,1.5rem);}
+    .type-option{cursor:pointer;position:relative;}
+    .type-option input[type="radio"]{position:absolute;opacity:0;pointer-events:none;}
+    .type-card{background:rgba(0,0,0,.5);border:2px solid var(--border-line);border-radius:clamp(15px,4vw,28px);padding:clamp(1.25rem,4vw,2.25rem);text-align:center;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;min-height:clamp(120px,20vw,140px);display:flex;flex-direction:column;justify-content:center;align-items:center;}
+    .type-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at top left,var(--cyan-glow) 0%,transparent 60%);opacity:0;transition:opacity .5s ease;}
+    .type-card:hover::before{opacity:1;}
+    .type-card i{font-size:clamp(1.8rem,6vw,2.8rem);color:var(--cyan-accent);margin-bottom:clamp(.5rem,2vw,1rem);transition:all .3s ease;filter:drop-shadow(0 0 12px var(--cyan-glow));}
+    .type-card h3{font-size:clamp(.95rem,3vw,1.3rem);margin-bottom:clamp(.25rem,1vw,.5rem);font-weight:900;color:var(--text-white);line-height:1.2;}
+    .type-card p{font-size:clamp(.75rem,2vw,.95rem);color:var(--text-silver);line-height:1.3;}
+    .type-option input[type="radio"]:checked+.type-card,.type-option.active .type-card{background:rgba(0,240,255,.1);border-color:var(--cyan-accent);box-shadow:0 12px 40px rgba(0,240,255,.25);}
+    .type-option input[type="radio"]:checked+.type-card i,.type-option.active .type-card i{color:var(--cyan-accent);transform:scale(1.08);}
+    .type-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,240,255,.25);border-color:var(--cyan-accent);}
+
+    .custom-plan-toggle{margin-bottom:clamp(1.5rem,4vw,2.5rem);text-align:center;position:relative;z-index:1;}
+    .toggle-container{display:inline-flex;align-items:center;cursor:pointer;user-select:none;position:relative;flex-wrap:wrap;justify-content:center;gap:10px;padding:.5rem;}
+    .toggle-slider{position:relative;display:inline-block;width:56px;height:30px;background:rgba(0,240,255,.1);border-radius:30px;transition:all .3s ease;border:2px solid var(--border-line);flex-shrink:0;}
+    .toggle-slider::before{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:var(--text-silver);top:2px;left:2px;transition:all .3s ease;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+    .toggle-container input{display:none;}
+    .toggle-container input:checked+.toggle-slider{background:var(--cyan-accent);border-color:var(--cyan-accent);box-shadow:0 0 25px var(--cyan-glow);}
+    .toggle-container input:checked+.toggle-slider::before{transform:translateX(26px);background:var(--bg-pure-black);box-shadow:0 0 15px rgba(0,240,255,.4);}
+    .toggle-label{font-size:clamp(.9rem,2.5vw,1.05rem);font-weight:600;color:var(--text-white);}
+
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:clamp(1.25rem,3vw,2.25rem);position:relative;z-index:1;}
+    .form-group{margin-bottom:0;}
+    .form-label{display:block;margin-bottom:.85rem;font-weight:600;font-size:clamp(.95rem,2.5vw,1.05rem);color:var(--text-white);}
+    .form-label i{color:var(--cyan-accent);margin-right:.5rem;filter:drop-shadow(0 0 8px var(--cyan-glow));font-size:.9em;}
+    .form-control{width:100%;padding:clamp(.85rem,2vw,1rem) clamp(1rem,3vw,1.5rem);background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:12px;color:var(--text-white);font-size:clamp(.9rem,2vw,1rem);transition:all .3s ease;}
+    .form-control:focus{outline:none;border-color:var(--cyan-accent);box-shadow:0 0 18px var(--cyan-glow);background:rgba(0,240,255,.05);}
+    .range-container{position:relative;padding-top:0;}
+    input[type="range"]{-webkit-appearance:none;width:100%;height:7px;background:rgba(0,240,255,.1);border-radius:4px;outline:none;border:1px solid var(--border-line);}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:linear-gradient(135deg,var(--cyan-accent),#00A8E8);border-radius:50%;cursor:pointer;border:2px solid var(--bg-pure-black);box-shadow:0 0 18px rgba(0,240,255,.4);}
+    input[type="range"]::-moz-range-thumb{width:22px;height:22px;background:linear-gradient(135deg,var(--cyan-accent),#00A8E8);border-radius:50%;cursor:pointer;border:2px solid var(--bg-pure-black);box-shadow:0 0 18px rgba(0,240,255,.4);}
+    .range-inputs{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap;}
+    .manual-input{width:clamp(65px,18vw,85px);padding:clamp(6px,2vw,8px) clamp(8px,2vw,10px);background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:10px;color:var(--text-white);font-size:clamp(.8rem,2vw,.9rem);text-align:center;transition:all .3s ease;}
+    .manual-input:focus{outline:none;border-color:var(--cyan-accent);box-shadow:0 0 12px var(--cyan-glow);}
+    .manual-input:disabled{opacity:.35;cursor:not-allowed;}
+    .manual-input.enabled{border-color:var(--cyan-accent);box-shadow:0 0 12px var(--cyan-glow);}
+    .range-value{font-size:clamp(.9rem,2.5vw,1rem);color:var(--cyan-accent);font-weight:700;text-shadow:0 0 18px var(--cyan-glow);}
+    .checkbox-group{display:flex;gap:clamp(1rem,3vw,1.75rem);flex-wrap:wrap;margin-top:.85rem;}
+    .checkbox-container{display:flex;align-items:center;cursor:pointer;gap:.5rem;}
+    .checkbox-container input[type="checkbox"]{appearance:none;width:22px;height:22px;min-width:22px;background:rgba(0,0,0,.5);border:2px solid var(--border-line);border-radius:6px;position:relative;cursor:pointer;transition:all .2s ease;flex-shrink:0;}
+    .checkbox-container input[type="checkbox"]:hover{background:rgba(0,240,255,.1);border-color:var(--cyan-accent);}
+    .checkbox-container input[type="checkbox"]:checked{background:var(--cyan-accent);border-color:var(--cyan-accent);box-shadow:0 0 18px var(--cyan-glow);}
+    .checkbox-container input[type="checkbox"]:checked::after{content:"✓";position:absolute;color:var(--bg-pure-black);font-size:15px;font-weight:900;left:3px;top:0;}
+    .checkbox-container label{font-size:clamp(.85rem,2vw,.95rem);color:var(--text-silver);font-weight:500;cursor:pointer;}
+
+    .btn{background:linear-gradient(135deg,var(--cyan-accent),#00A8E8);color:var(--bg-pure-black);border:none;padding:clamp(.95rem,3vw,1.2rem) clamp(2rem,6vw,3.25rem);font-size:clamp(.95rem,2.5vw,1.15rem);font-weight:900;border-radius:50px;cursor:pointer;transition:all .4s ease;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,240,255,.4);position:relative;overflow:hidden;letter-spacing:.5px;width:100%;max-width:380px;}
+    .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transition:left .6s ease;}
+    .btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 60px rgba(0,240,255,.6);}
+    .btn:hover::before{left:100%;}
+    .btn:active{transform:translateY(-2px);}
+    .btn-icon{margin-right:.5rem;font-size:clamp(1rem,2.5vw,1.2rem);}
+    .btn-container{margin-top:clamp(1.75rem,4vw,2.75rem);text-align:center;position:relative;z-index:1;}
+    .loading-btn.loading .btn-text{visibility:hidden;}
+    .loading-btn.loading::after{content:"";position:absolute;width:22px;height:22px;border:3px solid rgba(0,0,0,.3);border-radius:50%;border-top-color:var(--bg-pure-black);animation:spin 1s ease-in-out infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .loader{text-align:center;padding:clamp(2rem,5vw,3.5rem);position:relative;z-index:1;}
+    .spinner{width:55px;height:55px;border:4px solid rgba(0,240,255,.2);border-left-color:var(--cyan-accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1.5rem;}
+    .loader p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--text-silver);}
+
+    .results-container{animation:fadeIn .5s ease;position:relative;z-index:1;margin-bottom:clamp(2.5rem,6vw,4.5rem);}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(25px);}to{opacity:1;transform:translateY(0);}}
+    .results-header{margin-bottom:clamp(2rem,5vw,3.5rem);text-align:center;}
+    .results-title{font-size:clamp(1.8rem,6vw,4rem);margin-bottom:1.25rem;font-weight:900;color:var(--text-white);letter-spacing:-1.5px;text-shadow:0 0 35px rgba(0,255,255,.35);line-height:1.1;}
+    .results-title::after{content:"";display:block;width:clamp(60px,10vw,80px);height:3px;background:linear-gradient(90deg,var(--cyan-accent),transparent);margin:1rem auto 0;border-radius:2px;box-shadow:0 0 18px var(--cyan-glow);}
+    .results-header p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--text-silver);max-width:700px;margin:0 auto;padding:0 1rem;line-height:1.6;}
+
+    .best-plan{background:linear-gradient(135deg,rgba(0,255,183,.05),rgba(0,240,255,.05));border:2px solid rgba(0,255,183,.3);border-radius:clamp(18px,5vw,35px);padding:clamp(1.75rem,5vw,3.5rem);margin-bottom:clamp(2rem,5vw,3.5rem);position:relative;overflow:hidden;box-shadow:0 25px 70px rgba(0,240,255,.25);}
+    .best-plan::before{content:"BEST MATCH";position:absolute;top:18px;right:-42px;background:linear-gradient(135deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);padding:clamp(.3rem,1vw,.4rem) clamp(2.5rem,5vw,3rem);font-size:clamp(.6rem,1.5vw,.7rem);font-weight:900;letter-spacing:1.5px;transform:rotate(45deg);box-shadow:0 4px 18px rgba(0,255,183,.4);}
+    .best-plan-header{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.75rem;}
+    .best-plan-provider{font-size:clamp(1rem,3vw,1.25rem);font-weight:700;color:#00FFB7;text-transform:capitalize;text-shadow:0 0 18px rgba(0,255,183,.4);}
+    .best-plan-name{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:.5rem;color:var(--text-white);line-height:1.2;}
+    .best-plan-price-container{display:flex;align-items:baseline;gap:.85rem;flex-wrap:wrap;}
+    .best-plan-price{font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;color:#00FFB7;text-shadow:0 0 28px rgba(0,255,183,.4);}
+    .best-plan-original{font-size:clamp(1rem,3vw,1.25rem);color:var(--text-gray);text-decoration:line-through;}
+    .best-plan-savings{font-size:clamp(.85rem,2.5vw,.95rem);color:#FFB800;font-weight:700;}
+    .best-plan-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:clamp(.85rem,3vw,1.75rem);margin-top:1.75rem;}
+    .detail-item{display:flex;align-items:center;gap:.65rem;}
+    .detail-icon{width:30px;height:30px;min-width:30px;border-radius:50%;background:rgba(0,255,183,.2);color:#00FFB7;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;border:2px solid #00FFB7;box-shadow:0 0 18px rgba(0,255,183,.25);flex-shrink:0;}
+    .detail-item div{font-size:clamp(.85rem,2.5vw,1rem);color:var(--text-silver);line-height:1.4;}
+    .best-for{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border-line);font-size:clamp(.9rem,2.5vw,1rem);color:var(--text-silver);line-height:1.5;}
+    .best-for strong{color:#00FFB7;font-weight:700;}
+    .buy-now-container{margin-top:1.75rem;text-align:center;}
+    .buy-btn{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);padding:clamp(.95rem,3vw,1.2rem) clamp(2rem,6vw,3.25rem);border-radius:50px;font-weight:900;font-size:clamp(.95rem,2.5vw,1.15rem);text-decoration:none;transition:all .4s ease;box-shadow:0 12px 40px rgba(0,255,183,.4);letter-spacing:.5px;width:100%;max-width:330px;}
+    .buy-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 60px rgba(0,255,183,.6);}
+
+    .plan-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(1.25rem,3vw,2.25rem);margin-top:1.75rem;}
+    .plan-card{background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:clamp(18px,4vw,28px);padding:clamp(1.4rem,4vw,2.25rem);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
+    .plan-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;box-shadow:0 0 18px currentColor;}
+    .plan-card.hostinger::before{background-color:var(--hostinger);}
+    .plan-card.bluehost::before{background-color:var(--bluehost);}
+    .plan-card.godaddy::before{background-color:var(--godaddy);}
+    .plan-card.bigrock::before{background-color:var(--bigrock);}
+    .plan-card.namecheap::before{background-color:var(--namecheap);}
+    .plan-card:hover{transform:translateY(-6px);box-shadow:0 22px 55px rgba(0,240,255,.28);background:rgba(0,240,255,.05);border-color:var(--cyan-accent);}
+    .plan-provider{margin-bottom:.85rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+    .provider-logo{display:flex;align-items:center;gap:.65rem;}
+    .provider-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--bg-pure-black);font-weight:900;font-size:.85rem;box-shadow:0 0 18px currentColor;flex-shrink:0;}
+    .hostinger-icon{background-color:var(--hostinger);} .bluehost-icon{background-color:var(--bluehost);} .godaddy-icon{background-color:var(--godaddy);} .bigrock-icon{background-color:var(--bigrock);} .namecheap-icon{background-color:var(--namecheap);}
+    .provider-logo span{text-transform:capitalize;font-weight:700;font-size:clamp(.95rem,2.5vw,1.05rem);color:var(--text-white);}
+    .plan-name{font-size:clamp(1.2rem,3.5vw,1.5rem);font-weight:900;margin:.85rem 0;color:var(--text-white);line-height:1.3;}
+    .plan-price-container{display:flex;align-items:baseline;gap:.65rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .plan-price{font-size:clamp(1.5rem,5vw,1.9rem);font-weight:900;color:var(--cyan-accent);text-shadow:0 0 18px var(--cyan-glow);}
+    .plan-original{font-size:clamp(.95rem,2.5vw,1.05rem);color:var(--text-gray);text-decoration:line-through;}
+    .plan-features{list-style:none;margin-bottom:1.25rem;}
+    .plan-feature{display:flex;align-items:flex-start;margin-bottom:.65rem;color:var(--text-silver);font-size:clamp(.85rem,2vw,.95rem);gap:.5rem;line-height:1.4;}
+    .feature-icon{color:var(--cyan-accent);font-size:.95rem;font-weight:900;flex-shrink:0;margin-top:2px;}
+    .card-buy-now{margin-top:1.25rem;text-align:center;}
+    .card-buy-btn{display:inline-block;background:rgba(0,240,255,.1);color:var(--cyan-accent);padding:clamp(.65rem,2vw,.75rem) clamp(1.5rem,4vw,2rem);border-radius:28px;font-size:clamp(.9rem,2vw,.95rem);font-weight:700;text-decoration:none;transition:all .3s ease;border:1px solid rgba(0,240,255,.3);width:100%;max-width:230px;}
+    .card-buy-btn:hover{background:rgba(0,240,255,.2);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,240,255,.28);}
+    .card-buy-btn i{margin-left:.4rem;}
+    .vps-badge,.cloud-badge,.dedicated-badge{display:inline-block;padding:clamp(.25rem,1vw,.3rem) clamp(.7rem,2vw,.85rem);border-radius:18px;font-size:clamp(.65rem,2vw,.75rem);font-weight:700;box-shadow:0 0 18px currentColor;white-space:nowrap;}
+    .vps-badge{background:linear-gradient(45deg,var(--cyan-accent),#00A8E8);color:var(--bg-pure-black);}
+    .cloud-badge{background:linear-gradient(45deg,var(--cyan-accent),#00D9FF);color:var(--bg-pure-black);}
+    .dedicated-badge{background:linear-gradient(45deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);}
+    .vps-card,.cloud-card,.dedicated-card{border-left:4px solid var(--cyan-accent);}
+    .no-results{text-align:center;padding:clamp(2.5rem,6vw,4.5rem) clamp(1.75rem,4vw,2.75rem);background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:clamp(18px,5vw,35px);}
+    .no-results h3{font-size:clamp(1.4rem,5vw,1.9rem);margin-bottom:.85rem;color:#FFB800;font-weight:900;line-height:1.2;}
+    .no-results p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--text-silver);line-height:1.5;}
+
+    /* ===== COMPARE CHECKBOX ===== */
+    .compare-checkbox-container{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-line);display:flex;align-items:center;justify-content:center;gap:.65rem;}
+    .compare-checkbox{appearance:none;width:24px;height:24px;min-width:24px;background:rgba(0,0,0,.5);border:2px solid var(--border-line);border-radius:6px;position:relative;cursor:pointer;transition:all .3s ease;flex-shrink:0;}
+    .compare-checkbox:hover{background:rgba(0,240,255,.1);border-color:var(--cyan-accent);}
+    .compare-checkbox:checked{background:var(--cyan-accent);border-color:var(--cyan-accent);box-shadow:0 0 18px var(--cyan-glow);}
+    .compare-checkbox:checked::after{content:"✓";position:absolute;color:var(--bg-pure-black);font-size:16px;font-weight:900;left:4px;top:1px;}
+    .compare-label{font-size:clamp(.9rem,2vw,.95rem);color:var(--text-silver);font-weight:600;cursor:pointer;}
+
+    /* ===== COMPARE LIMIT BANNER ===== */
+    .compare-limit-banner{display:none;align-items:flex-start;gap:1rem;background:rgba(255,184,0,.07);border:1px solid rgba(255,184,0,.35);border-radius:14px;padding:1rem 1.25rem;margin-top:1.5rem;animation:slideIn .3s ease;}
+    .compare-limit-banner.visible{display:flex;}
+    .clb-icon{font-size:1.4rem;flex-shrink:0;line-height:1.5;}
+    .clb-body{}
+    .clb-title{font-weight:700;color:var(--warning-yellow);font-size:.95rem;margin-bottom:.3rem;}
+    .clb-desc{color:var(--text-silver);font-size:.88rem;line-height:1.6;}
+
+    /* ===== COMPARE BAR ===== */
+    .compare-bar{position:fixed;bottom:-140px;left:50%;transform:translateX(-50%);width:90%;max-width:860px;background:rgba(0,0,0,.98);backdrop-filter:blur(20px);border:2px solid var(--cyan-accent);border-radius:25px;padding:1.25rem 2rem;box-shadow:0 -10px 60px rgba(0,240,255,.4);z-index:1001;transition:bottom .4s cubic-bezier(.4,0,.2,1);}
+    .compare-bar.active{bottom:20px;}
+    .compare-bar-content{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .compare-bar-left{display:flex;align-items:center;gap:1rem;flex:1;min-width:0;}
+    .compare-count{background:var(--cyan-accent);color:var(--bg-pure-black);width:40px;height:40px;min-width:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;box-shadow:0 0 20px var(--cyan-glow);}
+    .compare-bar-text-group{display:flex;flex-direction:column;gap:2px;}
+    .compare-text{color:var(--text-white);font-weight:600;font-size:1rem;}
+    .compare-limit-hint{font-size:.78rem;color:var(--text-gray);}
+    .compare-bar-actions{display:flex;gap:.85rem;flex-shrink:0;}
+    .compare-btn,.clear-compare-btn{padding:.7rem 1.4rem;border-radius:25px;font-weight:700;font-size:.9rem;transition:all .3s ease;cursor:pointer;border:none;white-space:nowrap;}
+    .compare-btn{background:var(--cyan-accent);color:var(--bg-pure-black);box-shadow:0 0 20px var(--cyan-glow);}
+    .compare-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 10px 40px rgba(0,240,255,.6);}
+    .compare-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .clear-compare-btn{background:transparent;color:var(--text-silver);border:1px solid var(--border-line);}
+    .clear-compare-btn:hover{background:rgba(255,0,128,.1);border-color:var(--error-red);color:var(--error-red);}
+
+    /* ===== COMPARISON MODAL ===== */
+    .comparison-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:2rem;overflow-y:auto;}
+    .comparison-modal.active{display:flex;}
+    .comparison-content{background:var(--bg-pure-black);border:2px solid var(--cyan-accent);border-radius:30px;width:100%;max-width:1300px;position:relative;box-shadow:0 30px 90px rgba(0,240,255,.4);}
+    .comparison-header{position:sticky;top:0;background:rgba(0,0,0,.98);backdrop-filter:blur(20px);padding:1.5rem 2rem;border-bottom:1px solid var(--border-line);display:flex;justify-content:space-between;align-items:center;z-index:10;border-radius:28px 28px 0 0;}
+    .comparison-header h2{font-size:clamp(1.3rem,4vw,2rem);font-weight:900;color:var(--cyan-accent);letter-spacing:-1px;}
+    .close-comparison{background:none;border:none;color:var(--text-silver);font-size:2rem;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .3s ease;}
+    .close-comparison:hover{background:rgba(255,0,128,.1);color:var(--error-red);transform:rotate(90deg);}
+    .comparison-body{padding:2rem;overflow-x:auto;}
+
+    /* plan header row in modal */
+    .cmp-plan-row{display:grid;gap:1rem;margin-bottom:1.5rem;}
+    .cmp-plan-card{background:rgba(0,0,0,.6);border:1px solid var(--border-line);border-radius:18px;padding:1.25rem 1.5rem;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:.35rem;}
+    .cmp-plan-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at top left,var(--cyan-glow) 0%,transparent 60%);opacity:.25;pointer-events:none;}
+    .cmp-provider{font-size:.82rem;font-weight:700;color:var(--cyan-accent);text-transform:capitalize;position:relative;z-index:1;}
+    .cmp-plan-name{font-size:clamp(.95rem,2.5vw,1.25rem);font-weight:900;color:var(--text-white);line-height:1.2;position:relative;z-index:1;}
+    .cmp-price{font-size:clamp(1.3rem,4vw,1.75rem);font-weight:900;color:var(--success-green);position:relative;z-index:1;}
+    .cmp-orig-price{font-size:.85rem;color:var(--text-gray);text-decoration:line-through;position:relative;z-index:1;}
+    /* Buy Now inside comparison card */
+    .cmp-buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:linear-gradient(45deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);padding:.55rem 1rem;border-radius:50px;font-weight:900;font-size:.82rem;text-decoration:none;transition:all .3s ease;box-shadow:0 6px 20px rgba(0,255,183,.3);margin-top:.25rem;position:relative;z-index:1;}
+    .cmp-buy-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,255,183,.55);}
+
+    /* feature table */
+    .feature-comparison{margin-top:1.5rem;}
+    .feature-comparison h3{font-size:1.15rem;font-weight:900;color:var(--text-white);margin-bottom:1rem;text-align:center;}
+    .comparison-table{width:100%;border-collapse:separate;border-spacing:0;min-width:480px;}
+    .comparison-table th,.comparison-table td{padding:.8rem .9rem;text-align:left;border-bottom:1px solid var(--border-line);}
+    .comparison-table th{background:rgba(0,240,255,.05);color:var(--cyan-accent);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:1px;}
+    .comparison-table tbody tr:hover{background:rgba(0,240,255,.03);}
+    .feature-name{font-weight:600;color:var(--text-silver);width:20%;white-space:nowrap;}
+    .feature-value{font-weight:500;color:var(--text-white);}
+    .better{background:rgba(0,255,183,.1);border-left:3px solid var(--success-green);padding-left:.8rem!important;color:var(--success-green)!important;font-weight:700;}
+    .worse{background:rgba(255,184,0,.1);border-left:3px solid var(--warning-yellow);padding-left:.8rem!important;color:var(--warning-yellow)!important;}
+    .same{color:var(--text-silver);}
+
+    /* recommendation */
+    .recommendation-section{background:linear-gradient(135deg,rgba(0,255,183,.05),rgba(0,240,255,.05));border:2px solid var(--success-green);border-radius:20px;padding:1.75rem;margin-top:1.75rem;position:relative;overflow:hidden;}
+    .recommendation-section::before{content:'AI RECOMMENDATION';position:absolute;top:15px;right:-35px;background:linear-gradient(135deg,var(--success-green),var(--cyan-accent));color:var(--bg-pure-black);padding:.3rem 2.5rem;font-size:.65rem;font-weight:900;letter-spacing:1.5px;transform:rotate(45deg);box-shadow:0 4px 18px rgba(0,255,183,.4);}
+    .recommendation-header{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+    .recommendation-icon{width:44px;height:44px;min-width:44px;background:var(--success-green);color:var(--bg-pure-black);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;box-shadow:0 0 25px rgba(0,255,183,.4);}
+    .recommendation-header h3{font-size:1.4rem;font-weight:900;color:var(--success-green);}
+    .recommendation-content{color:var(--text-silver);font-size:.98rem;line-height:1.8;margin-bottom:1rem;}
+    .recommendation-winner{background:rgba(0,255,183,.1);border:1px solid var(--success-green);border-radius:14px;padding:1.25rem;margin-top:.75rem;}
+    .winner-badge{display:inline-block;background:var(--success-green);color:var(--bg-pure-black);padding:.35rem .9rem;border-radius:20px;font-size:.78rem;font-weight:900;letter-spacing:1px;margin-bottom:.75rem;}
+    .winner-plan-name{font-size:1.25rem;font-weight:900;color:var(--text-white);margin-bottom:.4rem;}
+    .winner-reason{color:var(--text-silver);font-size:.92rem;line-height:1.7;}
+    .key-differences{margin-top:1.75rem;background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:18px;padding:1.75rem;}
+    .key-differences h3{font-size:1.1rem;font-weight:900;color:var(--cyan-accent);margin-bottom:1.25rem;display:flex;align-items:center;gap:.65rem;}
+    .key-differences h3::before{content:'⚡';font-size:1.3rem;}
+    .difference-list{list-style:none;display:grid;gap:.85rem;}
+    .difference-item{display:flex;align-items:flex-start;gap:.85rem;padding:.85rem 1rem;background:rgba(0,240,255,.03);border-radius:10px;border-left:3px solid var(--cyan-accent);}
+    .difference-icon{width:26px;height:26px;min-width:26px;background:var(--cyan-accent);color:var(--bg-pure-black);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;flex-shrink:0;}
+    .difference-text{color:var(--text-silver);line-height:1.6;font-size:.92rem;}
+    .difference-text strong{color:var(--text-white);font-weight:700;}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:968px){
+        .comparison-table{font-size:.82rem;}
+        .comparison-table th,.comparison-table td{padding:.6rem .45rem;}
+        .compare-bar{width:95%;padding:1rem;}
+        .compare-bar-content{flex-direction:column;gap:.85rem;}
+        .compare-bar-actions{width:100%;}
+        .compare-btn,.clear-compare-btn{flex:1;text-align:center;}
+    }
+    @media(max-width:768px){
+        .orb{width:280px!important;height:280px!important;filter:blur(80px);opacity:.1;}
+        .type-options{grid-template-columns:repeat(2,1fr);}
+        .best-plan::before{font-size:.55rem;padding:.25rem 2.25rem;top:15px;}
+        .form-grid{gap:1.25rem;}
+        .checkbox-group{flex-direction:column;align-items:flex-start;}
+        .plan-cards{grid-template-columns:1fr;}
+    }
+    @media(max-width:480px){
+        .type-options{grid-template-columns:1fr;}
+        .range-inputs{justify-content:center;gap:10px;}
+        .container{padding:0 3%;}
+        .best-plan-header{gap:1rem;}
+        .comparison-modal{padding:.5rem;}
+        .comparison-content{border-radius:16px;}
+        .comparison-header,.comparison-body{padding:1.25rem 1rem;}
+        .feature-name{width:26%;font-size:.78rem;}
+        .recommendation-section{padding:1.25rem;}
     }
 </style>
 {% endblock %}
@@ -1144,61 +286,36 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- Header -->
     <header class="header">
-        <h1>Hosting Plan <span>Finder</span></h1>
+        <h1><span>AI </span>Hosting Plan <span>Finder</span></h1>
         <p>Compare top hosting providers and find the perfect plan for your needs. Get unbiased recommendations from Hostinger, Bluehost, GoDaddy, BigRock, and Namecheap.</p>
     </header>
 
     <div class="container">
-        <!-- Display errors -->
         {% if error %}
-        <div class="error-message">
-            <strong>Error:</strong> {{ error }}
-        </div>
+        <div class="error-message"><strong>Error:</strong> {{ error }}</div>
         {% endif %}
 
         <div class="form-container">
             <h2 class="form-title">Tell Us What You Need</h2>
-            
             <form id="hosting-form" method="POST" action="{{ url_for('calculator') }}">
-                <!-- Hosting Type Selector -->
                 <div class="hosting-type-selector">
                     <div class="type-options">
                         <label class="type-option {% if form_data.hosting_type == 'shared' or not form_data.hosting_type %}active{% endif %}">
                             <input type="radio" name="hosting_type" value="shared" {% if form_data.hosting_type == 'shared' or not form_data.hosting_type %}checked{% endif %}>
-                            <div class="type-card">
-                                <i class="fas fa-server"></i>
-                                <h3>Shared Hosting</h3>
-                                <p>Perfect for websites</p>
-                            </div>
+                            <div class="type-card"><i class="fas fa-server"></i><h3>Shared Hosting</h3><p>Perfect for websites</p></div>
                         </label>
-                        
                         <label class="type-option {% if form_data.hosting_type == 'vps' %}active{% endif %}">
                             <input type="radio" name="hosting_type" value="vps" {% if form_data.hosting_type == 'vps' %}checked{% endif %}>
-                            <div class="type-card">
-                                <i class="fas fa-hdd"></i>
-                                <h3>VPS Hosting</h3>
-                                <p>More power & control</p>
-                            </div>
+                            <div class="type-card"><i class="fas fa-hdd"></i><h3>VPS Hosting</h3><p>More power & control</p></div>
                         </label>
-
                         <label class="type-option {% if form_data.hosting_type == 'cloud' %}active{% endif %}">
                             <input type="radio" name="hosting_type" value="cloud" {% if form_data.hosting_type == 'cloud' %}checked{% endif %}>
-                            <div class="type-card">
-                                <i class="fas fa-cloud"></i>
-                                <h3>Cloud Hosting</h3>
-                                <p>Scalable & reliable</p>
-                            </div>
+                            <div class="type-card"><i class="fas fa-cloud"></i><h3>Cloud Hosting</h3><p>Scalable & reliable</p></div>
                         </label>
-
                         <label class="type-option {% if form_data.hosting_type == 'dedicated' %}active{% endif %}">
                             <input type="radio" name="hosting_type" value="dedicated" {% if form_data.hosting_type == 'dedicated' %}checked{% endif %}>
-                            <div class="type-card">
-                                <i class="fas fa-database"></i>
-                                <h3>Dedicated Server</h3>
-                                <p>Maximum resources</p>
-                            </div>
+                            <div class="type-card"><i class="fas fa-database"></i><h3>Dedicated Server</h3><p>Maximum resources</p></div>
                         </label>
                     </div>
                 </div>
@@ -1212,11 +329,8 @@
                 </div>
 
                 <div class="form-grid">
-                    <!-- Shared Hosting Specific Fields -->
                     <div class="form-group form-section" id="websites-field">
-                        <label for="websites" class="form-label">
-                            <i class="fas fa-globe"></i> How many websites?
-                        </label>
+                        <label for="websites" class="form-label"><i class="fas fa-globe"></i> How many websites?</label>
                         <div class="range-container">
                             <input type="range" id="websites" name="websites" min="1" max="20" value="{{ form_data.websites }}" class="form-control">
                             <div class="range-inputs">
@@ -1225,12 +339,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- VPS Specific Fields -->
                     <div class="form-group form-section hidden" id="cpu-field">
-                        <label for="cpu_cores" class="form-label">
-                            <i class="fas fa-microchip"></i> CPU Cores
-                        </label>
+                        <label for="cpu_cores" class="form-label"><i class="fas fa-microchip"></i> CPU Cores</label>
                         <div class="range-container">
                             <input type="range" id="cpu_cores" name="cpu_cores" min="1" max="32" value="{{ form_data.cpu_cores|default(2) }}" class="form-control">
                             <div class="range-inputs">
@@ -1239,11 +349,8 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group form-section hidden" id="ram-field">
-                        <label for="ram" class="form-label">
-                            <i class="fas fa-memory"></i> RAM (GB)
-                        </label>
+                        <label for="ram" class="form-label"><i class="fas fa-memory"></i> RAM (GB)</label>
                         <div class="range-container">
                             <input type="range" id="ram" name="ram" min="1" max="64" value="{{ form_data.ram|default(4) }}" class="form-control">
                             <div class="range-inputs">
@@ -1252,12 +359,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Common Fields -->
                     <div class="form-group form-section" id="storage-field">
-                        <label for="storage" class="form-label">
-                            <i class="fas fa-hdd"></i> <span id="storage-label-text">Minimum storage (GB)</span>
-                        </label>
+                        <label for="storage" class="form-label"><i class="fas fa-hdd"></i> <span id="storage-label-text">Minimum storage (GB)</span></label>
                         <div class="range-container">
                             <input type="range" id="storage" name="storage" min="1" max="500" value="{{ form_data.storage }}" class="form-control">
                             <div class="range-inputs">
@@ -1266,25 +369,18 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="form-group form-section" id="budget-field">
-                        <label for="budget" class="form-label">
-                            <i class="fas fa-dollar-sign"></i> Monthly budget 
-                        </label>
+                        <label for="budget" class="form-label"><i class="fas fa-dollar-sign"></i> Monthly budget</label>
                         <div class="range-container">
-                            <input type="range" id="budget" name="budget" min="50" max="10000" value="{{ form_data.budget }}" step="50" class="form-control">
+                            <input type="range" id="budget" name="budget" min="50" max="100000" value="{{ form_data.budget }}" step="50" class="form-control">
                             <div class="range-inputs">
                                 <span class="range-value" id="budgetValue">₹{{ form_data.budget }}</span>
                                 <input type="number" id="budgetInput" class="manual-input" min="50" max="20000" step="50" value="{{ form_data.budget }}" {% if not form_data.custom_plan %}disabled{% endif %}>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Shared Hosting Additional Features -->
                     <div class="form-group form-section" id="features-field">
-                        <label class="form-label">
-                            <i class="fas fa-star"></i> Operating System
-                        </label>
+                        <label class="form-label"><i class="fas fa-star"></i> Operating System</label>
                         <div class="checkbox-group">
                             <label class="checkbox-container">
                                 <input type="checkbox" name="email" {% if form_data.email %}checked{% endif %}>
@@ -1297,9 +393,9 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="btn-container">
-                    <button type="submit" class="btn loading-btn" id="compareBtn">
+                    <button type="submit" class="btn loading-btn" id="findPlansBtn">
                         <span class="btn-icon">🔍</span>
                         <span class="btn-text">Find Best Hosting Plans</span>
                     </button>
@@ -1307,546 +403,536 @@
             </form>
         </div>
 
-        <div class="loader" id="loader" style="display: none;">
-            <div class="spinner"></div>
-            <p>Analyzing hosting plans...</p>
+        <div class="loader" id="loader" style="display:none;">
+            <div class="spinner"></div><p>Analyzing hosting plans...</p>
         </div>
 
-        <div class="results-container" id="results" style="display: {% if show_results %}block{% else %}none{% endif %};">
+        <div class="results-container" id="results" style="display:{% if show_results %}block{% else %}none{% endif %};">
             <div class="results-header">
                 <h2 class="results-title">Your Hosting Recommendations</h2>
-                <p>Based on your requirements, here are the best hosting plans we've found for you.</p>
+                <p>Based on your requirements, here are the best hosting plans. Select 2–4 plans and click <strong>Compare Plans</strong> to compare them side-by-side.</p>
             </div>
-            
+
             {% if results and results.count > 0 %}
                 {% if results.hosting_type == 'vps' %}
-                    <!-- VPS Results -->
                     {% if results.best_plan %}
-                        {% set bestPlan = results.best_plan %}
-                        {% set plan = bestPlan.plan %}
+                        {% set bestPlan = results.best_plan %}{% set plan = bestPlan.plan %}
                         {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                        
                         <div class="best-plan">
                             <div class="best-plan-header">
                                 <div>
                                     <div class="best-plan-provider">{{ bestPlan.provider }} <span class="vps-badge">VPS</span></div>
                                     <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
-                                    <div class="best-for">
-                                        <strong>Perfect for:</strong> {{ plan.best_for }}
-                                    </div>
+                                    <div class="best-for"><strong>Perfect for:</strong> {{ plan.best_for }}</div>
                                 </div>
                                 <div class="best-plan-price-container">
                                     <span class="best-plan-price">₹{{ plan.price }}/mo</span>
                                     <div>
                                         <div class="best-plan-original">₹{{ plan.regular_price }}/mo</div>
-                                        {% if savings > 0 %}
-                                        <div class="best-plan-savings">Save {{ savings }}%</div>
-                                        {% endif %}
+                                        {% if savings > 0 %}<div class="best-plan-savings">Save {{ savings }}%</div>{% endif %}
                                     </div>
                                 </div>
                             </div>
-                            
                             <div class="best-plan-details">
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.ram }} GB RAM</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.storage }} {{ plan.type }} Storage</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.bandwidth }} Bandwidth</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div>
-                                    <div>{{ plan.ssl }}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.backup }}</div>
-                                </div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.ram }} GB RAM</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.storage }} {{ plan.type }} Storage</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.bandwidth }} Bandwidth</div></div>
+                                <div class="detail-item"><div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div><div>{{ plan.ssl }}</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.backup }}</div></div>
                             </div>
-                            
                             <div class="buy-now-container">
-                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn">
-                                    <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
-                                    Buy Now
-                                </a>
+                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn"><span class="btn-icon"><i class="fas fa-shopping-cart"></i></span> Buy Now</a>
                             </div>
                         </div>
                     {% endif %}
-                    
-                    <h3 style="font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 900; color: var(--text-white); margin-bottom: 1.75rem; text-align: center;">All Matching VPS Plans</h3>
+                    <h3 style="font-size:clamp(1.4rem,5vw,1.9rem);font-weight:900;color:var(--text-white);margin-bottom:1.75rem;text-align:center;">All Matching VPS Plans</h3>
                     <div class="plan-cards">
-                        {% for plan_data in results.all_plans %}
-                            {% set plan = plan_data.plan %}
-                            {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                            
-                            <div class="plan-card {{ plan_data.provider }} vps-card">
-                                <div class="plan-provider">
-                                    <div class="provider-logo">
-                                        <div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div>
-                                        <span>{{ plan_data.provider }}</span>
-                                    </div>
-                                    <span class="vps-badge">VPS</span>
-                                </div>
-                                <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
-                                <div class="plan-price-container">
-                                    <span class="plan-price">₹{{ plan.price }}/mo</span>
-                                    <span class="plan-original">₹{{ plan.regular_price }}</span>
-                                </div>
-                                <ul class="plan-features">
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.ram }} GB RAM</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.storage }} {{ plan.type }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.bandwidth }} Bandwidth</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span>
-                                        <span>{{ plan.ssl }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">✓</span>
-                                        <span>{{ plan.backup }}</span>
-                                    </li>
-                                </ul>
-                                <div class="best-for">
-                                    <strong>Best for:</strong> {{ plan.best_for }}
-                                </div>
-                                <div class="card-buy-now">
-                                    <a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">
-                                        Buy Now <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
+                        {% for plan_data in results.all_plans %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
+                        <div class="plan-card {{ plan_data.provider }} vps-card" data-plan-id="{{ plan_id }}">
+                            <div class="plan-provider">
+                                <div class="provider-logo"><div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div><span>{{ plan_data.provider }}</span></div>
+                                <span class="vps-badge">VPS</span>
                             </div>
+                            <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                            <div class="plan-price-container"><span class="plan-price">₹{{ plan.price }}/mo</span><span class="plan-original">₹{{ plan.regular_price }}</span></div>
+                            <ul class="plan-features">
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.ram }} GB RAM</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.storage }} {{ plan.type }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.bandwidth }} Bandwidth</span></li>
+                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span><span>{{ plan.ssl }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">✓</span><span>{{ plan.backup }}</span></li>
+                            </ul>
+                            <div class="best-for"><strong>Best for:</strong> {{ plan.best_for }}</div>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Buy Now <i class="fas fa-arrow-right"></i></a></div>
+                            <div class="compare-checkbox-container">
+                                <input type="checkbox" class="compare-checkbox" id="compare-{{ plan_id }}">
+                                <label for="compare-{{ plan_id }}" class="compare-label">Add to Compare</label>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
+
                 {% else %}
-                    <!-- Shared Hosting Results -->
                     {% if results.best_plan %}
-                        {% set bestPlan = results.best_plan %}
-                        {% set plan = bestPlan.plan %}
+                        {% set bestPlan = results.best_plan %}{% set plan = bestPlan.plan %}
                         {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                        
                         <div class="best-plan">
                             <div class="best-plan-header">
                                 <div>
                                     <div class="best-plan-provider">{{ bestPlan.provider }}</div>
                                     <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
-                                    <div class="best-for">
-                                        <strong>Perfect for:</strong> {{ plan.best_for }}
-                                    </div>
+                                    <div class="best-for"><strong>Perfect for:</strong> {{ plan.best_for }}</div>
                                 </div>
                                 <div class="best-plan-price-container">
                                     <span class="best-plan-price">₹{{ plan.price }}/mo</span>
-                                    <div>
-                                        <div class="best-plan-original">₹{{ plan.regular_price }}/mo</div>
-                                        <div class="best-plan-savings">Save {{ savings }}%</div>
-                                    </div>
+                                    <div><div class="best-plan-original">₹{{ plan.regular_price }}/mo</div><div class="best-plan-savings">Save {{ savings }}%</div></div>
                                 </div>
                             </div>
-                            
                             <div class="best-plan-details">
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.storage }} {{ plan.type }} Storage</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.bandwidth }} Bandwidth</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">✓</div>
-                                    <div>{{ plan.email }}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">{{ '✓' if plan.free_domain else '×' }}</div>
-                                    <div>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div>
-                                    <div>{{ plan.ssl }}</div>
-                                </div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.storage }} {{ plan.type }} Storage</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.bandwidth }} Bandwidth</div></div>
+                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.email }}</div></div>
+                                <div class="detail-item"><div class="detail-icon">{{ '✓' if plan.free_domain else '×' }}</div><div>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</div></div>
+                                <div class="detail-item"><div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div><div>{{ plan.ssl }}</div></div>
                             </div>
-                            
                             <div class="buy-now-container">
-                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn">
-                                    <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
-                                    Buy Now
-                                </a>
+                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn"><span class="btn-icon"><i class="fas fa-shopping-cart"></i></span> Buy Now</a>
                             </div>
                         </div>
                     {% endif %}
-                    
-                    <h3 style="font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 900; color: var(--text-white); margin-bottom: 1.75rem; text-align: center;">All Matching Plans</h3>
+                    <h3 style="font-size:clamp(1.4rem,5vw,1.9rem);font-weight:900;color:var(--text-white);margin-bottom:1.75rem;text-align:center;">All Matching Plans</h3>
                     <div class="plan-cards">
-                        {% for plan_data in results.all_plans %}
-                            {% set plan = plan_data.plan %}
-                            {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                            
-                            <div class="plan-card {{ plan_data.provider }}">
-                                <div class="plan-provider">
-                                    <div class="provider-logo">
-                                        <div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div>
-                                        <span>{{ plan_data.provider }}</span>
-                                    </div>
-                                </div>
-                                <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
-                                <div class="plan-price-container">
-                                    <span class="plan-price">₹{{ plan.price }}/mo</span>
-                                    <span class="plan-original">₹{{ plan.regular_price }}</span>
-                                </div>
-                                <ul class="plan-features">
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.storage }} {{ plan.type }} Storage</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.bandwidth }} Bandwidth</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">•</span>
-                                        <span>{{ plan.email }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">{{ '✓' if plan.free_domain else '×' }}</span>
-                                        <span>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</span>
-                                    </li>
-                                    <li class="plan-feature">
-                                        <span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span>
-                                        <span>{{ plan.ssl }}</span>
-                                    </li>
-                                </ul>
-                                <div class="best-for">
-                                    <strong>Best for:</strong> {{ plan.best_for }}
-                                </div>
-                                <div class="card-buy-now">
-                                    <a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">
-                                        Buy Now <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
+                        {% for plan_data in results.all_plans %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
+                        <div class="plan-card {{ plan_data.provider }}" data-plan-id="{{ plan_id }}">
+                            <div class="plan-provider">
+                                <div class="provider-logo"><div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div><span>{{ plan_data.provider }}</span></div>
                             </div>
+                            <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                            <div class="plan-price-container"><span class="plan-price">₹{{ plan.price }}/mo</span><span class="plan-original">₹{{ plan.regular_price }}</span></div>
+                            <ul class="plan-features">
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.storage }} {{ plan.type }} Storage</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.bandwidth }} Bandwidth</span></li>
+                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.email }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if plan.free_domain else '×' }}</span><span>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</span></li>
+                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span><span>{{ plan.ssl }}</span></li>
+                            </ul>
+                            <div class="best-for"><strong>Best for:</strong> {{ plan.best_for }}</div>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Buy Now <i class="fas fa-arrow-right"></i></a></div>
+                            <div class="compare-checkbox-container">
+                                <input type="checkbox" class="compare-checkbox" id="compare-{{ plan_id }}">
+                                <label for="compare-{{ plan_id }}" class="compare-label">Add to Compare</label>
+                            </div>
+                        </div>
                         {% endfor %}
                     </div>
                 {% endif %}
-            {% else %}
-                <div class="no-results">
-                    <h3>No Matching Plans Found</h3>
-                    <p>Try adjusting your requirements to see more options.</p>
+
+                <!-- Shown inline when 4-plan limit is hit -->
+                <div class="compare-limit-banner" id="compareLimitBanner">
+                    <div class="clb-icon">⚠️</div>
+                    <div class="clb-body">
+                        <div class="clb-title">Maximum 4 plans selected — comparison limit reached</div>
+                        <div class="clb-desc">You can compare up to 4 plans at once. To swap a plan, uncheck one of the currently selected plans first, then check the new one you want to add.</div>
+                    </div>
                 </div>
+
+            {% else %}
+                <div class="no-results"><h3>No Matching Plans Found</h3><p>Try adjusting your requirements to see more options.</p></div>
             {% endif %}
         </div>
     </div>
 
+    <!-- Plan data — server-rendered JS object (avoids all HTML attribute encoding issues) -->
     <script>
-        // Update range value display
-        function updateRangeValue(input, outputId, prefix = '', suffix = '', inputFieldId = null) {
-            const value = input.value;
-            let displayValue = prefix + value + suffix;
-            
-            document.getElementById(outputId).textContent = displayValue;
-            
-            if (inputFieldId) {
-                const inputField = document.getElementById(inputFieldId);
-                if (inputField) {
-                    inputField.value = value;
-                }
-            }
-        }
-        
-        // Update slider from manual input
-        function updateSliderFromInput(input, sliderId) {
-            const value = input.value;
-            const slider = document.getElementById(sliderId);
-            
-            if (!slider) return;
-            
-            const min = parseInt(slider.min);
-            const max = parseInt(slider.max);
-            
-            if (value < min) {
-                input.value = min;
-                slider.value = min;
-            } else if (value > max) {
-                input.value = max;
-                slider.value = max;
-            } else {
-                slider.value = value;
-            }
-            
-            slider.dispatchEvent(new Event('input'));
-        }
-        
-        // Toggle custom plan inputs
-        function toggleCustomPlanInputs() {
-            const customPlanCheckbox = document.getElementById('custom_plan');
-            if (!customPlanCheckbox) return;
-            
-            const isEnabled = customPlanCheckbox.checked;
-            const manualInputs = document.querySelectorAll('.manual-input');
-            
-            manualInputs.forEach(input => {
-                input.disabled = !isEnabled;
-                
-                if (isEnabled) {
-                    input.classList.add('enabled');
-                } else {
-                    input.classList.remove('enabled');
-                }
-            });
-        }
+    window.PLAN_DATA = {};
+    {% if results and results.count > 0 %}
+        {% for plan_data in results.all_plans %}
+        window.PLAN_DATA[{{ loop.index }}] = {{ plan_data | tojson }};
+        {% endfor %}
+    {% endif %}
+    </script>
 
-        // Toggle fields based on hosting type
-        function toggleHostingFields(hostingType, preserveValue = false) {
-            const websitesField = document.getElementById('websites-field');
-            const cpuField = document.getElementById('cpu-field');
-            const ramField = document.getElementById('ram-field');
-            const featuresField = document.getElementById('features-field');
-            const storageLabelText = document.getElementById('storage-label-text');
-            const budgetSlider = document.getElementById('budget');
-            const budgetValue = document.getElementById('budgetValue');
-            const budgetInput = document.getElementById('budgetInput');
-            
-            // Store current budget value if preserving
-            const currentBudget = preserveValue && budgetSlider ? parseInt(budgetSlider.value) : null;
-            
-            if (hostingType === 'vps') {
-                if (cpuField) cpuField.classList.remove('hidden');
-                if (ramField) ramField.classList.remove('hidden');
-                if (websitesField) websitesField.classList.add('hidden');
-                if (featuresField) featuresField.classList.add('hidden');
-                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
-                
-                if (budgetSlider) {
-                    budgetSlider.min = 500;
-                    budgetSlider.max = 10000;
-                    budgetSlider.step = 100;
-                    if (currentBudget && currentBudget >= 500 && currentBudget <= 10000) {
-                        budgetSlider.value = currentBudget;
-                    } else if (!preserveValue) {
-                        budgetSlider.value = 500;
-                    }
-                    budgetValue.textContent = '₹' + budgetSlider.value;
-                    if (budgetInput) budgetInput.value = budgetSlider.value;
-                }
-            } else if (hostingType === 'cloud') {
-                if (cpuField) cpuField.classList.remove('hidden');
-                if (ramField) ramField.classList.remove('hidden');
-                if (websitesField) websitesField.classList.remove('hidden');
-                if (featuresField) featuresField.classList.remove('hidden');
-                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
-                
-                if (budgetSlider) {
-                    budgetSlider.min = 200;
-                    budgetSlider.max = 20000;
-                    budgetSlider.step = 100;
-                    if (currentBudget && currentBudget >= 200 && currentBudget <= 20000) {
-                        budgetSlider.value = currentBudget;
-                    } else if (!preserveValue) {
-                        budgetSlider.value = 200;
-                    }
-                    budgetValue.textContent = '₹' + budgetSlider.value;
-                    if (budgetInput) budgetInput.value = budgetSlider.value;
-                }
-            } else if (hostingType === 'dedicated') {
-                if (cpuField) cpuField.classList.remove('hidden');
-                if (ramField) ramField.classList.remove('hidden');
-                if (websitesField) websitesField.classList.add('hidden');
-                if (featuresField) featuresField.classList.add('hidden');
-                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
-                
-                if (budgetSlider) {
-                    budgetSlider.min = 7000;
-                    budgetSlider.max = 50000;
-                    budgetSlider.step = 500;
-                    if (currentBudget && currentBudget >= 7000 && currentBudget <= 50000) {
-                        budgetSlider.value = currentBudget;
-                    } else if (!preserveValue) {
-                        budgetSlider.value = 7000;
-                    }
-                    budgetValue.textContent = '₹' + budgetSlider.value;
-                    if (budgetInput) budgetInput.value = budgetSlider.value;
-                }
-            } else {
-                if (websitesField) websitesField.classList.remove('hidden');
-                if (featuresField) featuresField.classList.remove('hidden');
-                if (cpuField) cpuField.classList.add('hidden');
-                if (ramField) ramField.classList.add('hidden');
-                if (storageLabelText) storageLabelText.textContent = 'Minimum storage (GB)';
-                
-                if (budgetSlider) {
-                    budgetSlider.min = 50;
-                    budgetSlider.max = 2000;
-                    budgetSlider.step = 50;
-                    if (currentBudget && currentBudget >= 50 && currentBudget <= 2000) {
-                        budgetSlider.value = currentBudget;
-                    } else if (!preserveValue) {
-                        budgetSlider.value = 50;
-                    }
-                    budgetValue.textContent = '₹' + budgetSlider.value;
-                    if (budgetInput) budgetInput.value = budgetSlider.value;
-                }
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const initialHostingType = document.querySelector('input[name="hosting_type"]:checked');
-            if (initialHostingType) {
-                toggleHostingFields(initialHostingType.value, true);
-            }
+    <!-- Floating Compare Bar -->
+    <div class="compare-bar" id="compareBar">
+        <div class="compare-bar-content">
+            <div class="compare-bar-left">
+                <div class="compare-count" id="compareCount">0</div>
+                <div class="compare-bar-text-group">
+                    <span class="compare-text">Plans selected for comparison</span>
+                    <span class="compare-limit-hint">Select 2–4 plans, then click Compare</span>
+                </div>
+            </div>
+            <div class="compare-bar-actions">
+                <button class="compare-btn" id="compareNowBtn" disabled>
+                    <i class="fas fa-balance-scale"></i> Compare Plans
+                </button>
+                <button class="clear-compare-btn" id="clearCompareBtn">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
 
-            // Initialize range sliders
-            const websitesSlider = document.getElementById('websites');
-            if (websitesSlider) {
-                websitesSlider.addEventListener('input', function() {
-                    updateRangeValue(this, 'websitesValue', '', '', 'websitesInput');
-                });
-                updateRangeValue(websitesSlider, 'websitesValue', '', '', 'websitesInput');
-            }
-            
-            const cpuSlider = document.getElementById('cpu_cores');
-            if (cpuSlider) {
-                cpuSlider.addEventListener('input', function() {
-                    updateRangeValue(this, 'cpuValue', '', '', 'cpuInput');
-                });
-                updateRangeValue(cpuSlider, 'cpuValue', '', '', 'cpuInput');
-            }
+    <!-- Comparison Modal -->
+    <div class="comparison-modal" id="comparisonModal">
+        <div class="comparison-content">
+            <div class="comparison-header">
+                <h2><i class="fas fa-balance-scale"></i> Plan Comparison</h2>
+                <button class="close-comparison" id="closeComparison">&#x2715;</button>
+            </div>
+            <div class="comparison-body" id="comparisonBody"></div>
+        </div>
+    </div>
 
-            const ramSlider = document.getElementById('ram');
-            if (ramSlider) {
-                ramSlider.addEventListener('input', function() {
-                    updateRangeValue(this, 'ramValue', '', ' GB', 'ramInput');
-                });
-                updateRangeValue(ramSlider, 'ramValue', '', ' GB', 'ramInput');
-            }
-
-            const storageSlider = document.getElementById('storage');
-            if (storageSlider) {
-                storageSlider.addEventListener('input', function() {
-                    updateRangeValue(this, 'storageValue', '', ' GB', 'storageInput');
-                });
-                updateRangeValue(storageSlider, 'storageValue', '', ' GB', 'storageInput');
-            }
-            
-            const budgetSlider = document.getElementById('budget');
-            if (budgetSlider) {
-                budgetSlider.addEventListener('input', function() {
-                    updateRangeValue(this, 'budgetValue', '₹', '', 'budgetInput');
-                });
-                updateRangeValue(budgetSlider, 'budgetValue', '₹', '', 'budgetInput');
-            }
-            
-            // Manual inputs
-            const websitesInput = document.getElementById('websitesInput');
-            if (websitesInput) {
-                websitesInput.addEventListener('change', function() {
-                    updateSliderFromInput(this, 'websites');
-                });
-            }
-
-            const cpuInput = document.getElementById('cpuInput');
-            if (cpuInput) {
-                cpuInput.addEventListener('change', function() {
-                    updateSliderFromInput(this, 'cpu_cores');
-                });
-            }
-
-            const ramInput = document.getElementById('ramInput');
-            if (ramInput) {
-                ramInput.addEventListener('change', function() {
-                    updateSliderFromInput(this, 'ram');
-                });
-            }
-            
-            const storageInput = document.getElementById('storageInput');
-            if (storageInput) {
-                storageInput.addEventListener('change', function() {
-                    updateSliderFromInput(this, 'storage');
-                });
-            }
-            
-            const budgetInput = document.getElementById('budgetInput');
-            if (budgetInput) {
-                budgetInput.addEventListener('change', function() {
-                    updateSliderFromInput(this, 'budget');
-                });
-            }
-            
-            // Custom plan toggle
-            const customPlanToggle = document.getElementById('custom_plan');
-            if (customPlanToggle) {
-                customPlanToggle.addEventListener('change', toggleCustomPlanInputs);
-                toggleCustomPlanInputs();
-            }
-            
-            // Hosting type radio buttons
-            const hostingTypeRadios = document.querySelectorAll('input[name="hosting_type"]');
-            hostingTypeRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.querySelectorAll('.type-option').forEach(option => {
-                        option.classList.remove('active');
-                    });
-                    
-                    if (this.checked) {
-                        this.closest('.type-option').classList.add('active');
-                        toggleHostingFields(this.value, true);
-                    }
-                });
-            });
-            
-            // Form submission
-            const form = document.getElementById('hosting-form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const customPlanEnabled = document.getElementById('custom_plan').checked;
-                    
-                    if (customPlanEnabled) {
-                        const inputPairs = [
-                            ['websitesInput', 'websites'],
-                            ['cpuInput', 'cpu_cores'],
-                            ['ramInput', 'ram'],
-                            ['storageInput', 'storage'],
-                            ['budgetInput', 'budget']
-                        ];
-                        
-                        inputPairs.forEach(([inputId, sliderId]) => {
-                            const input = document.getElementById(inputId);
-                            const slider = document.getElementById(sliderId);
-                            if (input && slider && !input.disabled) {
-                                slider.value = input.value;
-                            }
-                        });
-                    }
-                });
-            }
+    <script>
+    // ==================== SLIDERS ====================
+    function updateRangeValue(input, outputId, prefix, suffix, inputFieldId) {
+        var v = input.value;
+        document.getElementById(outputId).textContent = (prefix||'') + v + (suffix||'');
+        if (inputFieldId) { var f = document.getElementById(inputFieldId); if (f) f.value = v; }
+    }
+    function updateSliderFromInput(input, sliderId) {
+        var sl = document.getElementById(sliderId); if (!sl) return;
+        var mn = parseInt(sl.min), mx = parseInt(sl.max);
+        if (parseInt(input.value) < mn) input.value = mn;
+        else if (parseInt(input.value) > mx) input.value = mx;
+        sl.value = input.value; sl.dispatchEvent(new Event('input'));
+    }
+    function toggleCustomPlanInputs() {
+        var cb = document.getElementById('custom_plan'); if (!cb) return;
+        var on = cb.checked;
+        document.querySelectorAll('.manual-input').forEach(function(i) {
+            i.disabled = !on;
+            if (on) i.classList.add('enabled'); else i.classList.remove('enabled');
         });
+    }
+    function toggleHostingFields(type, preserve) {
+        var wf=document.getElementById('websites-field'), cf=document.getElementById('cpu-field'),
+            rf=document.getElementById('ram-field'), ff=document.getElementById('features-field'),
+            sl=document.getElementById('storage-label-text'), bs=document.getElementById('budget'),
+            bv=document.getElementById('budgetValue'), bi=document.getElementById('budgetInput');
+        var cur = (preserve && bs) ? parseInt(bs.value) : null;
+        function setBudget(mn,mx,st,def) {
+            if (!bs) return; bs.min=mn; bs.max=mx; bs.step=st;
+            if (!cur || cur < mn) bs.value = def;
+            bv.textContent = '\u20B9' + bs.value;
+            if (bi) bi.value = bs.value;
+        }
+        if (type === 'vps') {
+            if(cf)cf.classList.remove('hidden'); if(rf)rf.classList.remove('hidden');
+            if(wf)wf.classList.add('hidden'); if(ff)ff.classList.add('hidden');
+            if(sl)sl.textContent='Storage needed (GB)'; setBudget(500,100000,100,500);
+        } else if (type === 'cloud') {
+            if(cf)cf.classList.remove('hidden'); if(rf)rf.classList.remove('hidden');
+            if(wf)wf.classList.add('hidden'); if(ff)ff.classList.remove('hidden');
+            if(sl)sl.textContent='Storage needed (GB)'; setBudget(200,20000,100,200);
+        } else if (type === 'dedicated') {
+            if(cf)cf.classList.remove('hidden'); if(rf)rf.classList.remove('hidden');
+            if(wf)wf.classList.add('hidden'); if(ff)ff.classList.add('hidden');
+            if(sl)sl.textContent='Storage needed (GB)'; setBudget(7000,50000,500,7000);
+        } else {
+            if(wf)wf.classList.remove('hidden'); if(ff)ff.classList.remove('hidden');
+            if(cf)cf.classList.add('hidden'); if(rf)rf.classList.add('hidden');
+            if(sl)sl.textContent='Minimum storage (GB)'; setBudget(50,2000,50,50);
+        }
+    }
+
+    // ==================== COMPARISON STATE ====================
+    var selectedPlans = [];
+    var MAX_COMPARE = 4;
+
+    function updateCompareBar() {
+        var bar = document.getElementById('compareBar');
+        var cnt = document.getElementById('compareCount');
+        var btn = document.getElementById('compareNowBtn');
+        var banner = document.getElementById('compareLimitBanner');
+        if (!bar || !cnt || !btn) return;
+        cnt.textContent = selectedPlans.length;
+        if (selectedPlans.length > 0) bar.classList.add('active');
+        else bar.classList.remove('active');
+        btn.disabled = (selectedPlans.length < 2);
+        if (banner) {
+            if (selectedPlans.length >= MAX_COMPARE) banner.classList.add('visible');
+            else banner.classList.remove('visible');
+        }
+    }
+
+    function compareValues(v1, v2, higher) {
+        var n1 = parseFloat(v1), n2 = parseFloat(v2);
+        if (isNaN(n1) || isNaN(n2)) return 'same';
+        if (higher === false) return n1 < n2 ? 'better' : (n1 > n2 ? 'worse' : 'same');
+        return n1 > n2 ? 'better' : (n1 < n2 ? 'worse' : 'same');
+    }
+
+    function determineWinner(plans) {
+        var scores = [], reasons = [];
+        for (var i = 0; i < plans.length; i++) scores.push(0);
+
+        var prices = plans.map(function(p){ return parseFloat(p.plan.price) || Infinity; });
+        var minP = Math.min.apply(null, prices);
+        var minCount = prices.filter(function(x){ return x === minP; }).length;
+        if (minCount === 1) {
+            var wi = prices.indexOf(minP);
+            scores[wi] += 2;
+            var secondMin = Infinity;
+            for (var j = 0; j < prices.length; j++) if (prices[j] !== minP && prices[j] < secondMin) secondMin = prices[j];
+            var pct = secondMin !== Infinity ? Math.abs(((secondMin - minP) / secondMin) * 100).toFixed(0) : 0;
+            reasons.push(plans[wi].provider + ' ' + plans[wi].plan_name + ' is cheapest' + (pct > 0 ? ' (' + pct + '% less than next)' : ''));
+        }
+
+        var cpus = plans.map(function(p){ return parseFloat(p.plan.cpu_cores) || 0; });
+        var maxC = Math.max.apply(null, cpus);
+        if (maxC > 0 && cpus.filter(function(x){ return x === maxC; }).length === 1) {
+            var ci = cpus.indexOf(maxC); scores[ci]++;
+            reasons.push(plans[ci].provider + ' has most CPU cores (' + maxC + ')');
+        }
+
+        var rams = plans.map(function(p){ return parseFloat(p.plan.ram) || 0; });
+        var maxR = Math.max.apply(null, rams);
+        if (maxR > 0 && rams.filter(function(x){ return x === maxR; }).length === 1) {
+            var ri = rams.indexOf(maxR); scores[ri]++;
+            reasons.push(plans[ri].provider + ' has most RAM (' + maxR + ' GB)');
+        }
+
+        var best = Math.max.apply(null, scores);
+        var ties = scores.filter(function(s){ return s === best; }).length;
+        if (ties > 1 || best === 0) {
+            return '<div class="recommendation-section"><div class="recommendation-header"><div class="recommendation-icon">&#x2696;</div><h3>Very close call!</h3></div><div class="recommendation-content">These plans score similarly. Consider which specific features matter most to your use case — pricing, CPU, RAM, or provider reputation.</div></div>';
+        }
+        var winIdx = scores.indexOf(best);
+        var w = plans[winIdx];
+        return '<div class="recommendation-section"><div class="recommendation-header"><div class="recommendation-icon">&#x1F3C6;</div><h3>Our Recommendation</h3></div><div class="recommendation-content">Based on price, resources, and features across all selected plans, we recommend:</div><div class="recommendation-winner"><span class="winner-badge">BEST VALUE</span><div class="winner-plan-name">' + w.provider + ' &mdash; ' + w.plan_name + '</div><div class="winner-reason">' + reasons.slice(0,3).join('. ') + '. This plan offers the best overall balance.</div></div></div>';
+    }
+
+    function generateKeyDifferences(plans) {
+        var diffs = [];
+        var prices = plans.map(function(p){ return parseFloat(p.plan.price) || 0; }).filter(function(x){ return x > 0; });
+        if (prices.length > 1) {
+            var mn = Math.min.apply(null, prices), mx = Math.max.apply(null, prices);
+            if (mn !== mx) {
+                var allPrices = plans.map(function(p){ return parseFloat(p.plan.price) || 0; });
+                var ch = plans[allPrices.indexOf(mn)];
+                diffs.push('<strong>' + ch.provider + '</strong> is the cheapest at &#8377;' + mn + '/mo — &#8377;' + (mx - mn).toFixed(0) + ' less than the most expensive');
+            }
+        }
+        var cpuVals = plans.map(function(p){ return parseFloat(p.plan.cpu_cores) || 0; });
+        var mxC = Math.max.apply(null, cpuVals), mnC = Math.min.apply(null, cpuVals.filter(function(x){ return x > 0; }));
+        if (mxC > 0 && mxC !== mnC) {
+            diffs.push('<strong>' + plans[cpuVals.indexOf(mxC)].provider + '</strong> leads on CPU with ' + mxC + ' cores');
+        }
+        var ramVals = plans.map(function(p){ return parseFloat(p.plan.ram) || 0; });
+        var mxR = Math.max.apply(null, ramVals), mnR = Math.min.apply(null, ramVals.filter(function(x){ return x > 0; }));
+        if (mxR > 0 && mxR !== mnR) {
+            diffs.push('<strong>' + plans[ramVals.indexOf(mxR)].provider + '</strong> leads on RAM with ' + mxR + ' GB');
+        }
+        if (!diffs.length) return '';
+        var items = '';
+        for (var i = 0; i < diffs.length; i++) items += '<li class="difference-item"><div class="difference-icon">' + (i+1) + '</div><div class="difference-text">' + diffs[i] + '</div></li>';
+        return '<div class="key-differences"><h3>Key Differences</h3><ul class="difference-list">' + items + '</ul></div>';
+    }
+
+    function showComparison(plans) {
+        var body = document.getElementById('comparisonBody');
+        var modal = document.getElementById('comparisonModal');
+        if (!body || !modal) return;
+
+        var n = plans.length;
+        var cols = n === 2 ? 'repeat(2,1fr)' : n === 3 ? 'repeat(3,1fr)' : 'repeat(4,1fr)';
+
+        // Plan cards with Buy Now buttons
+        var planCards = '';
+        for (var i = 0; i < n; i++) {
+            var pd = plans[i], p = pd.plan;
+            planCards +=
+                '<div class="cmp-plan-card">' +
+                  '<div class="cmp-provider">' + pd.provider + '</div>' +
+                  '<div class="cmp-plan-name">' + pd.plan_name + '</div>' +
+                  '<div class="cmp-price">&#8377;' + p.price + '/mo</div>' +
+                  '<div class="cmp-orig-price">&#8377;' + (p.regular_price || p.price) + '/mo regular</div>' +
+                  '<a href="' + (p.buy_link || '#') + '" target="_blank" class="cmp-buy-btn">' +
+                    '<i class="fas fa-shopping-cart"></i> Buy Now' +
+                  '</a>' +
+                '</div>';
+        }
+
+        // Feature table
+        function row(label, getValue, isNumeric, higherBetter) {
+            var vals = plans.map(getValue);
+            var nums = vals.map(function(v){ return parseFloat(v); });
+            var allNum = isNumeric && nums.every(function(x){ return !isNaN(x) && x > 0; });
+            var best = allNum ? (higherBetter === false ? Math.min.apply(null, nums) : Math.max.apply(null, nums)) : null;
+            var worst = allNum ? (higherBetter === false ? Math.max.apply(null, nums) : Math.min.apply(null, nums)) : null;
+            var r = '<tr><td class="feature-name">' + label + '</td>';
+            for (var i = 0; i < n; i++) {
+                var cls = 'same';
+                if (allNum && nums.filter(function(x){return x===best;}).length < n) {
+                    if (nums[i] === best) cls = 'better';
+                    else if (nums[i] === worst && nums.filter(function(x){return x===worst;}).length < n) cls = 'worse';
+                }
+                r += '<td class="feature-value ' + cls + '">' + vals[i] + '</td>';
+            }
+            return r + '</tr>';
+        }
+
+        var thCols = '<th>Feature</th>';
+        for (var i = 0; i < n; i++) thCols += '<th>' + plans[i].provider + '<br><small style="font-weight:400;font-size:.72rem;text-transform:none;opacity:.8">' + plans[i].plan_name + '</small></th>';
+
+        // Price row (numeric comparison, ₹ display)
+        var pNums = plans.map(function(p){ return parseFloat(p.plan.price) || 0; });
+        var pMin = Math.min.apply(null, pNums), pMax = Math.max.apply(null, pNums);
+        var priceRow = '<tr><td class="feature-name">Monthly Price</td>';
+        for (var i = 0; i < n; i++) {
+            var cls = 'same';
+            if (pMin !== pMax) { if (pNums[i] === pMin) cls = 'better'; else if (pNums[i] === pMax) cls = 'worse'; }
+            priceRow += '<td class="feature-value ' + cls + '">&#8377;' + plans[i].plan.price + '</td>';
+        }
+        priceRow += '</tr>';
+
+        var hasW = plans.some(function(p){ return p.plan.websites != null; });
+        var hasC = plans.some(function(p){ return p.plan.cpu_cores != null; });
+        var hasR = plans.some(function(p){ return p.plan.ram != null; });
+        var hasE = plans.some(function(p){ return p.plan.email; });
+        var hasB = plans.some(function(p){ return p.plan.backup; });
+
+        var tableRows = priceRow;
+        if (hasW) tableRows += row('Websites', function(p){ return p.plan.websites || '-'; }, true, true);
+        tableRows += row('Storage', function(p){ return (p.plan.storage||'-') + ' ' + (p.plan.type||''); }, false, false);
+        tableRows += row('Bandwidth', function(p){ return p.plan.bandwidth || '-'; }, false, false);
+        if (hasC) tableRows += row('CPU Cores', function(p){ return p.plan.cpu_cores || 0; }, true, true);
+        if (hasR) tableRows += row('RAM (GB)', function(p){ return p.plan.ram || 0; }, true, true);
+        tableRows += row('SSL', function(p){ return p.plan.ssl || '-'; }, false, false);
+        if (hasE) tableRows += row('Email', function(p){ return p.plan.email || '-'; }, false, false);
+        if (hasB) tableRows += row('Backup', function(p){ return p.plan.backup || '-'; }, false, false);
+
+        body.innerHTML =
+            '<div class="cmp-plan-row" style="grid-template-columns:' + cols + '">' + planCards + '</div>' +
+            '<div class="feature-comparison">' +
+              '<h3>Feature-by-Feature Comparison</h3>' +
+              '<div style="overflow-x:auto">' +
+                '<table class="comparison-table"><thead><tr>' + thCols + '</tr></thead><tbody>' + tableRows + '</tbody></table>' +
+              '</div>' +
+            '</div>' +
+            determineWinner(plans) +
+            generateKeyDifferences(plans);
+
+        modal.style.display = 'flex';
+        modal.offsetHeight; // force reflow
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('comparisonModal');
+        if (modal) { modal.classList.remove('active'); modal.style.display = 'none'; }
+    }
+
+    // ==================== CHECKBOX HANDLER (top-level) ====================
+    document.addEventListener('change', function(e) {
+        if (!e.target || !e.target.classList.contains('compare-checkbox')) return;
+        var cb = e.target;
+        var cbId = cb.id;
+        var idx = parseInt(cbId.replace('compare-', ''), 10);
+        var planData = window.PLAN_DATA && window.PLAN_DATA[idx];
+
+        if (!planData) {
+            console.error('No PLAN_DATA for index', idx);
+            cb.checked = false; return;
+        }
+
+        if (cb.checked) {
+            for (var i = 0; i < selectedPlans.length; i++) {
+                if (selectedPlans[i].checkboxId === cbId) return; // duplicate
+            }
+            if (selectedPlans.length >= MAX_COMPARE) {
+                cb.checked = false;
+                // Banner already visible — no alert needed
+                return;
+            }
+            var entry = { checkboxId: cbId };
+            for (var k in planData) { if (planData.hasOwnProperty(k)) entry[k] = planData[k]; }
+            selectedPlans.push(entry);
+        } else {
+            var nl = [];
+            for (var j = 0; j < selectedPlans.length; j++) {
+                if (selectedPlans[j].checkboxId !== cbId) nl.push(selectedPlans[j]);
+            }
+            selectedPlans = nl;
+        }
+        updateCompareBar();
+    });
+
+    // ==================== DOMContentLoaded ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        var initType = document.querySelector('input[name="hosting_type"]:checked');
+        if (initType) toggleHostingFields(initType.value, true);
+
+        var sliders = [
+            {s:'websites',  v:'websitesValue', p:'',        x:'',    i:'websitesInput'},
+            {s:'cpu_cores', v:'cpuValue',      p:'',        x:'',    i:'cpuInput'},
+            {s:'ram',       v:'ramValue',      p:'',        x:' GB', i:'ramInput'},
+            {s:'storage',   v:'storageValue',  p:'',        x:' GB', i:'storageInput'},
+            {s:'budget',    v:'budgetValue',   p:'\u20B9',  x:'',    i:'budgetInput'}
+        ];
+        sliders.forEach(function(cfg) {
+            var el = document.getElementById(cfg.s); if (!el) return;
+            (function(c) {
+                el.addEventListener('input', function() { updateRangeValue(this, c.v, c.p, c.x, c.i); });
+                updateRangeValue(el, c.v, c.p, c.x, c.i);
+            })(cfg);
+            var inp = document.getElementById(cfg.i);
+            if (inp) { (function(sid) { inp.addEventListener('change', function() { updateSliderFromInput(this, sid); }); })(cfg.s); }
+        });
+
+        var cpt = document.getElementById('custom_plan');
+        if (cpt) { cpt.addEventListener('change', toggleCustomPlanInputs); toggleCustomPlanInputs(); }
+
+        document.querySelectorAll('input[name="hosting_type"]').forEach(function(r) {
+            r.addEventListener('change', function() {
+                document.querySelectorAll('.type-option').forEach(function(o) { o.classList.remove('active'); });
+                if (this.checked) { this.closest('.type-option').classList.add('active'); toggleHostingFields(this.value, true); }
+            });
+        });
+
+        var form = document.getElementById('hosting-form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                var cp = document.getElementById('custom_plan');
+                if (cp && cp.checked) {
+                    [['websitesInput','websites'],['cpuInput','cpu_cores'],['ramInput','ram'],['storageInput','storage'],['budgetInput','budget']].forEach(function(pair) {
+                        var inp = document.getElementById(pair[0]), sldr = document.getElementById(pair[1]);
+                        if (inp && sldr && !inp.disabled) sldr.value = inp.value;
+                    });
+                }
+            });
+        }
+
+        var clearBtn = document.getElementById('clearCompareBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                for (var i = 0; i < selectedPlans.length; i++) {
+                    var c = document.getElementById(selectedPlans[i].checkboxId); if (c) c.checked = false;
+                }
+                selectedPlans = [];
+                updateCompareBar();
+            });
+        }
+
+        var cmpBtn = document.getElementById('compareNowBtn');
+        if (cmpBtn) {
+            cmpBtn.addEventListener('click', function() {
+                if (selectedPlans.length >= 2) showComparison(selectedPlans);
+            });
+        }
+
+        var closeBtn = document.getElementById('closeComparison');
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+        var modal = document.getElementById('comparisonModal');
+        if (modal) { modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); }); }
+    });
     </script>
 </body>
 {% endblock %}

@@ -1,0 +1,1852 @@
+{% extends 'base.html' %}
+
+{% block title %}Hosting Calculator - CB4UHost{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+    
+    /* Global Variables */
+    :root {
+        --bg-pure-black: #000000;
+        --cyan-accent: #00F0FF;
+        --cyan-glow: rgba(0, 240, 255, 0.15);
+        --text-white: #FFFFFF;
+        --text-silver: #D1D5DB;
+        --text-gray: #9CA3AF;
+        --border-line: rgba(255, 255, 255, 0.08);
+        --hostinger: #00D9FF;
+        --bluehost: #0080FF;
+        --godaddy: #00FFFF;
+        --bigrock: #00FFB7;
+        --namecheap: #0080FF;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-pure-black);
+        color: var(--text-white);
+        line-height: 1.7;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background Grid */
+    .bg-grid {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+        background-size: 70px 70px;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Floating Glow Orbs */
+    .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.12;
+        pointer-events: none;
+        z-index: 0;
+        animation: float 30s ease-in-out infinite;
+    }
+
+    .orb-1 {
+        width: 500px;
+        height: 500px;
+        background: var(--cyan-accent);
+        top: -250px;
+        right: -150px;
+    }
+
+    .orb-2 {
+        width: 400px;
+        height: 400px;
+        background: var(--cyan-accent);
+        bottom: -200px;
+        left: -150px;
+        animation-delay: -15s;
+    }
+
+    .orb-3 {
+        width: 350px;
+        height: 350px;
+        background: var(--cyan-accent);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: -10s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(50px, -50px) scale(1.15); }
+    }
+
+    /* Header Section */
+    .header {
+        position: relative;
+        text-align: center;
+        padding: clamp(2.5rem, 8vw, 6rem) 5% clamp(1.5rem, 5vw, 4rem);
+        z-index: 1;
+        overflow: hidden;
+        margin-bottom: clamp(1.5rem, 5vw, 4rem);
+    }
+
+    .header h1 {
+        font-size: clamp(1.8rem, 8vw, 5rem);
+        font-weight: 900;
+        margin-bottom: 0.75rem;
+        letter-spacing: -1.5px;
+        color: var(--text-white);
+        text-shadow: 0 0 30px rgba(0,255,255,0.3);
+        line-height: 1.1;
+    }
+
+    .header h1 span {
+        color: var(--cyan-accent);
+        text-shadow: 0 0 40px var(--cyan-glow);
+    }
+
+    .header p {
+        font-size: clamp(0.9rem, 2.5vw, 1.4rem);
+        color: var(--text-silver);
+        max-width: 900px;
+        margin: 0 auto;
+        font-weight: 300;
+        line-height: 1.6;
+        padding: 0 1rem;
+    }
+
+    /* Container */
+    .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 4%;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Error Message */
+    .error-message {
+        background: rgba(255, 0, 128, 0.1);
+        border-left: 4px solid #FF0080;
+        border: 1px solid rgba(255, 0, 128, 0.3);
+        color: #FF0080;
+        padding: clamp(0.85rem, 2vw, 1rem);
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+        animation: slideIn 0.3s ease;
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(-10px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Form Container */
+    .form-container {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--border-line);
+        border-radius: clamp(18px, 5vw, 35px);
+        padding: clamp(1.5rem, 5vw, 3.5rem);
+        margin-bottom: clamp(1.5rem, 5vw, 4rem);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(0, 240, 255, 0.15);
+    }
+
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top left, var(--cyan-glow) 0%, transparent 60%);
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    .form-title {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+        font-weight: 900;
+        color: var(--text-white);
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        letter-spacing: -1px;
+    }
+
+    /* Form sections */
+    .form-section {
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-section.hidden {
+        display: none;
+    }
+
+    /* Hosting Type Selector */
+    .hosting-type-selector {
+        margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+        position: relative;
+        z-index: 1;
+    }
+
+    .type-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+        gap: clamp(0.75rem, 3vw, 1.5rem);
+    }
+
+    .type-option {
+        cursor: pointer;
+        position: relative;
+    }
+
+    .type-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .type-card {
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid var(--border-line);
+        border-radius: clamp(15px, 4vw, 28px);
+        padding: clamp(1.25rem, 4vw, 2.25rem);
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        min-height: clamp(120px, 20vw, 140px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .type-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top left, var(--cyan-glow) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .type-card:hover::before {
+        opacity: 1;
+    }
+
+    .type-card i {
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+        color: var(--cyan-accent);
+        margin-bottom: clamp(0.5rem, 2vw, 1rem);
+        transition: all 0.3s ease;
+        filter: drop-shadow(0 0 12px var(--cyan-glow));
+    }
+
+    .type-card h3 {
+        font-size: clamp(0.95rem, 3vw, 1.3rem);
+        margin-bottom: clamp(0.25rem, 1vw, 0.5rem);
+        font-weight: 900;
+        color: var(--text-white);
+        line-height: 1.2;
+    }
+
+    .type-card p {
+        font-size: clamp(0.75rem, 2vw, 0.95rem);
+        color: var(--text-silver);
+        line-height: 1.3;
+    }
+
+    .type-option input[type="radio"]:checked + .type-card,
+    .type-option.active .type-card {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: var(--cyan-accent);
+        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.25);
+    }
+
+    .type-option input[type="radio"]:checked + .type-card i,
+    .type-option.active .type-card i {
+        color: var(--cyan-accent);
+        transform: scale(1.08);
+    }
+
+    .type-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.25);
+        border-color: var(--cyan-accent);
+    }
+
+    /* Custom Plan Toggle */
+    .custom-plan-toggle {
+        margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .toggle-container {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 0.5rem;
+    }
+
+    .toggle-slider {
+        position: relative;
+        display: inline-block;
+        width: 56px;
+        height: 30px;
+        background: rgba(0, 240, 255, 0.1);
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        border: 2px solid var(--border-line);
+        flex-shrink: 0;
+    }
+
+    .toggle-slider::before {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--text-silver);
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .toggle-container input {
+        display: none;
+    }
+
+    .toggle-container input:checked + .toggle-slider {
+        background: var(--cyan-accent);
+        border-color: var(--cyan-accent);
+        box-shadow: 0 0 25px var(--cyan-glow);
+    }
+
+    .toggle-container input:checked + .toggle-slider::before {
+        transform: translateX(26px);
+        background: var(--bg-pure-black);
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+
+    .toggle-label {
+        font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+        font-weight: 600;
+        color: var(--text-white);
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+        gap: clamp(1.25rem, 3vw, 2.25rem);
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.85rem;
+        font-weight: 600;
+        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+        color: var(--text-white);
+    }
+
+    .form-label i {
+        color: var(--cyan-accent);
+        margin-right: 0.5rem;
+        filter: drop-shadow(0 0 8px var(--cyan-glow));
+        font-size: 0.9em;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: clamp(0.85rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem);
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-line);
+        border-radius: 12px;
+        color: var(--text-white);
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--cyan-accent);
+        box-shadow: 0 0 18px var(--cyan-glow);
+        background: rgba(0, 240, 255, 0.05);
+    }
+
+    /* Range Inputs */
+    .range-container {
+        position: relative;
+        padding-top: 0;
+    }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 7px;
+        background: rgba(0, 240, 255, 0.1);
+        border-radius: 4px;
+        outline: none;
+        border: 1px solid var(--border-line);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid var(--bg-pure-black);
+        box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid var(--bg-pure-black);
+        box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+    }
+
+    .range-inputs {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .manual-input {
+        width: clamp(65px, 18vw, 85px);
+        padding: clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px);
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-line);
+        border-radius: 10px;
+        color: var(--text-white);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .manual-input:focus {
+        outline: none;
+        border-color: var(--cyan-accent);
+        box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    .manual-input:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    .manual-input.enabled {
+        border-color: var(--cyan-accent);
+        box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    .range-value {
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+        color: var(--cyan-accent);
+        font-weight: 700;
+        text-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    /* Checkbox Group */
+    .checkbox-group {
+        display: flex;
+        gap: clamp(1rem, 3vw, 1.75rem);
+        flex-wrap: wrap;
+        margin-top: 0.85rem;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        gap: 0.5rem;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+        appearance: none;
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid var(--border-line);
+        border-radius: 6px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .checkbox-container input[type="checkbox"]:hover {
+        background: rgba(0, 240, 255, 0.1);
+        border-color: var(--cyan-accent);
+    }
+
+    .checkbox-container input[type="checkbox"]:checked {
+        background: var(--cyan-accent);
+        border-color: var(--cyan-accent);
+        box-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    .checkbox-container input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        color: var(--bg-pure-black);
+        font-size: 15px;
+        font-weight: 900;
+        left: 3px;
+        top: 0px;
+    }
+
+    .checkbox-container label {
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        color: var(--text-silver);
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    /* Button */
+    .btn {
+        background: linear-gradient(135deg, var(--cyan-accent), #00A8E8);
+        color: var(--bg-pure-black);
+        border: none;
+        padding: clamp(0.95rem, 3vw, 1.2rem) clamp(2rem, 6vw, 3.25rem);
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        font-weight: 900;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 12px 40px rgba(0, 240, 255, 0.4);
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.5px;
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(0, 240, 255, 0.6);
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn:active {
+        transform: translateY(-2px);
+    }
+
+    .btn-icon {
+        margin-right: 0.5rem;
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+    }
+
+    .btn-container {
+        margin-top: clamp(1.75rem, 4vw, 2.75rem);
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Loading State */
+    .loading-btn.loading .btn-text {
+        visibility: hidden;
+    }
+
+    .loading-btn.loading::after {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border: 3px solid rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--bg-pure-black);
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Loader */
+    .loader {
+        text-align: center;
+        padding: clamp(2rem, 5vw, 3.5rem);
+        position: relative;
+        z-index: 1;
+    }
+
+    .spinner {
+        width: 55px;
+        height: 55px;
+        border: 4px solid rgba(0, 240, 255, 0.2);
+        border-left-color: var(--cyan-accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem;
+    }
+
+    .loader p {
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        color: var(--text-silver);
+    }
+
+    /* Results Section */
+    .results-container {
+        animation: fadeIn 0.5s ease;
+        position: relative;
+        z-index: 1;
+        margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .results-header {
+        margin-bottom: clamp(2rem, 5vw, 3.5rem);
+        text-align: center;
+    }
+
+    .results-title {
+        font-size: clamp(1.8rem, 6vw, 4rem);
+        margin-bottom: 1.25rem;
+        font-weight: 900;
+        color: var(--text-white);
+        letter-spacing: -1.5px;
+        text-shadow: 0 0 35px rgba(0,255,255,0.35);
+        line-height: 1.1;
+    }
+
+    .results-title::after {
+        content: "";
+        display: block;
+        width: clamp(60px, 10vw, 80px);
+        height: 3px;
+        background: linear-gradient(90deg, var(--cyan-accent), transparent);
+        margin: 1rem auto 0;
+        border-radius: 2px;
+        box-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    .results-header p {
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        color: var(--text-silver);
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        line-height: 1.6;
+    }
+
+    /* Best Plan Card */
+    .best-plan {
+        background: linear-gradient(135deg, rgba(0, 255, 183, 0.05), rgba(0, 240, 255, 0.05));
+        border: 2px solid rgba(0, 255, 183, 0.3);
+        border-radius: clamp(18px, 5vw, 35px);
+        padding: clamp(1.75rem, 5vw, 3.5rem);
+        margin-bottom: clamp(2rem, 5vw, 3.5rem);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 25px 70px rgba(0, 240, 255, 0.25);
+    }
+
+    .best-plan::before {
+        content: "BEST MATCH";
+        position: absolute;
+        top: 18px;
+        right: -42px;
+        background: linear-gradient(135deg, #00FFB7, var(--cyan-accent));
+        color: var(--bg-pure-black);
+        padding: clamp(0.3rem, 1vw, 0.4rem) clamp(2.5rem, 5vw, 3rem);
+        font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        transform: rotate(45deg);
+        box-shadow: 0 4px 18px rgba(0, 255, 183, 0.4);
+    }
+
+    .best-plan-header {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .best-plan-provider {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        font-weight: 700;
+        color: #00FFB7;
+        text-transform: capitalize;
+        text-shadow: 0 0 18px rgba(0, 255, 183, 0.4);
+    }
+
+    .best-plan-name {
+        font-size: clamp(1.4rem, 5vw, 2.1rem);
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+        color: var(--text-white);
+        line-height: 1.2;
+    }
+
+    .best-plan-price-container {
+        display: flex;
+        align-items: baseline;
+        gap: 0.85rem;
+        flex-wrap: wrap;
+    }
+
+    .best-plan-price {
+        font-size: clamp(1.8rem, 7vw, 2.8rem);
+        font-weight: 900;
+        color: #00FFB7;
+        text-shadow: 0 0 28px rgba(0, 255, 183, 0.4);
+    }
+
+    .best-plan-original {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        color: var(--text-gray);
+        text-decoration: line-through;
+    }
+
+    .best-plan-savings {
+        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        color: #FFB800;
+        font-weight: 700;
+    }
+
+    .best-plan-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+        gap: clamp(0.85rem, 3vw, 1.75rem);
+        margin-top: 1.75rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .detail-icon {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        border-radius: 50%;
+        background: rgba(0, 255, 183, 0.2);
+        color: #00FFB7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        font-weight: 900;
+        border: 2px solid #00FFB7;
+        box-shadow: 0 0 18px rgba(0, 255, 183, 0.25);
+        flex-shrink: 0;
+    }
+
+    .detail-item div {
+        font-size: clamp(0.85rem, 2.5vw, 1rem);
+        color: var(--text-silver);
+        line-height: 1.4;
+    }
+
+    .best-for {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border-line);
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+        color: var(--text-silver);
+        line-height: 1.5;
+    }
+
+    .best-for strong {
+        color: #00FFB7;
+        font-weight: 700;
+    }
+
+    /* Buy Now Buttons */
+    .buy-now-container {
+        margin-top: 1.75rem;
+        text-align: center;
+    }
+
+    .buy-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(45deg, #00FFB7, var(--cyan-accent));
+        color: var(--bg-pure-black);
+        padding: clamp(0.95rem, 3vw, 1.2rem) clamp(2rem, 6vw, 3.25rem);
+        border-radius: 50px;
+        font-weight: 900;
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        text-decoration: none;
+        transition: all 0.4s ease;
+        box-shadow: 0 12px 40px rgba(0, 255, 183, 0.4);
+        letter-spacing: 0.5px;
+        width: 100%;
+        max-width: 330px;
+    }
+
+    .buy-btn:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 60px rgba(0, 255, 183, 0.6);
+    }
+
+    .buy-btn .btn-icon {
+        margin-right: 0.5rem;
+    }
+
+    /* Plan Cards */
+    .plan-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: clamp(1.25rem, 3vw, 2.25rem);
+        margin-top: 1.75rem;
+    }
+
+    .plan-card {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-line);
+        border-radius: clamp(18px, 4vw, 28px);
+        padding: clamp(1.4rem, 4vw, 2.25rem);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .plan-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        box-shadow: 0 0 18px currentColor;
+    }
+
+    .plan-card.hostinger::before { background-color: var(--hostinger); }
+    .plan-card.bluehost::before { background-color: var(--bluehost); }
+    .plan-card.godaddy::before { background-color: var(--godaddy); }
+    .plan-card.bigrock::before { background-color: var(--bigrock); }
+    .plan-card.namecheap::before { background-color: var(--namecheap); }
+
+    .plan-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 55px rgba(0, 240, 255, 0.28);
+        background: rgba(0, 240, 255, 0.05);
+        border-color: var(--cyan-accent);
+    }
+
+    .plan-provider {
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .provider-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .provider-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(--bg-pure-black);
+        font-weight: 900;
+        font-size: 0.85rem;
+        box-shadow: 0 0 18px currentColor;
+        flex-shrink: 0;
+    }
+
+    .hostinger-icon { background-color: var(--hostinger); }
+    .bluehost-icon { background-color: var(--bluehost); }
+    .godaddy-icon { background-color: var(--godaddy); }
+    .bigrock-icon { background-color: var(--bigrock); }
+    .namecheap-icon { background-color: var(--namecheap); }
+
+    .provider-logo span {
+        text-transform: capitalize;
+        font-weight: 700;
+        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+        color: var(--text-white);
+    }
+
+    .plan-name {
+        font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+        font-weight: 900;
+        margin: 0.85rem 0;
+        color: var(--text-white);
+        line-height: 1.3;
+    }
+
+    .plan-price-container {
+        display: flex;
+        align-items: baseline;
+        gap: 0.65rem;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+    }
+
+    .plan-price {
+        font-size: clamp(1.5rem, 5vw, 1.9rem);
+        font-weight: 900;
+        color: var(--cyan-accent);
+        text-shadow: 0 0 18px var(--cyan-glow);
+    }
+
+    .plan-original {
+        font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+        color: var(--text-gray);
+        text-decoration: line-through;
+    }
+
+    .plan-features {
+        list-style: none;
+        margin-bottom: 1.25rem;
+    }
+
+    .plan-feature {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.65rem;
+        color: var(--text-silver);
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        gap: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .feature-icon {
+        color: var(--cyan-accent);
+        font-size: 0.95rem;
+        font-weight: 900;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .card-buy-now {
+        margin-top: 1.25rem;
+        text-align: center;
+    }
+
+    .card-buy-btn {
+        display: inline-block;
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--cyan-accent);
+        padding: clamp(0.65rem, 2vw, 0.75rem) clamp(1.5rem, 4vw, 2rem);
+        border-radius: 28px;
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 240, 255, 0.3);
+        width: 100%;
+        max-width: 230px;
+    }
+
+    .card-buy-btn:hover {
+        background: rgba(0, 240, 255, 0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 240, 255, 0.28);
+    }
+
+    .card-buy-btn i {
+        margin-left: 0.4rem;
+    }
+
+    /* Badges */
+    .vps-badge, .cloud-badge, .dedicated-badge {
+        display: inline-block;
+        padding: clamp(0.25rem, 1vw, 0.3rem) clamp(0.7rem, 2vw, 0.85rem);
+        border-radius: 18px;
+        font-size: clamp(0.65rem, 2vw, 0.75rem);
+        font-weight: 700;
+        box-shadow: 0 0 18px currentColor;
+        white-space: nowrap;
+    }
+
+    .vps-badge {
+        background: linear-gradient(45deg, var(--cyan-accent), #00A8E8);
+        color: var(--bg-pure-black);
+    }
+
+    .cloud-badge {
+        background: linear-gradient(45deg, var(--cyan-accent), #00D9FF);
+        color: var(--bg-pure-black);
+    }
+
+    .dedicated-badge {
+        background: linear-gradient(45deg, #00FFB7, var(--cyan-accent));
+        color: var(--bg-pure-black);
+    }
+
+    .vps-card, .cloud-card, .dedicated-card {
+        border-left: 4px solid var(--cyan-accent);
+    }
+
+    /* No Results */
+    .no-results {
+        text-align: center;
+        padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.75rem, 4vw, 2.75rem);
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-line);
+        border-radius: clamp(18px, 5vw, 35px);
+    }
+
+    .no-results h3 {
+        font-size: clamp(1.4rem, 5vw, 1.9rem);
+        margin-bottom: 0.85rem;
+        color: #FFB800;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+    .no-results p {
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+        color: var(--text-silver);
+        line-height: 1.5;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+        .orb {
+            width: 280px !important;
+            height: 280px !important;
+            filter: blur(80px);
+            opacity: 0.1;
+        }
+
+        .type-options {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .best-plan::before {
+            font-size: 0.55rem;
+            padding: 0.25rem 2.25rem;
+            top: 15px;
+        }
+
+        .form-grid {
+            gap: 1.25rem;
+        }
+
+        .checkbox-group {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .plan-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .type-options {
+            grid-template-columns: 1fr;
+        }
+
+        .range-inputs {
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .container {
+            padding: 0 3%;
+        }
+
+        .best-plan-header {
+            gap: 1rem;
+        }
+    }
+
+    /* Prevent horizontal scroll */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Hosting Plan <span>Finder</span></h1>
+        <p>Compare top hosting providers and find the perfect plan for your needs. Get unbiased recommendations from Hostinger, Bluehost, GoDaddy, BigRock, and Namecheap.</p>
+    </header>
+
+    <div class="container">
+        <!-- Display errors -->
+        {% if error %}
+        <div class="error-message">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="form-container">
+            <h2 class="form-title">Tell Us What You Need</h2>
+            
+            <form id="hosting-form" method="POST" action="{{ url_for('calculator') }}">
+                <!-- Hosting Type Selector -->
+                <div class="hosting-type-selector">
+                    <div class="type-options">
+                        <label class="type-option {% if form_data.hosting_type == 'shared' or not form_data.hosting_type %}active{% endif %}">
+                            <input type="radio" name="hosting_type" value="shared" {% if form_data.hosting_type == 'shared' or not form_data.hosting_type %}checked{% endif %}>
+                            <div class="type-card">
+                                <i class="fas fa-server"></i>
+                                <h3>Shared Hosting</h3>
+                                <p>Perfect for websites</p>
+                            </div>
+                        </label>
+                        
+                        <label class="type-option {% if form_data.hosting_type == 'vps' %}active{% endif %}">
+                            <input type="radio" name="hosting_type" value="vps" {% if form_data.hosting_type == 'vps' %}checked{% endif %}>
+                            <div class="type-card">
+                                <i class="fas fa-hdd"></i>
+                                <h3>VPS Hosting</h3>
+                                <p>More power & control</p>
+                            </div>
+                        </label>
+
+                        <label class="type-option {% if form_data.hosting_type == 'cloud' %}active{% endif %}">
+                            <input type="radio" name="hosting_type" value="cloud" {% if form_data.hosting_type == 'cloud' %}checked{% endif %}>
+                            <div class="type-card">
+                                <i class="fas fa-cloud"></i>
+                                <h3>Cloud Hosting</h3>
+                                <p>Scalable & reliable</p>
+                            </div>
+                        </label>
+
+                        <label class="type-option {% if form_data.hosting_type == 'dedicated' %}active{% endif %}">
+                            <input type="radio" name="hosting_type" value="dedicated" {% if form_data.hosting_type == 'dedicated' %}checked{% endif %}>
+                            <div class="type-card">
+                                <i class="fas fa-database"></i>
+                                <h3>Dedicated Server</h3>
+                                <p>Maximum resources</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="custom-plan-toggle">
+                    <label class="toggle-container">
+                        <input type="checkbox" name="custom_plan" id="custom_plan" {% if form_data.custom_plan %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">Enable Custom Plan Options</span>
+                    </label>
+                </div>
+
+                <div class="form-grid">
+                    <!-- Shared Hosting Specific Fields -->
+                    <div class="form-group form-section" id="websites-field">
+                        <label for="websites" class="form-label">
+                            <i class="fas fa-globe"></i> How many websites?
+                        </label>
+                        <div class="range-container">
+                            <input type="range" id="websites" name="websites" min="1" max="20" value="{{ form_data.websites }}" class="form-control">
+                            <div class="range-inputs">
+                                <span class="range-value" id="websitesValue">{{ form_data.websites }}</span>
+                                <input type="number" id="websitesInput" class="manual-input" min="1" max="100" value="{{ form_data.websites }}" {% if not form_data.custom_plan %}disabled{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VPS Specific Fields -->
+                    <div class="form-group form-section hidden" id="cpu-field">
+                        <label for="cpu_cores" class="form-label">
+                            <i class="fas fa-microchip"></i> CPU Cores
+                        </label>
+                        <div class="range-container">
+                            <input type="range" id="cpu_cores" name="cpu_cores" min="1" max="32" value="{{ form_data.cpu_cores|default(2) }}" class="form-control">
+                            <div class="range-inputs">
+                                <span class="range-value" id="cpuValue">{{ form_data.cpu_cores|default(2) }}</span>
+                                <input type="number" id="cpuInput" class="manual-input" min="1" max="64" value="{{ form_data.cpu_cores|default(2) }}" {% if not form_data.custom_plan %}disabled{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group form-section hidden" id="ram-field">
+                        <label for="ram" class="form-label">
+                            <i class="fas fa-memory"></i> RAM (GB)
+                        </label>
+                        <div class="range-container">
+                            <input type="range" id="ram" name="ram" min="1" max="64" value="{{ form_data.ram|default(4) }}" class="form-control">
+                            <div class="range-inputs">
+                                <span class="range-value" id="ramValue">{{ form_data.ram|default(4) }} GB</span>
+                                <input type="number" id="ramInput" class="manual-input" min="1" max="128" value="{{ form_data.ram|default(4) }}" {% if not form_data.custom_plan %}disabled{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Common Fields -->
+                    <div class="form-group form-section" id="storage-field">
+                        <label for="storage" class="form-label">
+                            <i class="fas fa-hdd"></i> <span id="storage-label-text">Minimum storage (GB)</span>
+                        </label>
+                        <div class="range-container">
+                            <input type="range" id="storage" name="storage" min="1" max="500" value="{{ form_data.storage }}" class="form-control">
+                            <div class="range-inputs">
+                                <span class="range-value" id="storageValue">{{ form_data.storage }} GB</span>
+                                <input type="number" id="storageInput" class="manual-input" min="1" max="1000" value="{{ form_data.storage }}" {% if not form_data.custom_plan %}disabled{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group form-section" id="budget-field">
+                        <label for="budget" class="form-label">
+                            <i class="fas fa-dollar-sign"></i> Monthly budget 
+                        </label>
+                        <div class="range-container">
+                            <input type="range" id="budget" name="budget" min="50" max="100000" value="{{ form_data.budget }}" step="50" class="form-control">
+                            <div class="range-inputs">
+                                <span class="range-value" id="budgetValue">${{ form_data.budget }}</span>
+                                <input type="number" id="budgetInput" class="manual-input" min="50" max="20000" step="50" value="{{ form_data.budget }}" {% if not form_data.custom_plan %}disabled{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shared Hosting Additional Features -->
+                    <div class="form-group form-section" id="features-field">
+                        <label class="form-label">
+                            <i class="fas fa-star"></i> Operating System
+                        </label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="email" {% if form_data.email %}checked{% endif %}>
+                                <label>Windows</label>
+                            </label>
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="domain" {% if form_data.domain %}checked{% endif %}>
+                                <label>Linux</label>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn loading-btn" id="compareBtn">
+                        <span class="btn-icon">🔍</span>
+                        <span class="btn-text">Find Best Hosting Plans</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="loader" id="loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing hosting plans...</p>
+        </div>
+
+        <div class="results-container" id="results" style="display: {% if show_results %}block{% else %}none{% endif %};">
+            <div class="results-header">
+                <h2 class="results-title">Your Hosting Recommendations</h2>
+                <p>Based on your requirements, here are the best hosting plans we've found for you.</p>
+            </div>
+            
+            {% if results and results.count > 0 %}
+                {% if results.hosting_type == 'vps' %}
+                    <!-- VPS Results -->
+                    {% if results.best_plan %}
+                        {% set bestPlan = results.best_plan %}
+                        {% set plan = bestPlan.plan %}
+                        {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
+                        
+                        <div class="best-plan">
+                            <div class="best-plan-header">
+                                <div>
+                                    <div class="best-plan-provider">{{ bestPlan.provider }} <span class="vps-badge">VPS</span></div>
+                                    <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
+                                    <div class="best-for">
+                                        <strong>Perfect for:</strong> {{ plan.best_for }}
+                                    </div>
+                                </div>
+                                <div class="best-plan-price-container">
+                                    <span class="best-plan-price">${{ plan.price }}/mo</span>
+                                    <div>
+                                        <div class="best-plan-original">${{ plan.regular_price }}/mo</div>
+                                        {% if savings > 0 %}
+                                        <div class="best-plan-savings">Save {{ savings }}%</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="best-plan-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.ram }} GB RAM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.storage }} {{ plan.type }} Storage</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.bandwidth }} Bandwidth</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div>
+                                    <div>{{ plan.ssl }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.backup }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="buy-now-container">
+                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn">
+                                    <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
+                                    Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <h3 style="font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 900; color: var(--text-white); margin-bottom: 1.75rem; text-align: center;">All Matching VPS Plans</h3>
+                    <div class="plan-cards">
+                        {% for plan_data in results.all_plans %}
+                            {% set plan = plan_data.plan %}
+                            {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
+                            
+                            <div class="plan-card {{ plan_data.provider }} vps-card">
+                                <div class="plan-provider">
+                                    <div class="provider-logo">
+                                        <div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div>
+                                        <span>{{ plan_data.provider }}</span>
+                                    </div>
+                                    <span class="vps-badge">VPS</span>
+                                </div>
+                                <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                                <div class="plan-price-container">
+                                    <span class="plan-price">${{ plan.price }}/mo</span>
+                                    <span class="plan-original">${{ plan.regular_price }}</span>
+                                </div>
+                                <ul class="plan-features">
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.ram }} GB RAM</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.storage }} {{ plan.type }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.bandwidth }} Bandwidth</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span>
+                                        <span>{{ plan.ssl }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">✓</span>
+                                        <span>{{ plan.backup }}</span>
+                                    </li>
+                                </ul>
+                                <div class="best-for">
+                                    <strong>Best for:</strong> {{ plan.best_for }}
+                                </div>
+                                <div class="card-buy-now">
+                                    <a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">
+                                        Buy Now <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Shared Hosting Results -->
+                    {% if results.best_plan %}
+                        {% set bestPlan = results.best_plan %}
+                        {% set plan = bestPlan.plan %}
+                        {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
+                        
+                        <div class="best-plan">
+                            <div class="best-plan-header">
+                                <div>
+                                    <div class="best-plan-provider">{{ bestPlan.provider }}</div>
+                                    <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
+                                    <div class="best-for">
+                                        <strong>Perfect for:</strong> {{ plan.best_for }}
+                                    </div>
+                                </div>
+                                <div class="best-plan-price-container">
+                                    <span class="best-plan-price">${{ plan.price }}/mo</span>
+                                    <div>
+                                        <div class="best-plan-original">${{ plan.regular_price }}/mo</div>
+                                        <div class="best-plan-savings">Save {{ savings }}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="best-plan-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.storage }} {{ plan.type }} Storage</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.bandwidth }} Bandwidth</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">✓</div>
+                                    <div>{{ plan.email }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">{{ '✓' if plan.free_domain else '×' }}</div>
+                                    <div>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div>
+                                    <div>{{ plan.ssl }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="buy-now-container">
+                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn">
+                                    <span class="btn-icon"><i class="fas fa-shopping-cart"></i></span>
+                                    Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <h3 style="font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 900; color: var(--text-white); margin-bottom: 1.75rem; text-align: center;">All Matching Plans</h3>
+                    <div class="plan-cards">
+                        {% for plan_data in results.all_plans %}
+                            {% set plan = plan_data.plan %}
+                            {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
+                            
+                            <div class="plan-card {{ plan_data.provider }}">
+                                <div class="plan-provider">
+                                    <div class="provider-logo">
+                                        <div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div>
+                                        <span>{{ plan_data.provider }}</span>
+                                    </div>
+                                </div>
+                                <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                                <div class="plan-price-container">
+                                    <span class="plan-price">${{ plan.price }}/mo</span>
+                                    <span class="plan-original">${{ plan.regular_price }}</span>
+                                </div>
+                                <ul class="plan-features">
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.storage }} {{ plan.type }} Storage</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.bandwidth }} Bandwidth</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">•</span>
+                                        <span>{{ plan.email }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">{{ '✓' if plan.free_domain else '×' }}</span>
+                                        <span>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</span>
+                                    </li>
+                                    <li class="plan-feature">
+                                        <span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span>
+                                        <span>{{ plan.ssl }}</span>
+                                    </li>
+                                </ul>
+                                <div class="best-for">
+                                    <strong>Best for:</strong> {{ plan.best_for }}
+                                </div>
+                                <div class="card-buy-now">
+                                    <a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">
+                                        Buy Now <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="no-results">
+                    <h3>No Matching Plans Found</h3>
+                    <p>Try adjusting your requirements to see more options.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Update range value display
+        function updateRangeValue(input, outputId, prefix = '', suffix = '', inputFieldId = null) {
+            const value = input.value;
+            let displayValue = prefix + value + suffix;
+            
+            document.getElementById(outputId).textContent = displayValue;
+            
+            if (inputFieldId) {
+                const inputField = document.getElementById(inputFieldId);
+                if (inputField) {
+                    inputField.value = value;
+                }
+            }
+        }
+        
+        // Update slider from manual input
+        function updateSliderFromInput(input, sliderId) {
+            const value = input.value;
+            const slider = document.getElementById(sliderId);
+            
+            if (!slider) return;
+            
+            const min = parseInt(slider.min);
+            const max = parseInt(slider.max);
+            
+            if (value < min) {
+                input.value = min;
+                slider.value = min;
+            } else if (value > max) {
+                input.value = max;
+                slider.value = max;
+            } else {
+                slider.value = value;
+            }
+            
+            slider.dispatchEvent(new Event('input'));
+        }
+        
+        // Toggle custom plan inputs
+        function toggleCustomPlanInputs() {
+            const customPlanCheckbox = document.getElementById('custom_plan');
+            if (!customPlanCheckbox) return;
+            
+            const isEnabled = customPlanCheckbox.checked;
+            const manualInputs = document.querySelectorAll('.manual-input');
+            
+            manualInputs.forEach(input => {
+                input.disabled = !isEnabled;
+                
+                if (isEnabled) {
+                    input.classList.add('enabled');
+                } else {
+                    input.classList.remove('enabled');
+                }
+            });
+        }
+
+        // Toggle fields based on hosting type
+        function toggleHostingFields(hostingType, preserveValue = false) {
+            const websitesField = document.getElementById('websites-field');
+            const cpuField = document.getElementById('cpu-field');
+            const ramField = document.getElementById('ram-field');
+            const featuresField = document.getElementById('features-field');
+            const storageLabelText = document.getElementById('storage-label-text');
+            const budgetSlider = document.getElementById('budget');
+            const budgetValue = document.getElementById('budgetValue');
+            const budgetInput = document.getElementById('budgetInput');
+            
+            // Store current budget value if preserving
+            const currentBudget = preserveValue && budgetSlider ? parseInt(budgetSlider.value) : null;
+            
+            if (hostingType === 'vps') {
+                if (cpuField) cpuField.classList.remove('hidden');
+                if (ramField) ramField.classList.remove('hidden');
+                if (websitesField) websitesField.classList.add('hidden');
+                if (featuresField) featuresField.classList.add('hidden');
+                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
+                
+                if (budgetSlider) {
+                    budgetSlider.min = 500;
+                    budgetSlider.max = 100000;
+                    budgetSlider.step = 100;
+                    if (currentBudget && currentBudget >= 500 && currentBudget <= 100000) {
+                        budgetSlider.value = currentBudget;
+                    } else if (!preserveValue) {
+                        budgetSlider.value = 500;
+                    }
+                    budgetValue.textContent = '$' + budgetSlider.value;
+                    if (budgetInput) budgetInput.value = budgetSlider.value;
+                }
+            } else if (hostingType === 'cloud') {
+                if (cpuField) cpuField.classList.remove('hidden');
+                if (ramField) ramField.classList.remove('hidden');
+                if (websitesField) websitesField.classList.add('hidden');
+                if (featuresField) featuresField.classList.remove('hidden');
+                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
+                
+                if (budgetSlider) {
+                    budgetSlider.min = 200;
+                    budgetSlider.max = 20000;
+                    budgetSlider.step = 100;
+                    if (currentBudget && currentBudget >= 200 && currentBudget <= 20000) {
+                        budgetSlider.value = currentBudget;
+                    } else if (!preserveValue) {
+                        budgetSlider.value = 200;
+                    }
+                    budgetValue.textContent = '$' + budgetSlider.value;
+                    if (budgetInput) budgetInput.value = budgetSlider.value;
+                }
+            } else if (hostingType === 'dedicated') {
+                if (cpuField) cpuField.classList.remove('hidden');
+                if (ramField) ramField.classList.remove('hidden');
+                if (websitesField) websitesField.classList.add('hidden');
+                if (featuresField) featuresField.classList.add('hidden');
+                if (storageLabelText) storageLabelText.textContent = 'Storage needed (GB)';
+                
+                if (budgetSlider) {
+                    budgetSlider.min = 7000;
+                    budgetSlider.max = 50000;
+                    budgetSlider.step = 500;
+                    if (currentBudget && currentBudget >= 7000 && currentBudget <= 50000) {
+                        budgetSlider.value = currentBudget;
+                    } else if (!preserveValue) {
+                        budgetSlider.value = 7000;
+                    }
+                    budgetValue.textContent = '$' + budgetSlider.value;
+                    if (budgetInput) budgetInput.value = budgetSlider.value;
+                }
+            } else {
+                if (websitesField) websitesField.classList.remove('hidden');
+                if (featuresField) featuresField.classList.remove('hidden');
+                if (cpuField) cpuField.classList.add('hidden');
+                if (ramField) ramField.classList.add('hidden');
+                if (storageLabelText) storageLabelText.textContent = 'Minimum storage (GB)';
+                
+                if (budgetSlider) {
+                    budgetSlider.min = 50;
+                    budgetSlider.max = 2000;
+                    budgetSlider.step = 50;
+                    if (currentBudget && currentBudget >= 50 && currentBudget <= 2000) {
+                        budgetSlider.value = currentBudget;
+                    } else if (!preserveValue) {
+                        budgetSlider.value = 50;
+                    }
+                    budgetValue.textContent = '$' + budgetSlider.value;
+                    if (budgetInput) budgetInput.value = budgetSlider.value;
+                }
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialHostingType = document.querySelector('input[name="hosting_type"]:checked');
+            if (initialHostingType) {
+                toggleHostingFields(initialHostingType.value, true);
+            }
+
+            // Initialize range sliders
+            const websitesSlider = document.getElementById('websites');
+            if (websitesSlider) {
+                websitesSlider.addEventListener('input', function() {
+                    updateRangeValue(this, 'websitesValue', '', '', 'websitesInput');
+                });
+                updateRangeValue(websitesSlider, 'websitesValue', '', '', 'websitesInput');
+            }
+            
+            const cpuSlider = document.getElementById('cpu_cores');
+            if (cpuSlider) {
+                cpuSlider.addEventListener('input', function() {
+                    updateRangeValue(this, 'cpuValue', '', '', 'cpuInput');
+                });
+                updateRangeValue(cpuSlider, 'cpuValue', '', '', 'cpuInput');
+            }
+
+            const ramSlider = document.getElementById('ram');
+            if (ramSlider) {
+                ramSlider.addEventListener('input', function() {
+                    updateRangeValue(this, 'ramValue', '', ' GB', 'ramInput');
+                });
+                updateRangeValue(ramSlider, 'ramValue', '', ' GB', 'ramInput');
+            }
+
+            const storageSlider = document.getElementById('storage');
+            if (storageSlider) {
+                storageSlider.addEventListener('input', function() {
+                    updateRangeValue(this, 'storageValue', '', ' GB', 'storageInput');
+                });
+                updateRangeValue(storageSlider, 'storageValue', '', ' GB', 'storageInput');
+            }
+            
+            const budgetSlider = document.getElementById('budget');
+            if (budgetSlider) {
+                budgetSlider.addEventListener('input', function() {
+                    updateRangeValue(this, 'budgetValue', '$', '', 'budgetInput');
+                });
+                updateRangeValue(budgetSlider, 'budgetValue', '$', '', 'budgetInput');
+            }
+            
+            // Manual inputs
+            const websitesInput = document.getElementById('websitesInput');
+            if (websitesInput) {
+                websitesInput.addEventListener('change', function() {
+                    updateSliderFromInput(this, 'websites');
+                });
+            }
+
+            const cpuInput = document.getElementById('cpuInput');
+            if (cpuInput) {
+                cpuInput.addEventListener('change', function() {
+                    updateSliderFromInput(this, 'cpu_cores');
+                });
+            }
+
+            const ramInput = document.getElementById('ramInput');
+            if (ramInput) {
+                ramInput.addEventListener('change', function() {
+                    updateSliderFromInput(this, 'ram');
+                });
+            }
+            
+            const storageInput = document.getElementById('storageInput');
+            if (storageInput) {
+                storageInput.addEventListener('change', function() {
+                    updateSliderFromInput(this, 'storage');
+                });
+            }
+            
+            const budgetInput = document.getElementById('budgetInput');
+            if (budgetInput) {
+                budgetInput.addEventListener('change', function() {
+                    updateSliderFromInput(this, 'budget');
+                });
+            }
+            
+            // Custom plan toggle
+            const customPlanToggle = document.getElementById('custom_plan');
+            if (customPlanToggle) {
+                customPlanToggle.addEventListener('change', toggleCustomPlanInputs);
+                toggleCustomPlanInputs();
+            }
+            
+            // Hosting type radio buttons
+            const hostingTypeRadios = document.querySelectorAll('input[name="hosting_type"]');
+            hostingTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.type-option').forEach(option => {
+                        option.classList.remove('active');
+                    });
+                    
+                    if (this.checked) {
+                        this.closest('.type-option').classList.add('active');
+                        toggleHostingFields(this.value, true);
+                    }
+                });
+            });
+            
+            // Form submission
+            const form = document.getElementById('hosting-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const customPlanEnabled = document.getElementById('custom_plan').checked;
+                    
+                    if (customPlanEnabled) {
+                        const inputPairs = [
+                            ['websitesInput', 'websites'],
+                            ['cpuInput', 'cpu_cores'],
+                            ['ramInput', 'ram'],
+                            ['storageInput', 'storage'],
+                            ['budgetInput', 'budget']
+                        ];
+                        
+                        inputPairs.forEach(([inputId, sliderId]) => {
+                            const input = document.getElementById(inputId);
+                            const slider = document.getElementById(sliderId);
+                            if (input && slider && !input.disabled) {
+                                slider.value = input.value;
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+{% endblock %}
