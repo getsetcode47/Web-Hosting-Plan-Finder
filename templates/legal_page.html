@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | CB4UHost{% endblock %}
+
+{% block content %}
+<section style="padding: 120px 5% 80px; position: relative; z-index: 1;">
+    <div style="max-width: 900px; margin: 0 auto;">
+        <div style="margin-bottom: 2.5rem;">
+            <p style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.9rem;">Legal</p>
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; margin-bottom: 1rem; color: var(--text-white);">{{ page_title }}</h1>
+            <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-silver); max-width: 720px;">{{ page_description }}</p>
+        </div>
+
+        <div style="display: grid; gap: 1.25rem;">
+            {% for section in content_sections %}
+            <article style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-line); border-radius: 20px; padding: 1.5rem;">
+                <h2 style="font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--text-white);">{{ section.heading }}</h2>
+                <p style="color: var(--text-silver); line-height: 1.8;">{{ section.body }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

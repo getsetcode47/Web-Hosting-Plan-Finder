@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60" role="img" aria-label="Bluehost logo">
+  <rect width="220" height="60" rx="12" fill="transparent"/>
+  <g fill="#2563eb">
+    <rect x="24" y="18" width="8" height="8" rx="1.5"/>
+    <rect x="34" y="18" width="8" height="8" rx="1.5"/>
+    <rect x="24" y="28" width="8" height="8" rx="1.5"/>
+    <rect x="34" y="28" width="8" height="8" rx="1.5"/>
+  </g>
+  <text x="58" y="38" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Bluehost</text>
+</svg>

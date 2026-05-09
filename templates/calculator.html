@@ -107,50 +107,55 @@
     .results-title::after{content:"";display:block;width:clamp(60px,10vw,80px);height:3px;background:linear-gradient(90deg,var(--cyan-accent),transparent);margin:1rem auto 0;border-radius:2px;box-shadow:0 0 18px var(--cyan-glow);}
     .results-header p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--text-silver);max-width:700px;margin:0 auto;padding:0 1rem;line-height:1.6;}
 
-    .best-plan{background:linear-gradient(135deg,rgba(0,255,183,.05),rgba(0,240,255,.05));border:2px solid rgba(0,255,183,.3);border-radius:clamp(18px,5vw,35px);padding:clamp(1.75rem,5vw,3.5rem);margin-bottom:clamp(2rem,5vw,3.5rem);position:relative;overflow:hidden;box-shadow:0 25px 70px rgba(0,240,255,.25);}
-    .best-plan::before{content:"BEST MATCH";position:absolute;top:18px;right:-42px;background:linear-gradient(135deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);padding:clamp(.3rem,1vw,.4rem) clamp(2.5rem,5vw,3rem);font-size:clamp(.6rem,1.5vw,.7rem);font-weight:900;letter-spacing:1.5px;transform:rotate(45deg);box-shadow:0 4px 18px rgba(0,255,183,.4);}
-    .best-plan-header{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.75rem;}
-    .best-plan-provider{font-size:clamp(1rem,3vw,1.25rem);font-weight:700;color:#00FFB7;text-transform:capitalize;text-shadow:0 0 18px rgba(0,255,183,.4);}
-    .best-plan-name{font-size:clamp(1.4rem,5vw,2.1rem);font-weight:900;margin-bottom:.5rem;color:var(--text-white);line-height:1.2;}
-    .best-plan-price-container{display:flex;align-items:baseline;gap:.85rem;flex-wrap:wrap;}
-    .best-plan-price{font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;color:#00FFB7;text-shadow:0 0 28px rgba(0,255,183,.4);}
-    .best-plan-original{font-size:clamp(1rem,3vw,1.25rem);color:var(--text-gray);text-decoration:line-through;}
-    .best-plan-savings{font-size:clamp(.85rem,2.5vw,.95rem);color:#FFB800;font-weight:700;}
-    .best-plan-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:clamp(.85rem,3vw,1.75rem);margin-top:1.75rem;}
-    .detail-item{display:flex;align-items:center;gap:.65rem;}
-    .detail-icon{width:30px;height:30px;min-width:30px;border-radius:50%;background:rgba(0,255,183,.2);color:#00FFB7;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;border:2px solid #00FFB7;box-shadow:0 0 18px rgba(0,255,183,.25);flex-shrink:0;}
-    .detail-item div{font-size:clamp(.85rem,2.5vw,1rem);color:var(--text-silver);line-height:1.4;}
-    .best-for{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border-line);font-size:clamp(.9rem,2.5vw,1rem);color:var(--text-silver);line-height:1.5;}
-    .best-for strong{color:#00FFB7;font-weight:700;}
-    .buy-now-container{margin-top:1.75rem;text-align:center;}
-    .buy-btn{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#00FFB7,var(--cyan-accent));color:var(--bg-pure-black);padding:clamp(.95rem,3vw,1.2rem) clamp(2rem,6vw,3.25rem);border-radius:50px;font-weight:900;font-size:clamp(.95rem,2.5vw,1.15rem);text-decoration:none;transition:all .4s ease;box-shadow:0 12px 40px rgba(0,255,183,.4);letter-spacing:.5px;width:100%;max-width:330px;}
-    .buy-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 60px rgba(0,255,183,.6);}
+    .best-plan{margin-bottom:clamp(2rem,5vw,3.5rem);border:1px solid rgba(0,240,255,.28);box-shadow:0 0 0 1px rgba(0,240,255,.12),0 28px 80px rgba(0,240,255,.14);}
+    .best-plan::after{content:"BEST MATCH";position:absolute;top:18px;right:18px;background:linear-gradient(90deg,#17d7ff,#4668ff);color:#fff;padding:.38rem .82rem;border-radius:999px;font-size:.72rem;font-weight:900;letter-spacing:.7px;text-transform:uppercase;z-index:2;}
+    .best-plan .card-buy-btn{background:linear-gradient(90deg,#17d7ff,#11efff);box-shadow:0 0 32px rgba(24,217,243,.3);}
+    .best-plan .provider-pill{box-shadow:0 10px 22px rgba(255,255,255,.08);}
 
-    .plan-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(1.25rem,3vw,2.25rem);margin-top:1.75rem;}
-    .plan-card{background:rgba(0,0,0,.5);border:1px solid var(--border-line);border-radius:clamp(18px,4vw,28px);padding:clamp(1.4rem,4vw,2.25rem);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;}
-    .plan-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;box-shadow:0 0 18px currentColor;}
-    .plan-card.hostinger::before{background-color:var(--hostinger);}
-    .plan-card.bluehost::before{background-color:var(--bluehost);}
-    .plan-card.godaddy::before{background-color:var(--godaddy);}
-    .plan-card.bigrock::before{background-color:var(--bigrock);}
-    .plan-card.namecheap::before{background-color:var(--namecheap);}
-    .plan-card:hover{transform:translateY(-6px);box-shadow:0 22px 55px rgba(0,240,255,.28);background:rgba(0,240,255,.05);border-color:var(--cyan-accent);}
-    .plan-provider{margin-bottom:.85rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
-    .provider-logo{display:flex;align-items:center;gap:.65rem;}
-    .provider-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--bg-pure-black);font-weight:900;font-size:.85rem;box-shadow:0 0 18px currentColor;flex-shrink:0;}
-    .hostinger-icon{background-color:var(--hostinger);} .bluehost-icon{background-color:var(--bluehost);} .godaddy-icon{background-color:var(--godaddy);} .bigrock-icon{background-color:var(--bigrock);} .namecheap-icon{background-color:var(--namecheap);}
-    .provider-logo span{text-transform:capitalize;font-weight:700;font-size:clamp(.95rem,2.5vw,1.05rem);color:var(--text-white);}
-    .plan-name{font-size:clamp(1.2rem,3.5vw,1.5rem);font-weight:900;margin:.85rem 0;color:var(--text-white);line-height:1.3;}
-    .plan-price-container{display:flex;align-items:baseline;gap:.65rem;margin-bottom:1.25rem;flex-wrap:wrap;}
-    .plan-price{font-size:clamp(1.5rem,5vw,1.9rem);font-weight:900;color:var(--cyan-accent);text-shadow:0 0 18px var(--cyan-glow);}
-    .plan-original{font-size:clamp(.95rem,2.5vw,1.05rem);color:var(--text-gray);text-decoration:line-through;}
-    .plan-features{list-style:none;margin-bottom:1.25rem;}
-    .plan-feature{display:flex;align-items:flex-start;margin-bottom:.65rem;color:var(--text-silver);font-size:clamp(.85rem,2vw,.95rem);gap:.5rem;line-height:1.4;}
-    .feature-icon{color:var(--cyan-accent);font-size:.95rem;font-weight:900;flex-shrink:0;margin-top:2px;}
-    .card-buy-now{margin-top:1.25rem;text-align:center;}
-    .card-buy-btn{display:inline-block;background:rgba(0,240,255,.1);color:var(--cyan-accent);padding:clamp(.65rem,2vw,.75rem) clamp(1.5rem,4vw,2rem);border-radius:28px;font-size:clamp(.9rem,2vw,.95rem);font-weight:700;text-decoration:none;transition:all .3s ease;border:1px solid rgba(0,240,255,.3);width:100%;max-width:230px;}
-    .card-buy-btn:hover{background:rgba(0,240,255,.2);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,240,255,.28);}
-    .card-buy-btn i{margin-left:.4rem;}
+    .plan-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:clamp(1.4rem,3vw,2.2rem);margin-top:1.75rem;}
+    .plan-card{background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:1.45rem;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:100%;}
+    .plan-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(0,240,255,.12),transparent 35%);pointer-events:none;}
+    .plan-card.popular{border-color:rgba(0,240,255,.3);box-shadow:0 0 0 1px rgba(0,240,255,.12),0 0 40px rgba(0,240,255,.08);}
+    .plan-card:hover{transform:translateY(-6px);border-color:rgba(0,240,255,.24);box-shadow:0 20px 50px rgba(0,240,255,.12);}
+    .plan-head,.plan-name-wrap,.plan-pricing,.plan-meta-grid,.plan-score-wrap,.plan-substats,.plan-highlights,.card-buy-now,.compare-checkbox-container{position:relative;z-index:1;}
+    .plan-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.8rem;margin-bottom:1.2rem;}
+    .provider-pill{background:linear-gradient(180deg,rgba(8,12,20,.96),rgba(0,0,0,.96));color:#f3f4f6;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.68rem .95rem;min-width:132px;min-height:48px;text-align:center;font-weight:800;font-size:1rem;line-height:1.15;box-shadow:0 10px 22px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .provider-pill img{display:block;max-width:100%;max-height:28px;object-fit:contain;}
+    .provider-pill span{display:inline-block;font-weight:800;}
+    .plan-type-badge{display:inline-flex;align-items:center;justify-content:center;padding:.38rem .82rem;border-radius:999px;font-size:.76rem;font-weight:800;letter-spacing:.2px;text-transform:lowercase;white-space:nowrap;border:1px solid transparent;}
+    .plan-type-shared{background:rgba(0,255,183,.12);border-color:rgba(0,255,183,.2);color:#42dfb0;}
+    .plan-type-vps{background:rgba(63,118,255,.14);border-color:rgba(63,118,255,.22);color:#6d97ff;}
+    .plan-type-cloud{background:rgba(131,72,255,.14);border-color:rgba(131,72,255,.22);color:#b58cff;}
+    .plan-type-dedicated{background:rgba(255,184,0,.14);border-color:rgba(255,184,0,.24);color:#f1c14b;}
+    .plan-name-wrap{margin-bottom:.95rem;}
+    .plan-name-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+    .plan-name{font-size:clamp(1.45rem,4vw,1.8rem);font-weight:900;margin:0;color:var(--text-white);line-height:1.12;}
+    .featured-badge{display:inline-flex;align-items:center;justify-content:center;padding:.28rem .75rem;border-radius:999px;background:linear-gradient(90deg,#17d7ff,#4668ff);color:#fff;font-size:.72rem;font-weight:900;letter-spacing:.7px;text-transform:uppercase;}
+    .plan-byline{font-size:clamp(.95rem,2.3vw,1rem);color:#9797a2;line-height:1.35;margin-top:.28rem;}
+    .plan-pricing{margin:1rem 0 1.2rem;}
+    .plan-price-line{display:flex;align-items:flex-end;gap:.28rem;flex-wrap:wrap;}
+    .plan-price{font-size:clamp(2.1rem,7vw,3rem);font-weight:900;line-height:1;color:#14e7ff;letter-spacing:.5px;text-shadow:0 0 22px rgba(20,231,255,.14);}
+    .plan-price-unit{font-size:clamp(1rem,2.8vw,1.15rem);color:#b7b7c2;padding-bottom:.28rem;}
+    .plan-billing{font-size:.95rem;color:#8f8f99;line-height:1.35;margin-top:.52rem;}
+    .plan-meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem 1.15rem;margin-bottom:1.2rem;}
+    .meta-item{display:flex;align-items:flex-start;gap:.62rem;color:#b8bcc4;font-size:clamp(.95rem,2.4vw,1rem);line-height:1.35;}
+    .meta-icon{color:#13e6ff;font-size:1rem;min-width:16px;padding-top:.1rem;display:inline-flex;justify-content:center;}
+    .plan-score-wrap{margin:1rem 0 1.15rem;}
+    .plan-score-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.55rem;}
+    .plan-score-label{display:flex;align-items:center;gap:.55rem;color:#b9bcc5;font-size:clamp(.95rem,2.4vw,1rem);}
+    .plan-score-label i{color:#f4b21b;}
+    .plan-score-value{font-size:clamp(1.2rem,3vw,1.45rem);font-weight:900;color:#13e7ff;}
+    .plan-score-bar{height:8px;background:#2a2a31;border-radius:999px;overflow:hidden;}
+    .plan-score-fill{height:100%;background:linear-gradient(90deg,#12ddff,#4d5eff);border-radius:999px;box-shadow:0 0 18px rgba(18,221,255,.25);}
+    .plan-substats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1.2rem;}
+    .substat{display:flex;align-items:flex-start;gap:.55rem;color:#b6b8c0;font-size:clamp(.95rem,2.4vw,1rem);line-height:1.35;}
+    .substat i{color:#838390;font-size:.95rem;padding-top:.1rem;}
+    .plan-highlights{list-style:none;display:grid;gap:.78rem;margin-bottom:1.45rem;}
+    .plan-highlights li{display:flex;align-items:flex-start;gap:.72rem;color:#bcc0c8;font-size:clamp(1rem,2.5vw,1.05rem);line-height:1.3;}
+    .plan-highlights li i{color:#00d98f;font-size:.95rem;padding-top:.16rem;}
+    .card-buy-now{margin-top:auto;text-align:center;}
+    .card-buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:.7rem;background:#18d9f3;color:var(--bg-pure-black);padding:1rem 1.25rem;border-radius:999px;font-size:1rem;font-weight:900;text-decoration:none;transition:all .3s ease;width:100%;box-shadow:0 0 28px rgba(24,217,243,.24);}
+    .card-buy-btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(24,217,243,.34);}
     .vps-badge,.cloud-badge,.dedicated-badge{display:inline-block;padding:clamp(.25rem,1vw,.3rem) clamp(.7rem,2vw,.85rem);border-radius:18px;font-size:clamp(.65rem,2vw,.75rem);font-weight:700;box-shadow:0 0 18px currentColor;white-space:nowrap;}
     .vps-badge{background:linear-gradient(45deg,var(--cyan-accent),#00A8E8);color:var(--bg-pure-black);}
     .cloud-badge{background:linear-gradient(45deg,var(--cyan-accent),#00D9FF);color:var(--bg-pure-black);}
@@ -161,7 +166,7 @@
     .no-results p{font-size:clamp(.95rem,2.5vw,1.15rem);color:var(--text-silver);line-height:1.5;}
 
     /* ===== COMPARE CHECKBOX ===== */
-    .compare-checkbox-container{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-line);display:flex;align-items:center;justify-content:center;gap:.65rem;}
+    .compare-checkbox-container{margin-top:.95rem;padding-top:.95rem;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:flex-start;gap:.65rem;}
     .compare-checkbox{appearance:none;width:24px;height:24px;min-width:24px;background:rgba(0,0,0,.5);border:2px solid var(--border-line);border-radius:6px;position:relative;cursor:pointer;transition:all .3s ease;flex-shrink:0;}
     .compare-checkbox:hover{background:rgba(0,240,255,.1);border-color:var(--cyan-accent);}
     .compare-checkbox:checked{background:var(--cyan-accent);border-color:var(--cyan-accent);box-shadow:0 0 18px var(--cyan-glow);}
@@ -260,7 +265,7 @@
     @media(max-width:768px){
         .orb{width:280px!important;height:280px!important;filter:blur(80px);opacity:.1;}
         .type-options{grid-template-columns:repeat(2,1fr);}
-        .best-plan::before{font-size:.55rem;padding:.25rem 2.25rem;top:15px;}
+        .best-plan::after{font-size:.62rem;padding:.32rem .7rem;top:15px;right:15px;}
         .form-grid{gap:1.25rem;}
         .checkbox-group{flex-direction:column;align-items:flex-start;}
         .plan-cards{grid-template-columns:1fr;}
@@ -269,7 +274,6 @@
         .type-options{grid-template-columns:1fr;}
         .range-inputs{justify-content:center;gap:10px;}
         .container{padding:0 3%;}
-        .best-plan-header{gap:1rem;}
         .comparison-modal{padding:.5rem;}
         .comparison-content{border-radius:16px;}
         .comparison-header,.comparison-body{padding:1.25rem 1rem;}
@@ -418,54 +422,111 @@
                     {% if results.best_plan %}
                         {% set bestPlan = results.best_plan %}{% set plan = bestPlan.plan %}
                         {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                        <div class="best-plan">
-                            <div class="best-plan-header">
-                                <div>
-                                    <div class="best-plan-provider">{{ bestPlan.provider }} <span class="vps-badge">VPS</span></div>
-                                    <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
-                                    <div class="best-for"><strong>Perfect for:</strong> {{ plan.best_for }}</div>
+                        <div class="plan-card best-plan {{ bestPlan.provider }} vps-card {% if plan.popular %}popular{% endif %}">
+                            <div class="plan-head">
+                                <div class="provider-pill">
+                                    {% set provider_logo = provider_logos.get(bestPlan.provider|lower) %}
+                                    {% if provider_logo %}
+                                    <img src="{{ provider_logo }}" alt="{{ bestPlan.provider|title }} logo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'{{ bestPlan.provider|title|e }}'}));">
+                                    {% else %}
+                                    <span>{{ bestPlan.provider|title }}</span>
+                                    {% endif %}
                                 </div>
-                                <div class="best-plan-price-container">
-                                    <span class="best-plan-price">₹{{ plan.price }}/mo</span>
-                                    <div>
-                                        <div class="best-plan-original">₹{{ plan.regular_price }}/mo</div>
-                                        {% if savings > 0 %}<div class="best-plan-savings">Save {{ savings }}%</div>{% endif %}
-                                    </div>
+                                <span class="plan-type-badge plan-type-vps">vps</span>
+                            </div>
+                            <div class="plan-name-wrap">
+                                <div class="plan-name-row">
+                                    <h3 class="plan-name">{{ bestPlan.plan_name }}</h3>
+                                    {% if plan.popular %}<span class="featured-badge">Featured</span>{% endif %}
                                 </div>
+                                <div class="plan-byline">by {{ bestPlan.provider|title }}</div>
                             </div>
-                            <div class="best-plan-details">
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.ram }} GB RAM</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.storage }} {{ plan.type }} Storage</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.bandwidth }} Bandwidth</div></div>
-                                <div class="detail-item"><div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div><div>{{ plan.ssl }}</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.backup }}</div></div>
+                            <div class="plan-pricing">
+                                <div class="plan-price-line">
+                                    <span class="plan-price">₹{{ plan.price }}</span>
+                                    <span class="plan-price-unit">/mo</span>
+                                </div>
+                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
                             </div>
-                            <div class="buy-now-container">
-                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn"><span class="btn-icon"><i class="fas fa-shopping-cart"></i></span> Buy Now</a>
+                            <div class="plan-meta-grid">
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-wifi"></i></span><span>{{ plan.bandwidth }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-globe"></i></span><span>{% if plan.free_domain %}Unlimited domains{% else %}No free domain{% endif %}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-shield-alt"></i></span><span>{{ plan.ssl }}</span></div>
                             </div>
+                            <div class="plan-score-wrap">
+                                <div class="plan-score-head">
+                                    <div class="plan-score-label"><i class="fas fa-bolt"></i><span>Performance Score</span></div>
+                                    <div class="plan-score-value">{{ results.all_plans[0].score }}/10</div>
+                                </div>
+                                <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (results.all_plans[0].score * 10)|round(0, 'floor') }}%"></div></div>
+                            </div>
+                            <div class="plan-substats">
+                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>7 day money-back</span></div>
+                            </div>
+                            <ul class="plan-highlights">
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>Dedicated Resources</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
+                            </ul>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Visit Provider <i class="fas fa-external-link-alt"></i></a></div>
                         </div>
                     {% endif %}
                     <h3 style="font-size:clamp(1.4rem,5vw,1.9rem);font-weight:900;color:var(--text-white);margin-bottom:1.75rem;text-align:center;">All Matching VPS Plans</h3>
                     <div class="plan-cards">
-                        {% for plan_data in results.all_plans %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
-                        <div class="plan-card {{ plan_data.provider }} vps-card" data-plan-id="{{ plan_id }}">
-                            <div class="plan-provider">
-                                <div class="provider-logo"><div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div><span>{{ plan_data.provider }}</span></div>
-                                <span class="vps-badge">VPS</span>
+                        {% for plan_data in results.all_plans[1:] %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
+                        <div class="plan-card {{ plan_data.provider }} vps-card {% if plan.popular %}popular{% endif %}" data-plan-id="{{ plan_id }}">
+                            <div class="plan-head">
+                                <div class="provider-pill">
+                                    {% set provider_logo = provider_logos.get(plan_data.provider|lower) %}
+                                    {% if provider_logo %}
+                                    <img src="{{ provider_logo }}" alt="{{ plan_data.provider|title }} logo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'{{ plan_data.provider|title|e }}'}));">
+                                    {% else %}
+                                    <span>{{ plan_data.provider|title }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="plan-type-badge plan-type-vps">vps</span>
                             </div>
-                            <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
-                            <div class="plan-price-container"><span class="plan-price">₹{{ plan.price }}/mo</span><span class="plan-original">₹{{ plan.regular_price }}</span></div>
-                            <ul class="plan-features">
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.cpu_cores }} vCPU Core{{ 's' if plan.cpu_cores != 1 else '' }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.ram }} GB RAM</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.storage }} {{ plan.type }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.bandwidth }} Bandwidth</span></li>
-                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span><span>{{ plan.ssl }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">✓</span><span>{{ plan.backup }}</span></li>
+                            <div class="plan-name-wrap">
+                                <div class="plan-name-row">
+                                    <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                                    {% if plan.popular %}<span class="featured-badge">Featured</span>{% endif %}
+                                </div>
+                                <div class="plan-byline">by {{ plan_data.provider|title }}</div>
+                            </div>
+                            <div class="plan-pricing">
+                                <div class="plan-price-line">
+                                    <span class="plan-price">₹{{ plan.price }}</span>
+                                    <span class="plan-price-unit">/mo</span>
+                                </div>
+                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                            </div>
+                            <div class="plan-meta-grid">
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-wifi"></i></span><span>{{ plan.bandwidth }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-globe"></i></span><span>{% if plan.free_domain %}Unlimited domains{% else %}No free domain{% endif %}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-shield-alt"></i></span><span>{{ plan.ssl }}</span></div>
+                            </div>
+                            <div class="plan-score-wrap">
+                                <div class="plan-score-head">
+                                    <div class="plan-score-label"><i class="fas fa-bolt"></i><span>Performance Score</span></div>
+                                    <div class="plan-score-value">{{ plan_data.score }}/10</div>
+                                </div>
+                                <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (plan_data.score * 10)|round(0, 'floor') }}%"></div></div>
+                            </div>
+                            <div class="plan-substats">
+                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>7 day money-back</span></div>
+                            </div>
+                            <ul class="plan-highlights">
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>Dedicated Resources</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
                             </ul>
-                            <div class="best-for"><strong>Best for:</strong> {{ plan.best_for }}</div>
-                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Buy Now <i class="fas fa-arrow-right"></i></a></div>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Visit Provider <i class="fas fa-external-link-alt"></i></a></div>
                             <div class="compare-checkbox-container">
                                 <input type="checkbox" class="compare-checkbox" id="compare-{{ plan_id }}">
                                 <label for="compare-{{ plan_id }}" class="compare-label">Add to Compare</label>
@@ -478,50 +539,135 @@
                     {% if results.best_plan %}
                         {% set bestPlan = results.best_plan %}{% set plan = bestPlan.plan %}
                         {% set savings = ((plan.regular_price - plan.price) / plan.regular_price * 100)|round|int %}
-                        <div class="best-plan">
-                            <div class="best-plan-header">
-                                <div>
-                                    <div class="best-plan-provider">{{ bestPlan.provider }}</div>
-                                    <div class="best-plan-name">{{ bestPlan.plan_name }}</div>
-                                    <div class="best-for"><strong>Perfect for:</strong> {{ plan.best_for }}</div>
+                        <div class="plan-card best-plan {{ bestPlan.provider }} {% if plan.popular %}popular{% endif %}">
+                            <div class="plan-head">
+                                <div class="provider-pill">
+                                    {% set provider_logo = provider_logos.get(bestPlan.provider|lower) %}
+                                    {% if provider_logo %}
+                                    <img src="{{ provider_logo }}" alt="{{ bestPlan.provider|title }} logo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'{{ bestPlan.provider|title|e }}'}));">
+                                    {% else %}
+                                    <span>{{ bestPlan.provider|title }}</span>
+                                    {% endif %}
                                 </div>
-                                <div class="best-plan-price-container">
-                                    <span class="best-plan-price">₹{{ plan.price }}/mo</span>
-                                    <div><div class="best-plan-original">₹{{ plan.regular_price }}/mo</div><div class="best-plan-savings">Save {{ savings }}%</div></div>
+                                <span class="plan-type-badge {% if results.hosting_type == 'cloud' %}plan-type-cloud{% elif results.hosting_type == 'dedicated' %}plan-type-dedicated{% else %}plan-type-shared{% endif %}">{{ results.hosting_type }}</span>
+                            </div>
+                            <div class="plan-name-wrap">
+                                <div class="plan-name-row">
+                                    <h3 class="plan-name">{{ bestPlan.plan_name }}</h3>
+                                    {% if plan.popular %}<span class="featured-badge">Featured</span>{% endif %}
                                 </div>
+                                <div class="plan-byline">by {{ bestPlan.provider|title }}</div>
                             </div>
-                            <div class="best-plan-details">
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.storage }} {{ plan.type }} Storage</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.bandwidth }} Bandwidth</div></div>
-                                <div class="detail-item"><div class="detail-icon">✓</div><div>{{ plan.email }}</div></div>
-                                <div class="detail-item"><div class="detail-icon">{{ '✓' if plan.free_domain else '×' }}</div><div>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</div></div>
-                                <div class="detail-item"><div class="detail-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</div><div>{{ plan.ssl }}</div></div>
+                            <div class="plan-pricing">
+                                <div class="plan-price-line">
+                                    <span class="plan-price">₹{{ plan.price }}</span>
+                                    <span class="plan-price-unit">/mo</span>
+                                </div>
+                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
                             </div>
-                            <div class="buy-now-container">
-                                <a href="{{ plan.buy_link }}" target="_blank" class="buy-btn"><span class="btn-icon"><i class="fas fa-shopping-cart"></i></span> Buy Now</a>
+                            <div class="plan-meta-grid">
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-wifi"></i></span><span>{{ plan.bandwidth }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-globe"></i></span><span>{% if plan.websites == 'Unlimited' %}Unlimited domains{% else %}{{ plan.websites if plan.websites is string else plan.websites }} domain{{ 's' if plan.websites != 1 else '' }}{% endif %}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-shield-alt"></i></span><span>{{ plan.ssl }}</span></div>
                             </div>
+                            <div class="plan-score-wrap">
+                                <div class="plan-score-head">
+                                    <div class="plan-score-label"><i class="fas fa-bolt"></i><span>Performance Score</span></div>
+                                    <div class="plan-score-value">{{ results.all_plans[0].score }}/10</div>
+                                </div>
+                                <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (results.all_plans[0].score * 10)|round(0, 'floor') }}%"></div></div>
+                            </div>
+                            <div class="plan-substats">
+                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{% if results.hosting_type == 'dedicated' %}7 day money-back{% else %}30 day money-back{% endif %}</span></div>
+                            </div>
+                            <ul class="plan-highlights">
+                                {% if results.hosting_type == 'dedicated' %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} Dedicated vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ips }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.migration }}</span></li>
+                                {% elif results.hosting_type == 'cloud' %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
+                                {% else %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ 'Free Domain' if plan.free_domain else plan.email }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.best_for }}</span></li>
+                                {% endif %}
+                            </ul>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Visit Provider <i class="fas fa-external-link-alt"></i></a></div>
                         </div>
                     {% endif %}
                     <h3 style="font-size:clamp(1.4rem,5vw,1.9rem);font-weight:900;color:var(--text-white);margin-bottom:1.75rem;text-align:center;">All Matching Plans</h3>
                     <div class="plan-cards">
-                        {% for plan_data in results.all_plans %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
-                        <div class="plan-card {{ plan_data.provider }}" data-plan-id="{{ plan_id }}">
-                            <div class="plan-provider">
-                                <div class="provider-logo"><div class="provider-icon {{ plan_data.provider }}-icon">{{ plan_data.provider[0]|upper }}</div><span>{{ plan_data.provider }}</span></div>
+                        {% for plan_data in results.all_plans[1:] %}{% set plan = plan_data.plan %}{% set plan_id = loop.index %}
+                        <div class="plan-card {{ plan_data.provider }} {% if plan.popular %}popular{% endif %}" data-plan-id="{{ plan_id }}">
+                            <div class="plan-head">
+                                <div class="provider-pill">
+                                    {% set provider_logo = provider_logos.get(plan_data.provider|lower) %}
+                                    {% if provider_logo %}
+                                    <img src="{{ provider_logo }}" alt="{{ plan_data.provider|title }} logo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'{{ plan_data.provider|title|e }}'}));">
+                                    {% else %}
+                                    <span>{{ plan_data.provider|title }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="plan-type-badge {% if results.hosting_type == 'cloud' %}plan-type-cloud{% elif results.hosting_type == 'dedicated' %}plan-type-dedicated{% else %}plan-type-shared{% endif %}">{{ results.hosting_type }}</span>
                             </div>
-                            <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
-                            <div class="plan-price-container"><span class="plan-price">₹{{ plan.price }}/mo</span><span class="plan-original">₹{{ plan.regular_price }}</span></div>
-                            <ul class="plan-features">
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.storage }} {{ plan.type }} Storage</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.bandwidth }} Bandwidth</span></li>
-                                <li class="plan-feature"><span class="feature-icon">•</span><span>{{ plan.email }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if plan.free_domain else '×' }}</span><span>{{ 'Free Domain' if plan.free_domain else 'No Free Domain' }}</span></li>
-                                <li class="plan-feature"><span class="feature-icon">{{ '✓' if 'SSL' in plan.ssl else '×' }}</span><span>{{ plan.ssl }}</span></li>
+                            <div class="plan-name-wrap">
+                                <div class="plan-name-row">
+                                    <h3 class="plan-name">{{ plan_data.plan_name }}</h3>
+                                    {% if plan.popular %}<span class="featured-badge">Featured</span>{% endif %}
+                                </div>
+                                <div class="plan-byline">by {{ plan_data.provider|title }}</div>
+                            </div>
+                            <div class="plan-pricing">
+                                <div class="plan-price-line">
+                                    <span class="plan-price">₹{{ plan.price }}</span>
+                                    <span class="plan-price-unit">/mo</span>
+                                </div>
+                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                            </div>
+                            <div class="plan-meta-grid">
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-wifi"></i></span><span>{{ plan.bandwidth }}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-globe"></i></span><span>{% if plan.websites == 'Unlimited' %}Unlimited domains{% else %}{{ plan.websites if plan.websites is string else plan.websites }} domain{{ 's' if plan.websites != 1 else '' }}{% endif %}</span></div>
+                                <div class="meta-item"><span class="meta-icon"><i class="fas fa-shield-alt"></i></span><span>{{ plan.ssl }}</span></div>
+                            </div>
+                            <div class="plan-score-wrap">
+                                <div class="plan-score-head">
+                                    <div class="plan-score-label"><i class="fas fa-bolt"></i><span>Performance Score</span></div>
+                                    <div class="plan-score-value">{{ plan_data.score }}/10</div>
+                                </div>
+                                <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (plan_data.score * 10)|round(0, 'floor') }}%"></div></div>
+                            </div>
+                            <div class="plan-substats">
+                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{% if results.hosting_type == 'dedicated' %}7 day money-back{% else %}30 day money-back{% endif %}</span></div>
+                            </div>
+                            <ul class="plan-highlights">
+                                {% if results.hosting_type == 'dedicated' %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} Dedicated vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ips }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.migration }}</span></li>
+                                {% elif results.hosting_type == 'cloud' %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.ram }} GB RAM</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
+                                {% else %}
+                                <li><i class="fas fa-check"></i><span>{{ plan.websites if plan.websites is string else plan.websites }} Website{{ 's' if plan.websites != 1 else '' }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ 'Free Domain' if plan.free_domain else plan.email }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.backup }}</span></li>
+                                <li><i class="fas fa-check"></i><span>{{ plan.best_for }}</span></li>
+                                {% endif %}
                             </ul>
-                            <div class="best-for"><strong>Best for:</strong> {{ plan.best_for }}</div>
-                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Buy Now <i class="fas fa-arrow-right"></i></a></div>
+                            <div class="card-buy-now"><a href="{{ plan.buy_link }}" target="_blank" class="card-buy-btn">Visit Provider <i class="fas fa-external-link-alt"></i></a></div>
                             <div class="compare-checkbox-container">
                                 <input type="checkbox" class="compare-checkbox" id="compare-{{ plan_id }}">
                                 <label for="compare-{{ plan_id }}" class="compare-label">Add to Compare</label>

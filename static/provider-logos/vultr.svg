@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60" role="img" aria-label="Vultr logo">
+  <rect width="220" height="60" rx="12" fill="transparent"/>
+  <path d="M24 20h12l8 20h-9l-2-5h-3l-2 5h-9l5-12z" fill="#3b82f6"/>
+  <text x="58" y="38" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">Vultr</text>
+</svg>

@@ -1,3 +1,31 @@
+const providerLogos = {
+    hostinger: '/static/provider-logos/hostinger.svg',
+    bluehost: '/static/provider-logos/bluehost.svg',
+    godaddy: '/static/provider-logos/godaddy.svg',
+    bigrock: '/static/provider-logos/bigrock.svg',
+    namecheap: '/static/provider-logos/namecheap.svg',
+    siteground: '/static/provider-logos/siteground.svg',
+    a2hosting: '/static/provider-logos/a2hosting.svg',
+    digitalocean: '/static/provider-logos/digitalocean.svg',
+    vultr: '/static/provider-logos/vultr.svg',
+    'amazon web services': '/static/provider-logos/aws.svg',
+    aws: '/static/provider-logos/aws.svg',
+    linode: '/static/provider-logos/linode.svg',
+    akamai: '/static/provider-logos/akamai.svg'
+};
+
+function renderProviderLogo(provider) {
+    const key = String(provider || '').toLowerCase();
+    const logoUrl = providerLogos[key];
+    const label = provider || '';
+
+    if (!logoUrl) {
+        return `<span>${label}</span>`;
+    }
+
+    return `<img src="${logoUrl}" alt="${label} logo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:${JSON.stringify(label)}}));">`;
+}
+
 // Range slider functions
 function updateRangeValue(input, outputId, prefix = '', inputId = null) {
     const value = input.value;
@@ -83,7 +111,7 @@ function displayResults(data) {
             <div class="best-plan">
                 <div class="best-plan-header">
                     <div>
-                        <div class="best-plan-provider">${bestPlan.provider}</div>
+                        <div class="best-plan-provider">${renderProviderLogo(bestPlan.provider)}</div>
                         <div class="best-plan-name">${bestPlan.plan_name}</div>
                         <div class="best-for">
                             <strong>Perfect for:</strong> ${plan.best_for}
@@ -139,10 +167,7 @@ function displayResults(data) {
             const planHTML = `
                 <div class="plan-card ${plan_data.provider}">
                     <div class="plan-provider">
-                        <div class="provider-logo">
-                            <div class="provider-icon ${plan_data.provider}-icon">${plan_data.provider.charAt(0).toUpperCase()}</div>
-                            <span>${plan_data.provider}</span>
-                        </div>
+                        <div class="provider-logo">${renderProviderLogo(plan_data.provider)}</div>
                     </div>
                     <h3 class="plan-name">${plan_data.plan_name}</h3>
                     <div class="plan-price-container">

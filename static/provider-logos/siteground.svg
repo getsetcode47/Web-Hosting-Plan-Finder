@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60" role="img" aria-label="SiteGround logo">
+  <rect width="220" height="60" rx="12" fill="transparent"/>
+  <path d="M28 30c0-7 5-12 12-12 5 0 10 3 12 8h-9c-1-1-3-2-4-2-4 0-6 3-6 6s2 6 6 6c2 0 4-1 5-3h-6v-6h15c1 10-6 17-14 17-7 0-11-5-11-14z" fill="#16a34a"/>
+  <text x="62" y="38" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#f8fafc">SiteGround</text>
+</svg>

@@ -81,6 +81,26 @@
     .btn-new:hover::before {
         left: 100%;
     }
+
+    .btn-secondary {
+        background: rgba(0, 217, 255, 0.1);
+        color: var(--primary);
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s;
+        border: 1px solid rgba(0, 217, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px var(--glow-blue);
+        background: rgba(0, 217, 255, 0.2);
+    }
     
     /* Alert Messages */
     .alert {
@@ -226,6 +246,7 @@
         overflow: hidden;
         border: 1px solid rgba(0, 217, 255, 0.2);
         box-shadow: 0 5px 20px var(--glow-blue);
+        margin-bottom: 2rem;
     }
     
     .table-header {
@@ -248,6 +269,11 @@
     .table-header h2 i {
         color: var(--primary);
         filter: drop-shadow(0 0 5px var(--glow-blue));
+    }
+
+    .table-header p {
+        color: var(--gray);
+        font-size: 0.95rem;
     }
     
     .table-responsive {
@@ -441,6 +467,11 @@
             width: 100%;
             justify-content: center;
         }
+
+        .btn-secondary {
+            width: 100%;
+            justify-content: center;
+        }
         
         .stats-grid {
             grid-template-columns: 1fr;
@@ -470,6 +501,12 @@
         .btn-action {
             width: 100%;
             justify-content: center;
+        }
+
+        .table-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
     }
     
@@ -535,7 +572,7 @@
             <i class="fas fa-chart-line"></i>
             Dashboard
         </h1>
-        <a href="{{ url_for('admin_login', post_id=None) }}" class="btn-new">
+        <a href="{{ url_for('create_blog') }}" class="btn-new">
             <i class="fas fa-plus"></i> New Post
         </a>
     </div>
@@ -570,6 +607,11 @@
             <i class="fas fa-eye stat-icon"></i>
             <h3>Total Views</h3>
             <div class="stat-value">{{ stats.total_views }}</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-envelope stat-icon"></i>
+            <h3>Contact Leads</h3>
+            <div class="stat-value">{{ stats.contact_submissions }}</div>
         </div>
     </div>
     
@@ -647,6 +689,76 @@
             <i class="fas fa-inbox"></i>
             <h3>No blog posts yet</h3>
             <p>Click "New Post" above to create your first blog post!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="posts-table">
+        <div class="table-header">
+            <h2>
+                <i class="fas fa-inbox"></i>
+                Recent Contact Submissions
+            </h2>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+                <p>Messages submitted from the site contact form are stored here.</p>
+                <a href="{{ url_for('export_contact_submissions') }}" class="btn-secondary">
+                    <i class="fas fa-file-csv"></i> Download CSV
+                </a>
+            </div>
+        </div>
+
+        {% if submissions %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Service</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Received</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                    <tr>
+                        <td>
+                            <div class="post-title">{{ submission.name }}</div>
+                            <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.email }}</div>
+                            {% if submission.phone %}
+                            <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.phone }}</div>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--gray);">
+                            {{ submission.company or 'Not provided' }}
+                        </td>
+                        <td>
+                            {% if submission.service %}
+                                <span class="category-badge">{{ submission.service }}</span>
+                            {% else %}
+                                <span class="category-uncategorized">General</span>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--light); font-weight: 600;">
+                            {{ submission.subject }}
+                        </td>
+                        <td style="max-width: 360px; color: var(--gray);">
+                            {{ submission.message[:140] }}{% if submission.message|length > 140 %}...{% endif %}
+                        </td>
+                        <td style="color: var(--gray);">
+                            {{ submission.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-posts">
+            <i class="fas fa-envelope-open"></i>
+            <h3>No contact submissions yet</h3>
+            <p>New website inquiries will appear here automatically.</p>
         </div>
         {% endif %}
     </div>

@@ -1,13 +1,73 @@
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
-import json
+import csv
+import os
+import re
+from io import StringIO
 from datetime import datetime
+from functools import wraps
 
-app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-this-in-production'
-
+from flask import Flask, abort, flash, jsonify, make_response, redirect, render_template, request, session, url_for
 from flask_sitemap import Sitemap
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
+def env_flag(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+IS_PRODUCTION = env_flag('FLASK_ENV') or env_flag('APP_ENV') or env_flag('PRODUCTION')
+
+app = Flask(__name__, instance_relative_config=True)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-change-me')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///blog.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = env_flag('SESSION_COOKIE_SECURE', IS_PRODUCTION)
+app.config['REMEMBER_COOKIE_SECURE'] = env_flag('REMEMBER_COOKIE_SECURE', IS_PRODUCTION)
+app.config['PREFERRED_URL_SCHEME'] = 'https' if IS_PRODUCTION else 'http'
+
+if IS_PRODUCTION and app.config['SECRET_KEY'] == 'dev-secret-change-me':
+    raise RuntimeError('SECRET_KEY must be set in production.')
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
 sitemap = Sitemap(app=app)
+db = SQLAlchemy(app)
+
+PROVIDER_LOGOS = {
+    'hostinger': '/static/provider-logos/hostinger.svg',
+    'bluehost': '/static/provider-logos/bluehost.svg',
+    'godaddy': '/static/provider-logos/godaddy.svg',
+    'bigrock': '/static/provider-logos/bigrock.svg',
+    'namecheap': '/static/provider-logos/namecheap.svg',
+    'siteground': '/static/provider-logos/siteground.svg',
+    'a2hosting': '/static/provider-logos/a2hosting.svg',
+    'digitalocean': '/static/provider-logos/digitalocean.svg',
+    'vultr': '/static/provider-logos/vultr.svg',
+    'amazon web services': '/static/provider-logos/aws.svg',
+    'aws': '/static/provider-logos/aws.svg',
+    'linode': '/static/provider-logos/linode.svg',
+    'akamai': '/static/provider-logos/akamai.svg',
+}
+
+
+@app.context_processor
+def inject_provider_assets():
+    return {'provider_logos': PROVIDER_LOGOS}
+
+
+@app.after_request
+def set_security_headers(response):
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    return response
 
 @sitemap.register_generator
 def sitemap_pages():
@@ -1042,27 +1102,6 @@ cloud_hosting_buy_links = {
 #     score += feature_score
     
 #     return score
-# ADD THESE IMPORTS
-
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from functools import wraps
-import re
-
-# Initialize Flask app FIRST
-app = Flask(__name__)
-
-# CRITICAL: Add secret key for sessions
-app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Initialize database AFTER app
-db = SQLAlchemy(app)
-
-# BLOG MODELS
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -1092,6 +1131,21 @@ class Admin(db.Model):
     
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class ContactSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(255), nullable=False, index=True)
+    phone = db.Column(db.String(50))
+    company = db.Column(db.String(120))
+    service = db.Column(db.String(100))
+    subject = db.Column(db.String(120), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+    def __repr__(self):
+        return f'<ContactSubmission {self.email}>'
 
 # ADMIN AUTHENTICATION DECORATOR
 def admin_required(f):
@@ -1147,17 +1201,47 @@ def service5():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    """Contact Us page"""
+    """Contact page with persistent lead capture."""
+    form_data = {
+        'name': '',
+        'email': '',
+        'phone': '',
+        'company': '',
+        'service': '',
+        'subject': '',
+        'message': ''
+    }
+
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        subject = request.form.get('subject')
-        message = request.form.get('message')
-        
-        flash('Thank you for contacting us! We will get back to you soon.', 'success')
-        return redirect(url_for('contact'))
-    
-    return render_template('contact.html')
+        form_data = {
+            'name': request.form.get('name', '').strip(),
+            'email': request.form.get('email', '').strip().lower(),
+            'phone': request.form.get('phone', '').strip(),
+            'company': request.form.get('company', '').strip(),
+            'service': request.form.get('service', '').strip(),
+            'subject': request.form.get('subject', '').strip(),
+            'message': request.form.get('message', '').strip()
+        }
+
+        if not form_data['name'] or not form_data['email'] or not form_data['subject'] or not form_data['message']:
+            flash('Please complete all required fields.', 'error')
+            return render_template('contact.html', form_data=form_data)
+
+        if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', form_data['email']):
+            flash('Please enter a valid email address.', 'error')
+            return render_template('contact.html', form_data=form_data)
+
+        submission = ContactSubmission(**form_data)
+        try:
+            db.session.add(submission)
+            db.session.commit()
+            flash('Thanks for reaching out. Your message has been saved and our team will reply soon.', 'success')
+            return redirect(url_for('contact'))
+        except Exception:
+            db.session.rollback()
+            flash('We could not submit your message right now. Please try again in a moment.', 'error')
+
+    return render_template('contact.html', form_data=form_data)
 
 def calculate_score(plan, budget, websites, storage, need_email, need_domain, need_ssl):
     """Calculate a score for how well a plan matches requirements - FIXED"""
@@ -1238,8 +1322,6 @@ def calculator():
     
     if request.method == 'POST':
         try:
-            print("Form data received:", request.form)
-            
             # Parse values
             try:
                 websites = int(request.form.get('websites', 1))
@@ -1278,8 +1360,6 @@ def calculator():
             form_data['custom_plan'] = request.form.get('custom_plan') == 'on'
             form_data['hosting_type'] = request.form.get('hosting_type', 'shared')
             
-            print(f"Processed form_data: {form_data}")
-            
             # FIXED: Better budget multipliers and minimum budgets
             if form_data['hosting_type'] == 'vps':
                 data_source = vps_data
@@ -1304,9 +1384,7 @@ def calculator():
             
             # Find matching plans
             matching_plans = []
-            
-            print(f"Searching in {len(data_source)} providers for {form_data['hosting_type']} hosting")
-            
+
             for provider, plans in data_source.items():
                 for plan_name, plan in plans.items():
                     meets_requirements = False
@@ -1354,9 +1432,7 @@ def calculator():
                             plan, budget, websites, storage,
                             form_data['email'], form_data['domain'], form_data['ssl']
                         )
-                        
-                        print(f"Plan {provider} - {plan_name}: Score = {plan_score:.2f}, Price = ₹{plan['price']}")
-                        
+
                         matching_plans.append({
                             'provider': provider,
                             'plan_name': plan_name,
@@ -1366,13 +1442,7 @@ def calculator():
             
             # Sort plans by score (higher is better)
             matching_plans.sort(key=lambda x: x['score'], reverse=True)
-            
-            print(f"Found {len(matching_plans)} matching {form_data['hosting_type']} plans")
-            if matching_plans:
-                print(f"Best plan: {matching_plans[0]['provider']} - {matching_plans[0]['plan_name']} (Score: {matching_plans[0]['score']:.2f}, Price: ₹{matching_plans[0]['plan']['price']})")
-            else:
-                print("No matching plans found!")
-            
+
             # FIXED: Organize results with proper structure for template
             if matching_plans:
                 results = {
@@ -1385,7 +1455,8 @@ def calculator():
                         {
                             'provider': p['provider'],
                             'plan_name': p['plan_name'],
-                            'plan': p['plan']
+                            'plan': p['plan'],
+                            'score': round(min(p['score'], 100) / 10, 1)
                         }
                         for p in matching_plans[:12]
                     ],
@@ -1406,9 +1477,7 @@ def calculator():
                     'user_budget': budget
                 }
                 show_results = True
-            
-            print(f"Final results structure: count={results['count']}, has_best_plan={results['best_plan'] is not None}")
-            
+
             # FIXED: Return with all required variables
             return render_template('calculator.html', 
                                  results=results, 
@@ -1417,10 +1486,8 @@ def calculator():
                                  error=None)
             
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            app.logger.exception('Calculator request failed')
             error = str(e)
-            print(f"ERROR: {error}")
             return render_template('calculator.html', 
                                  error=error, 
                                  form_data=form_data,
@@ -1444,9 +1511,7 @@ def compare():
         need_ssl = request.form.get('ssl') == 'on'
         budget = int(request.form.get('budget', 100))
         hosting_type = request.form.get('hosting_type', 'shared')
-        
-        print(f"Debug - Compare API: websites={websites}, storage={storage}, budget={budget}, type={hosting_type}")
-        
+
         # Select data source
         if hosting_type == 'vps':
             data_source = vps_data
@@ -1510,12 +1575,11 @@ def compare():
             'user_budget': budget
         }
         
-        print(f"Debug - Found {len(matching_plans)} plans")
+        app.logger.debug("Found %s matching plans for %s hosting", len(matching_plans), hosting_type)
         return jsonify(result)
     
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        app.logger.exception('Compare request failed')
         return jsonify({'error': str(e)}), 500
 # ============== BLOG ROUTES ==============
 
@@ -1585,8 +1649,10 @@ def admin_login():
         admin = Admin.query.filter_by(username=username).first()
         
         if admin and admin.check_password(password):
+            session.clear()
             session['admin_logged_in'] = True
             session['admin_username'] = admin.username
+            session.permanent = True
             flash('Login successful!', 'success')
             return redirect(url_for('admin_dashboard'))
         else:
@@ -1597,25 +1663,124 @@ def admin_login():
 @app.route('/admin/logout')
 def admin_logout():
     """Admin logout"""
-    session.pop('admin_logged_in', None)
-    session.pop('admin_username', None)
+    session.clear()
     flash('Logged out successfully', 'success')
     return redirect(url_for('blog_list'))
+
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template(
+        'legal_page.html',
+        page_title='Privacy Policy',
+        page_description='How Cb4uhost and W-Tech collect, use, and protect your information.',
+        content_sections=[
+            {
+                'heading': 'Information We Collect',
+                'body': 'We collect information you submit through contact forms, admin workflows, and website interactions needed to provide hosting recommendations and respond to inquiries.'
+            },
+            {
+                'heading': 'How We Use Information',
+                'body': 'We use submitted information to answer inquiries, improve our services, manage blog and contact workflows, and maintain the security and performance of the platform.'
+            },
+            {
+                'heading': 'Data Protection',
+                'body': 'We limit access to submitted information to authorized administrators and apply reasonable technical and organizational safeguards to protect stored data.'
+            }
+        ]
+    )
+
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template(
+        'legal_page.html',
+        page_title='Terms of Service',
+        page_description='Terms governing the use of the Cb4uhost and W-Tech website.',
+        content_sections=[
+            {
+                'heading': 'Acceptable Use',
+                'body': 'You agree to use this website lawfully and not to interfere with its operation, security, or availability.'
+            },
+            {
+                'heading': 'Service Information',
+                'body': 'Hosting prices, availability, and provider details may change over time. Recommendations are informational and should be validated before purchase.'
+            },
+            {
+                'heading': 'Liability',
+                'body': 'We strive for accuracy, but the site is provided as-is without guarantees that all third-party pricing or provider information is complete, current, or error-free.'
+            }
+        ]
+    )
+
+
+@app.route('/cookie-policy')
+def cookie_policy():
+    return render_template(
+        'legal_page.html',
+        page_title='Cookie Policy',
+        page_description='How cookies and similar technologies are used across the platform.',
+        content_sections=[
+            {
+                'heading': 'Essential Cookies',
+                'body': 'We may use essential cookies to maintain sessions, support authentication, and preserve core site functionality.'
+            },
+            {
+                'heading': 'Analytics and Performance',
+                'body': 'Third-party analytics or tag manager tools may set cookies to help us understand usage patterns and improve user experience.'
+            },
+            {
+                'heading': 'Managing Cookies',
+                'body': 'You can control cookies through your browser settings, though disabling essential cookies may affect parts of the site.'
+            }
+        ]
+    )
 
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
     """Admin dashboard showing all posts"""
     posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
+    submissions = ContactSubmission.query.order_by(ContactSubmission.created_at.desc()).limit(25).all()
     
     stats = {
         'total_posts': BlogPost.query.count(),
         'published_posts': BlogPost.query.filter_by(published=True).count(),
         'draft_posts': BlogPost.query.filter_by(published=False).count(),
-        'total_views': db.session.query(db.func.sum(BlogPost.views)).scalar() or 0
+        'total_views': db.session.query(db.func.sum(BlogPost.views)).scalar() or 0,
+        'contact_submissions': ContactSubmission.query.count()
     }
     
-    return render_template('blog/admin_dashboard.html', posts=posts, stats=stats)
+    return render_template('blog/admin_dashboard.html', posts=posts, stats=stats, submissions=submissions)
+
+
+@app.route('/admin/contact-submissions/export')
+@admin_required
+def export_contact_submissions():
+    """Download contact submissions as CSV."""
+    submissions = ContactSubmission.query.order_by(ContactSubmission.created_at.desc()).all()
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['ID', 'Name', 'Email', 'Phone', 'Company', 'Service', 'Subject', 'Message', 'Created At'])
+
+    for submission in submissions:
+        writer.writerow([
+            submission.id,
+            submission.name,
+            submission.email,
+            submission.phone or '',
+            submission.company or '',
+            submission.service or '',
+            submission.subject,
+            submission.message,
+            submission.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+    response.headers['Content-Disposition'] = 'attachment; filename=contact-submissions.csv'
+    return response
 
 @app.route('/admin/blog/new', methods=['GET', 'POST'])
 @admin_required
@@ -1717,6 +1882,9 @@ def delete_blog(post_id):
 @app.route('/init-db')
 def init_db():
     """Initialize the database (run once)"""
+    if not env_flag('ENABLE_DB_INIT_ROUTE'):
+        abort(404)
+
     try:
         with app.app_context():
             db.create_all()
@@ -1724,15 +1892,24 @@ def init_db():
             # Create default admin if doesn't exist
             admin = Admin.query.filter_by(username='admin').first()
             if not admin:
-                admin = Admin(username='admin', email='admin@cb4uhost.com')
-                admin.set_password('admin123')
+                default_username = os.environ.get('ADMIN_USERNAME', 'admin')
+                default_email = os.environ.get('ADMIN_EMAIL', 'admin@cb4uhost.com')
+                default_password = os.environ.get('ADMIN_PASSWORD')
+
+                if not default_password:
+                    return 'Database initialized, but no admin user was created. Set ADMIN_PASSWORD and run the init route again if you need to bootstrap an admin account.'
+
+                admin = Admin(username=default_username, email=default_email)
+                admin.set_password(default_password)
                 db.session.add(admin)
                 db.session.commit()
-                return 'Database initialized! Default admin created (username: admin, password: admin123)'
+                return f'Database initialized. Admin user "{default_username}" was created from environment configuration.'
             
             return 'Database already initialized!'
     except Exception as e:
         return f'Error initializing database: {str(e)}'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    with app.app_context():
+        db.create_all()
+    app.run(debug=os.environ.get('FLASK_DEBUG', '').lower() == 'true')
