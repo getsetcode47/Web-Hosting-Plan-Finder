@@ -544,7 +544,7 @@
         top: 0px;
     }
 
-    .checkbox-container label {
+    .checkbox-text {
         font-size: clamp(0.85rem, 2vw, 0.95rem);
         color: var(--text-silver);
         font-weight: 500;
@@ -1138,7 +1138,6 @@
 {% endblock %}
 
 {% block content %}
-<body>
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -1288,11 +1287,11 @@
                         <div class="checkbox-group">
                             <label class="checkbox-container">
                                 <input type="checkbox" name="email" {% if form_data.email %}checked{% endif %}>
-                                <label>Windows</label>
+                                <span class="checkbox-text">Windows</span>
                             </label>
                             <label class="checkbox-container">
                                 <input type="checkbox" name="domain" {% if form_data.domain %}checked{% endif %}>
-                                <label>Linux</label>
+                                <span class="checkbox-text">Linux</span>
                             </label>
                         </div>
                     </div>
@@ -1848,5 +1847,4 @@
             }
         });
     </script>
-</body>
 {% endblock %}

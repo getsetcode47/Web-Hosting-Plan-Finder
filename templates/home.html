@@ -12,10 +12,19 @@
     <meta charset="UTF-8">
     <!-- Add to your base.html in <head> section -->
         <!-- Add to base.html <head> -->
-<link rel="canonical" href="{{ request.base_url }}">
-    <meta name="description" content="Compare hosting providers and find the perfect plan with W-Tech's Cb4uhost Platform. Get unbiased recommendations from Hostinger, Bluehost, GoDaddy, BigRock, and Namecheap. Expert IT consulting services.">
+<link rel="canonical" href="{{ seo_meta.canonical }}">
+    <meta name="description" content="{{ seo_meta.description }}">
+    <meta name="robots" content="{{ seo_meta.robots }}">
+    <meta property="og:type" content="{{ seo_meta.og_type }}">
+    <meta property="og:title" content="{{ seo_meta.title }}">
+    <meta property="og:description" content="{{ seo_meta.description }}">
+    <meta property="og:url" content="{{ seo_meta.canonical }}">
+    <meta property="og:site_name" content="{{ seo_meta.site_name }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_meta.title }}">
+    <meta name="twitter:description" content="{{ seo_meta.description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cb4uhost - Enterprise Hosting Solutions & IT Services | W-Tech</title>
+    <title>{{ seo_meta.title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');

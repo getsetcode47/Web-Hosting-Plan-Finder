@@ -20,6 +20,7 @@ def env_flag(name, default=False):
 
 
 IS_PRODUCTION = env_flag('FLASK_ENV') or env_flag('APP_ENV') or env_flag('PRODUCTION')
+SITE_URL = os.environ.get('SITE_URL', '').rstrip('/')
 
 app = Flask(__name__, instance_relative_config=True)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-change-me')
@@ -55,10 +56,111 @@ PROVIDER_LOGOS = {
     'akamai': '/static/provider-logos/akamai.svg',
 }
 
+HOSTING_TYPE_CHOICES = [
+    ('shared', 'Shared Hosting'),
+    ('vps', 'VPS Hosting'),
+    ('cloud', 'Cloud Hosting'),
+    ('dedicated', 'Dedicated Server'),
+]
+
+HOSTING_TYPE_LABELS = dict(HOSTING_TYPE_CHOICES)
+
+PLAN_BUDGET_RULES = {
+    'shared': {'min_budget': 50, 'budget_multiplier': 3.0},
+    'vps': {'min_budget': 500, 'budget_multiplier': 3.0},
+    'cloud': {'min_budget': 200, 'budget_multiplier': 3.0},
+    'dedicated': {'min_budget': 7000, 'budget_multiplier': 3.0},
+}
+
+SEO_PAGE_DEFAULTS = {
+    'home': {
+        'title': 'CB4UHost - Hosting Comparison Platform & IT Services',
+        'description': 'Compare hosting providers, review pricing, and discover IT services from CB4UHost and W-Tech.',
+    },
+    'calculator': {
+        'title': 'Hosting Plan Calculator & Comparison Tool | CB4UHost',
+        'description': 'Compare hosting plans by price, storage, websites, SSL, migration, and performance to find the right hosting provider faster.',
+    },
+    'hosting_comparison_2026': {
+        'title': 'Web Hosting Comparison Tool 2026 | CB4UHost',
+        'description': 'Compare Hostinger, Bluehost, SiteGround, and CB4UHost instantly. Use our tool to find the cheapest NVMe hosting with free migration and SSL. Save up to 70% today.',
+    },
+    'about': {
+        'title': 'About CB4UHost & W-Tech',
+        'description': 'Learn about CB4UHost, our hosting comparison platform, and W-Tech’s digital infrastructure, migration, security, and managed services.',
+    },
+    'contact': {
+        'title': 'Contact CB4UHost & W-Tech',
+        'description': 'Contact CB4UHost for hosting help, migration planning, managed services, security consulting, and infrastructure strategy.',
+    },
+    'service1': {
+        'title': 'Cloud & Infrastructure Strategy | W-Tech',
+        'description': 'Plan cloud and infrastructure strategy with W-Tech. Compare options, reduce cost, and improve performance before you migrate or scale.',
+    },
+    'service2': {
+        'title': 'Migration Services | W-Tech',
+        'description': 'Website, hosting, and infrastructure migration services from W-Tech with planning, execution, and transition support.',
+    },
+    'service3': {
+        'title': 'Managed Services | W-Tech',
+        'description': 'Managed services for uptime, monitoring, optimization, and operational support across hosting and cloud environments.',
+    },
+    'service4': {
+        'title': 'Digital Security & Compliance | W-Tech',
+        'description': 'Security and compliance services for hosting, cloud, and digital infrastructure with practical risk reduction and audit readiness.',
+    },
+    'service5': {
+        'title': 'Digital Transformation & Future-Proofing | W-Tech',
+        'description': 'Digital transformation services that help teams modernize infrastructure, improve agility, and future-proof critical systems.',
+    },
+    'blog_list': {
+        'title': 'Hosting, Cloud & Infrastructure Blog | CB4UHost',
+        'description': 'Read hosting, cloud, security, migration, and infrastructure insights from the CB4UHost and W-Tech blog.',
+    },
+    'privacy_policy': {
+        'title': 'Privacy Policy | CB4UHost',
+        'description': 'Read the privacy policy for CB4UHost and W-Tech.',
+    },
+    'terms_of_service': {
+        'title': 'Terms of Service | CB4UHost',
+        'description': 'Review the terms of service for the CB4UHost website and services.',
+    },
+    'cookie_policy': {
+        'title': 'Cookie Policy | CB4UHost',
+        'description': 'Learn how cookies and similar technologies are used across the CB4UHost website.',
+    },
+}
+
+
+def absolute_url(path=''):
+    if SITE_URL:
+        return f"{SITE_URL}{path}"
+    if not request:
+        return path
+    return f"{request.url_root.rstrip('/')}{path}"
+
+
+def build_seo_meta(endpoint=None, **overrides):
+    endpoint = endpoint or request.endpoint or ''
+    defaults = {
+        'title': 'CB4UHost - Hosting Comparison Platform',
+        'description': 'Compare hosting providers, pricing, performance, and services with CB4UHost.',
+        'robots': 'index,follow',
+        'og_type': 'website',
+        'site_name': 'CB4UHost',
+        'canonical': request.base_url,
+    }
+    defaults.update(SEO_PAGE_DEFAULTS.get(endpoint, {}))
+    defaults.update(overrides)
+    return defaults
+
 
 @app.context_processor
 def inject_provider_assets():
-    return {'provider_logos': PROVIDER_LOGOS}
+    return {
+        'provider_logos': PROVIDER_LOGOS,
+        'seo_meta': build_seo_meta(),
+    }
 
 
 @app.after_request
@@ -73,10 +175,18 @@ def set_security_headers(response):
 def sitemap_pages():
     yield 'home', {}
     yield 'calculator', {}
+    yield 'hosting_comparison_2026', {}
     yield 'about', {}
     yield 'blog_list', {}
     yield 'contact', {}
-    # Add all your routes
+    yield 'service1', {}
+    yield 'service2', {}
+    yield 'service3', {}
+    yield 'service4', {}
+    yield 'service5', {}
+    yield 'privacy_policy', {}
+    yield 'terms_of_service', {}
+    yield 'cookie_policy', {}
 
 # Hosting plans data (Shared Hosting)
 # Hosting plans data
@@ -1147,6 +1257,372 @@ class ContactSubmission(db.Model):
     def __repr__(self):
         return f'<ContactSubmission {self.email}>'
 
+
+class HostingPlan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(120), nullable=False, index=True)
+    name = db.Column(db.String(120), nullable=False)
+    hosting_type = db.Column(db.String(30), nullable=False, index=True)
+    price = db.Column(db.Integer, nullable=False)
+    regular_price = db.Column(db.Integer, nullable=False)
+    billing_text = db.Column(db.String(120))
+    storage = db.Column(db.String(60), nullable=False)
+    storage_value = db.Column(db.Float)
+    storage_type = db.Column(db.String(30))
+    bandwidth = db.Column(db.String(60), nullable=False)
+    bandwidth_value = db.Column(db.Float)
+    websites_value = db.Column(db.Integer)
+    websites_text = db.Column(db.String(60))
+    websites_unlimited = db.Column(db.Boolean, default=False)
+    email = db.Column(db.String(120))
+    free_domain = db.Column(db.Boolean, default=False)
+    ssl = db.Column(db.String(120))
+    backup = db.Column(db.String(120))
+    best_for = db.Column(db.String(120))
+    buy_link = db.Column(db.String(300))
+    cpu_cores = db.Column(db.Integer)
+    ram = db.Column(db.Integer)
+    ips = db.Column(db.String(120))
+    migration = db.Column(db.String(120))
+    uptime = db.Column(db.String(60))
+    money_back = db.Column(db.String(60))
+    popular = db.Column(db.Boolean, default=False)
+    active = db.Column(db.Boolean, default=True)
+    sort_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        db.UniqueConstraint('provider', 'hosting_type', 'name', name='uq_hosting_plan_provider_type_name'),
+    )
+
+    def __repr__(self):
+        return f'<HostingPlan {self.provider} {self.name}>'
+
+    def websites_display(self):
+        if self.websites_unlimited:
+            return 'Unlimited'
+        if self.websites_value is not None:
+            return self.websites_value
+        if self.websites_text:
+            return self.websites_text
+        return 0
+
+    def to_plan_dict(self):
+        return {
+            'id': self.id,
+            'price': self.price,
+            'regular_price': self.regular_price or self.price,
+            'billing_text': self.billing_text or f'₹{self.price}/mo billed annually',
+            'storage': self.storage,
+            'storage_value': self.storage_value if self.storage_value is not None else 0,
+            'type': self.storage_type or '',
+            'bandwidth': self.bandwidth,
+            'bandwidth_value': self.bandwidth_value if self.bandwidth_value is not None else 0,
+            'websites': self.websites_display(),
+            'email': self.email or 'None',
+            'free_domain': bool(self.free_domain),
+            'ssl': self.ssl or 'No SSL included',
+            'backup': self.backup or 'No backup details provided',
+            'popular': bool(self.popular),
+            'best_for': self.best_for or 'General workloads',
+            'buy_link': self.buy_link or '#',
+            'cpu_cores': self.cpu_cores or 0,
+            'ram': self.ram or 0,
+            'ips': self.ips or 'Standard IP allocation',
+            'migration': self.migration or 'Migration support available',
+            'uptime': self.uptime or '99.9% uptime',
+            'money_back': self.money_back or '30 day money-back',
+        }
+
+
+def parse_numeric_value(value):
+    if value in (None, ''):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    normalized = str(value).strip().lower()
+    if normalized in {'inf', 'infinity', 'unlimited', 'unmetered'}:
+        return float('inf')
+    return float(normalized)
+
+
+def parse_optional_int(value):
+    if value in (None, ''):
+        return None
+    return int(value)
+
+
+def default_money_back_for_type(hosting_type):
+    return '7 day money-back' if hosting_type in {'vps', 'dedicated'} else '30 day money-back'
+
+
+def get_budget_rule(hosting_type):
+    return PLAN_BUDGET_RULES.get(hosting_type, PLAN_BUDGET_RULES['shared'])
+
+
+def build_plan_record(provider, hosting_type, plan_name, plan_data, link, sort_order):
+    websites = plan_data.get('websites')
+    websites_unlimited = isinstance(websites, str) and websites.strip().lower() == 'unlimited'
+    websites_value = None
+    websites_text = None
+
+    if websites_unlimited:
+        websites_text = 'Unlimited'
+    elif isinstance(websites, int):
+        websites_value = websites
+    elif websites not in (None, ''):
+        try:
+            websites_value = int(websites)
+        except (TypeError, ValueError):
+            websites_text = str(websites)
+
+    return HostingPlan(
+        provider=provider,
+        name=plan_name,
+        hosting_type=hosting_type,
+        price=int(plan_data.get('price') or 0),
+        regular_price=int(plan_data.get('regular_price') or plan_data.get('price') or 0),
+        billing_text=f"₹{plan_data.get('price')}/mo billed annually",
+        storage=str(plan_data.get('storage') or ''),
+        storage_value=parse_numeric_value(plan_data.get('storage_value')),
+        storage_type=str(plan_data.get('type') or ''),
+        bandwidth=str(plan_data.get('bandwidth') or ''),
+        bandwidth_value=parse_numeric_value(plan_data.get('bandwidth_value')),
+        websites_value=websites_value,
+        websites_text=websites_text,
+        websites_unlimited=websites_unlimited,
+        email=str(plan_data.get('email') or ''),
+        free_domain=bool(plan_data.get('free_domain')),
+        ssl=str(plan_data.get('ssl') or ''),
+        backup=str(plan_data.get('backup') or ''),
+        best_for=str(plan_data.get('best_for') or ''),
+        buy_link=link or '#',
+        cpu_cores=parse_optional_int(plan_data.get('cpu_cores')),
+        ram=parse_optional_int(plan_data.get('ram')),
+        ips=str(plan_data.get('ips') or ''),
+        migration=str(plan_data.get('migration') or ''),
+        uptime=str(plan_data.get('uptime') or '99.9% uptime'),
+        money_back=str(plan_data.get('money_back') or default_money_back_for_type(hosting_type)),
+        popular=bool(plan_data.get('popular')),
+        active=True,
+        sort_order=sort_order,
+    )
+
+
+def seed_default_hosting_plans():
+    if HostingPlan.query.count():
+        return 0
+
+    sources = [
+        ('shared', hosting_data, buy_links),
+        ('vps', vps_data, vps_buy_links),
+        ('cloud', cloud_hosting_data, cloud_hosting_buy_links),
+        ('dedicated', dedicated_data, dedicated_buy_links),
+    ]
+
+    created = 0
+    for hosting_type, plan_source, link_source in sources:
+        for provider, plans in plan_source.items():
+            for plan_name, plan_data in plans.items():
+                db.session.add(
+                    build_plan_record(
+                        provider=provider,
+                        hosting_type=hosting_type,
+                        plan_name=plan_name,
+                        plan_data=plan_data,
+                        link=link_source.get(provider, {}).get(plan_name, '#'),
+                        sort_order=created,
+                    )
+                )
+                created += 1
+
+    if created:
+        db.session.commit()
+    return created
+
+
+def ensure_database_ready():
+    with app.app_context():
+        db.create_all()
+        seed_default_hosting_plans()
+
+
+def fetch_plan_catalog(hosting_type):
+    return HostingPlan.query.filter_by(hosting_type=hosting_type, active=True).order_by(
+        HostingPlan.popular.desc(),
+        HostingPlan.sort_order.asc(),
+        HostingPlan.price.asc(),
+        HostingPlan.provider.asc(),
+    ).all()
+
+
+def plan_matches_requirements(plan, hosting_type, websites, storage, budget, budget_multiplier):
+    storage_ok = (
+        plan['storage_value'] == float('inf') or
+        plan['storage_value'] >= storage * 0.5
+    )
+    price_ok = plan['price'] <= budget * budget_multiplier
+
+    if hosting_type in {'vps', 'dedicated'}:
+        return price_ok and storage_ok
+
+    websites_value = plan.get('websites')
+    websites_ok = (
+        websites_value == 'Unlimited' or
+        (isinstance(websites_value, int) and websites_value >= websites)
+    )
+
+    if hosting_type == 'cloud':
+        return price_ok and storage_ok and websites_ok
+
+    return price_ok and storage_ok and websites_ok
+
+
+def find_matching_plans(hosting_type, websites, storage, budget, need_email, need_domain, need_ssl):
+    rule = get_budget_rule(hosting_type)
+    matching_plans = []
+
+    for record in fetch_plan_catalog(hosting_type):
+        plan = record.to_plan_dict()
+        if not plan_matches_requirements(plan, hosting_type, websites, storage, budget, rule['budget_multiplier']):
+            continue
+
+        matching_plans.append({
+            'provider': record.provider,
+            'plan_name': record.name,
+            'plan': plan,
+            'score': calculate_score(plan, budget, websites, storage, need_email, need_domain, need_ssl),
+        })
+
+    matching_plans.sort(key=lambda item: item['score'], reverse=True)
+    return matching_plans, rule
+
+
+def plan_form_data(plan=None):
+    if not plan:
+        return {
+            'provider': '',
+            'name': '',
+            'hosting_type': 'shared',
+            'price': '',
+            'regular_price': '',
+            'billing_text': '',
+            'storage': '',
+            'storage_value': '',
+            'storage_type': 'SSD',
+            'bandwidth': '',
+            'bandwidth_value': '',
+            'websites_value': '',
+            'websites_text': '',
+            'websites_unlimited': False,
+            'email': '',
+            'free_domain': False,
+            'ssl': '',
+            'backup': '',
+            'best_for': '',
+            'buy_link': '',
+            'cpu_cores': '',
+            'ram': '',
+            'ips': '',
+            'migration': '',
+            'uptime': '99.9% uptime',
+            'money_back': '',
+            'popular': False,
+            'active': True,
+            'sort_order': 0,
+        }
+
+    return {
+        'provider': plan.provider,
+        'name': plan.name,
+        'hosting_type': plan.hosting_type,
+        'price': plan.price,
+        'regular_price': plan.regular_price,
+        'billing_text': plan.billing_text or '',
+        'storage': plan.storage,
+        'storage_value': '' if plan.storage_value is None else ('Infinity' if plan.storage_value == float('inf') else int(plan.storage_value) if float(plan.storage_value).is_integer() else plan.storage_value),
+        'storage_type': plan.storage_type or '',
+        'bandwidth': plan.bandwidth,
+        'bandwidth_value': '' if plan.bandwidth_value is None else ('Infinity' if plan.bandwidth_value == float('inf') else int(plan.bandwidth_value) if float(plan.bandwidth_value).is_integer() else plan.bandwidth_value),
+        'websites_value': '' if plan.websites_value is None else plan.websites_value,
+        'websites_text': plan.websites_text or '',
+        'websites_unlimited': bool(plan.websites_unlimited),
+        'email': plan.email or '',
+        'free_domain': bool(plan.free_domain),
+        'ssl': plan.ssl or '',
+        'backup': plan.backup or '',
+        'best_for': plan.best_for or '',
+        'buy_link': plan.buy_link or '',
+        'cpu_cores': '' if plan.cpu_cores is None else plan.cpu_cores,
+        'ram': '' if plan.ram is None else plan.ram,
+        'ips': plan.ips or '',
+        'migration': plan.migration or '',
+        'uptime': plan.uptime or '',
+        'money_back': plan.money_back or '',
+        'popular': bool(plan.popular),
+        'active': bool(plan.active),
+        'sort_order': plan.sort_order or 0,
+    }
+
+
+def upsert_plan_from_form(plan=None):
+    provider = request.form.get('provider', '').strip()
+    name = request.form.get('name', '').strip()
+    hosting_type = request.form.get('hosting_type', 'shared').strip()
+    storage = request.form.get('storage', '').strip()
+    bandwidth = request.form.get('bandwidth', '').strip()
+
+    if not provider or not name or not storage or not bandwidth:
+        raise ValueError('Provider, plan name, storage, and bandwidth are required.')
+    if hosting_type not in HOSTING_TYPE_LABELS:
+        raise ValueError('Select a valid hosting type.')
+
+    price = int(request.form.get('price', '0') or 0)
+    if price <= 0:
+        raise ValueError('Monthly price must be greater than 0.')
+
+    record = plan or HostingPlan()
+    record.provider = provider
+    record.name = name
+    record.hosting_type = hosting_type
+    record.price = price
+    record.regular_price = int(request.form.get('regular_price', str(price)) or price)
+    record.billing_text = request.form.get('billing_text', '').strip() or f'₹{price}/mo billed annually'
+    record.storage = storage
+    record.storage_value = parse_numeric_value(request.form.get('storage_value', '').strip())
+    record.storage_type = request.form.get('storage_type', '').strip()
+    record.bandwidth = bandwidth
+    record.bandwidth_value = parse_numeric_value(request.form.get('bandwidth_value', '').strip())
+    record.websites_unlimited = request.form.get('websites_unlimited') == 'on'
+    record.websites_value = None if record.websites_unlimited else parse_optional_int(request.form.get('websites_value', '').strip())
+    record.websites_text = '' if record.websites_unlimited else request.form.get('websites_text', '').strip()
+    record.email = request.form.get('email', '').strip()
+    record.free_domain = request.form.get('free_domain') == 'on'
+    record.ssl = request.form.get('ssl', '').strip()
+    record.backup = request.form.get('backup', '').strip()
+    record.best_for = request.form.get('best_for', '').strip()
+    record.buy_link = request.form.get('buy_link', '').strip() or '#'
+    record.cpu_cores = parse_optional_int(request.form.get('cpu_cores', '').strip())
+    record.ram = parse_optional_int(request.form.get('ram', '').strip())
+    record.ips = request.form.get('ips', '').strip()
+    record.migration = request.form.get('migration', '').strip()
+    record.uptime = request.form.get('uptime', '').strip() or '99.9% uptime'
+    record.money_back = request.form.get('money_back', '').strip() or default_money_back_for_type(hosting_type)
+    record.popular = request.form.get('popular') == 'on'
+    record.active = request.form.get('active') == 'on'
+    record.sort_order = int(request.form.get('sort_order', '0') or 0)
+
+    if record.websites_unlimited:
+        record.websites_text = 'Unlimited'
+    elif record.websites_value is None and record.websites_text:
+        match = re.search(r'(\d+)', record.websites_text)
+        if match:
+            record.websites_value = int(match.group(1))
+
+    return record
+
 # ADMIN AUTHENTICATION DECORATOR
 def admin_required(f):
     @wraps(f)
@@ -1164,6 +1640,9 @@ def create_slug(title):
     slug = slug.strip('-')
     return slug
 
+
+ensure_database_ready()
+
 @app.route('/', methods=['GET'])
 def home():
     """Home page"""
@@ -1173,6 +1652,11 @@ def home():
 def about():
     """About Us page"""
     return render_template('about.html')
+
+
+@app.route('/web-hosting-comparison-tool-2026')
+def hosting_comparison_2026():
+    return render_template('hosting_comparison_2026.html')
 
 @app.route('/Cloud_&_Infrastructure_Strategy')
 def service1():
@@ -1300,8 +1784,7 @@ def calculate_score(plan, budget, websites, storage, need_email, need_domain, ne
 
 @app.route('/calculator', methods=['GET', 'POST'])
 def calculator():
-    """Main calculator page - FIXED for best match"""
-    # Default form values
+    """Main calculator page backed by database plans."""
     form_data = {
         'websites': 1,
         'storage': 10,
@@ -1311,44 +1794,40 @@ def calculator():
         'ssl': False,
         'custom_plan': False,
         'hosting_type': 'shared',
-        'cpu_cores': 2,  # ADD THIS
-        'ram': 4         # ADD THIS
+        'cpu_cores': 2,
+        'ram': 4,
     }
-    
-    # Initialize these for all requests
     show_results = False
     results = None
     error = None
-    
+
     if request.method == 'POST':
         try:
-            # Parse values
             try:
                 websites = int(request.form.get('websites', 1))
             except ValueError:
                 websites = 1
-                
+
             try:
                 storage = int(request.form.get('storage', 10))
             except ValueError:
                 storage = 10
-                
+
             try:
                 budget = int(request.form.get('budget', 200))
             except ValueError:
                 budget = 200
-            
+
             try:
                 cpu_cores = int(request.form.get('cpu_cores', 2))
             except ValueError:
                 cpu_cores = 2
-                
+
             try:
                 ram = int(request.form.get('ram', 4))
             except ValueError:
                 ram = 4
-            
-            # Update form_data
+
             form_data['websites'] = websites
             form_data['storage'] = storage
             form_data['budget'] = budget
@@ -1359,150 +1838,65 @@ def calculator():
             form_data['ssl'] = request.form.get('ssl') == 'on'
             form_data['custom_plan'] = request.form.get('custom_plan') == 'on'
             form_data['hosting_type'] = request.form.get('hosting_type', 'shared')
-            
-            # FIXED: Better budget multipliers and minimum budgets
-            if form_data['hosting_type'] == 'vps':
-                data_source = vps_data
-                links_source = vps_buy_links
-                min_budget = 500
-                budget_multiplier = 3.0
-            elif form_data['hosting_type'] == 'dedicated':
-                data_source = dedicated_data
-                links_source = dedicated_buy_links
-                min_budget = 7000
-                budget_multiplier = 3.0
-            elif form_data['hosting_type'] == 'cloud':
-                data_source = cloud_hosting_data
-                links_source = cloud_hosting_buy_links
-                min_budget = 200
-                budget_multiplier = 3.0
-            else:  # shared
-                data_source = hosting_data
-                links_source = buy_links
-                min_budget = 50
-                budget_multiplier = 3.0
-            
-            # Find matching plans
-            matching_plans = []
 
-            for provider, plans in data_source.items():
-                for plan_name, plan in plans.items():
-                    meets_requirements = False
-                    
-                    # FIXED: More lenient matching criteria
-                    if form_data['hosting_type'] in ['vps', 'dedicated', 'cloud']:
-                        # For VPS, Dedicated, and Cloud
-                        storage_ok = (
-                            plan['storage_value'] == float('inf') or 
-                            plan['storage_value'] >= storage * 0.5
-                        )
-                        
-                        price_ok = plan['price'] <= budget * budget_multiplier
-                        
-                        # For cloud, check websites if specified
-                        if form_data['hosting_type'] == 'cloud' and 'websites' in plan:
-                            if plan['websites'] != "Unlimited":
-                                websites_ok = plan['websites'] >= websites
-                            else:
-                                websites_ok = True
-                            meets_requirements = price_ok and storage_ok and websites_ok
-                        else:
-                            meets_requirements = price_ok and storage_ok
-                            
-                    else:  # shared hosting
-                        websites_ok = (
-                            plan['websites'] == "Unlimited" or 
-                            plan['websites'] >= websites
-                        )
-                        storage_ok = (
-                            plan['storage_value'] == float('inf') or 
-                            plan['storage_value'] >= storage * 0.5
-                        )
-                        price_ok = plan['price'] <= budget * budget_multiplier
-                        
-                        meets_requirements = price_ok and websites_ok and storage_ok
-                    
-                    if meets_requirements:
-                        # Add buy link to the plan data
-                        plan_with_link = plan.copy()
-                        plan_with_link['buy_link'] = links_source.get(provider, {}).get(plan_name, '#')
-                        
-                        # Calculate score
-                        plan_score = calculate_score(
-                            plan, budget, websites, storage,
-                            form_data['email'], form_data['domain'], form_data['ssl']
-                        )
+            matching_plans, rule = find_matching_plans(
+                hosting_type=form_data['hosting_type'],
+                websites=websites,
+                storage=storage,
+                budget=budget,
+                need_email=form_data['email'],
+                need_domain=form_data['domain'],
+                need_ssl=form_data['ssl'],
+            )
 
-                        matching_plans.append({
-                            'provider': provider,
-                            'plan_name': plan_name,
-                            'plan': plan_with_link,
-                            'score': plan_score
-                        })
-            
-            # Sort plans by score (higher is better)
-            matching_plans.sort(key=lambda x: x['score'], reverse=True)
+            results = {
+                'best_plan': matching_plans[0] if matching_plans else None,
+                'all_plans': [
+                    {
+                        'provider': item['provider'],
+                        'plan_name': item['plan_name'],
+                        'plan': item['plan'],
+                        'score': round(min(item['score'], 100) / 10, 1),
+                    }
+                    for item in matching_plans[:12]
+                ],
+                'count': len(matching_plans),
+                'hosting_type': form_data['hosting_type'],
+                'min_budget': rule['min_budget'],
+                'user_budget': budget,
+            }
+            show_results = True
 
-            # FIXED: Organize results with proper structure for template
-            if matching_plans:
-                results = {
-                    'best_plan': {
-                        'provider': matching_plans[0]['provider'],
-                        'plan_name': matching_plans[0]['plan_name'],
-                        'plan': matching_plans[0]['plan']
-                    },
-                    'all_plans': [
-                        {
-                            'provider': p['provider'],
-                            'plan_name': p['plan_name'],
-                            'plan': p['plan'],
-                            'score': round(min(p['score'], 100) / 10, 1)
-                        }
-                        for p in matching_plans[:12]
-                    ],
-                    'count': len(matching_plans),
-                    'hosting_type': form_data['hosting_type'],
-                    'min_budget': min_budget,
-                    'user_budget': budget
-                }
-                show_results = True
-            else:
-                # No plans found
-                results = {
-                    'best_plan': None,
-                    'all_plans': [],
-                    'count': 0,
-                    'hosting_type': form_data['hosting_type'],
-                    'min_budget': min_budget,
-                    'user_budget': budget
-                }
-                show_results = True
-
-            # FIXED: Return with all required variables
-            return render_template('calculator.html', 
-                                 results=results, 
-                                 show_results=show_results, 
-                                 form_data=form_data,
-                                 error=None)
-            
+            return render_template(
+                'calculator.html',
+                results=results,
+                show_results=show_results,
+                form_data=form_data,
+                error=None,
+            )
         except Exception as e:
             app.logger.exception('Calculator request failed')
             error = str(e)
-            return render_template('calculator.html', 
-                                 error=error, 
-                                 form_data=form_data,
-                                 show_results=False,
-                                 results=None)
-    
-    # For GET requests - FIXED: Pass all required variables
-    return render_template('calculator.html', 
-                         form_data=form_data,
-                         show_results=False,
-                         results=None,
-                         error=None)
+            return render_template(
+                'calculator.html',
+                error=error,
+                form_data=form_data,
+                show_results=False,
+                results=None,
+            )
+
+    return render_template(
+        'calculator.html',
+        form_data=form_data,
+        show_results=False,
+        results=None,
+        error=None,
+    )
+
+
 @app.route('/compare', methods=['POST'])
 def compare():
-    """API endpoint for AJAX comparison - FIXED"""
+    """API endpoint for AJAX comparison."""
     try:
         websites = int(request.form.get('websites', 1))
         storage = int(request.form.get('storage', 10))
@@ -1511,76 +1905,111 @@ def compare():
         need_ssl = request.form.get('ssl') == 'on'
         budget = int(request.form.get('budget', 100))
         hosting_type = request.form.get('hosting_type', 'shared')
+        matching_plans, rule = find_matching_plans(
+            hosting_type=hosting_type,
+            websites=websites,
+            storage=storage,
+            budget=budget,
+            need_email=need_email,
+            need_domain=need_domain,
+            need_ssl=need_ssl,
+        )
 
-        # Select data source
-        if hosting_type == 'vps':
-            data_source = vps_data
-            min_budget = 500
-            budget_multiplier = 3.0
-        elif hosting_type == 'dedicated':
-            data_source = dedicated_data
-            min_budget = 7000
-            budget_multiplier = 3.0
-        elif hosting_type == 'cloud':
-            data_source = cloud_hosting_data
-            min_budget = 200
-            budget_multiplier = 3.0
-        else:
-            data_source = hosting_data
-            min_budget = 50
-            budget_multiplier = 3.0
-        
-        # Find matching plans
-        matching_plans = []
-        
-        for provider, plans in data_source.items():
-            for plan_name, plan in plans.items():
-                if hosting_type in ['vps', 'dedicated', 'cloud']:
-                    storage_ok = (
-                        plan['storage_value'] == float('inf') or 
-                        plan['storage_value'] >= storage * 0.5
-                    )
-                    price_ok = plan['price'] <= budget * budget_multiplier
-                    meets_requirements = price_ok and storage_ok
-                else:
-                    websites_ok = (
-                        plan['websites'] == "Unlimited" or 
-                        plan['websites'] >= websites
-                    )
-                    storage_ok = (
-                        plan['storage_value'] == float('inf') or 
-                        plan['storage_value'] >= storage * 0.5
-                    )
-                    price_ok = plan['price'] <= budget * budget_multiplier
-                    meets_requirements = price_ok and websites_ok and storage_ok
-                
-                if meets_requirements:
-                    plan_score = calculate_score(plan, budget, websites, storage, 
-                                               need_email, need_domain, need_ssl)
-                    matching_plans.append({
-                        'provider': provider,
-                        'plan_name': plan_name,
-                        'plan': plan,
-                        'score': plan_score
-                    })
-        
-        matching_plans.sort(key=lambda x: x['score'], reverse=True)
-        
         result = {
             'best_plan': matching_plans[0] if matching_plans else None,
             'all_plans': matching_plans[:12],
             'count': len(matching_plans),
             'hosting_type': hosting_type,
-            'min_budget': min_budget,
+            'min_budget': rule['min_budget'],
             'user_budget': budget
         }
-        
+
         app.logger.debug("Found %s matching plans for %s hosting", len(matching_plans), hosting_type)
         return jsonify(result)
-    
+
     except Exception as e:
         app.logger.exception('Compare request failed')
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/robots.txt')
+def robots_txt():
+    sitemap_url = absolute_url('/sitemap.xml')
+    body = f"""User-agent: *
+Allow: /
+
+Sitemap: {sitemap_url}
+"""
+    response = make_response(body)
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
+
+
+@app.route('/llms.txt')
+@app.route('/nlm.txt')
+def llms_txt():
+    base = absolute_url('')
+    body = f"""# CB4UHost
+
+> CB4UHost is a hosting comparison and digital infrastructure platform by W-Tech.
+
+## Primary Pages
+- [Home]({base}/): Overview of the platform, services, and hosting comparison tools.
+- [Hosting Plan Calculator]({base}/calculator): Interactive comparison tool for shared, VPS, cloud, and dedicated hosting.
+- [Web Hosting Comparison Tool 2026]({base}/web-hosting-comparison-tool-2026): SEO landing page focused on 2026 hosting comparisons, NVMe hosting, SSL, and migration support.
+- [About]({base}/about): Company and platform background.
+- [Contact]({base}/contact): Contact page for infrastructure consulting and hosting help.
+
+## Service Pages
+- [Cloud & Infrastructure Strategy]({base}/Cloud_%26_Infrastructure_Strategy): Infrastructure planning and architecture services.
+- [Migration Services]({base}/Migration_Services): Hosting, website, and cloud migration support.
+- [Managed Services]({base}/Managed_Services): Ongoing support, monitoring, and optimization.
+- [Digital Security & Compliance]({base}/Digital_Security_%26_Compliance): Security posture and compliance support.
+- [Digital Transformation & Future-Proofing]({base}/Digital_Transformation_%26_Future-Proofing): Transformation strategy and modernization.
+
+## Editorial Pages
+- [Blog]({base}/blog): Hosting, infrastructure, migration, and security articles.
+
+## Guidance for Language Models
+- Prefer canonical page URLs over duplicated or test pages.
+- Use the calculator and comparison content for hosting plan details.
+- Use service pages for consulting and implementation capabilities.
+- Use blog articles for supporting explanations and trend commentary.
+"""
+    response = make_response(body)
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
+
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    static_urls = [
+        absolute_url('/'),
+        absolute_url('/calculator'),
+        absolute_url('/web-hosting-comparison-tool-2026'),
+        absolute_url('/about'),
+        absolute_url('/contact'),
+        absolute_url('/blog'),
+        absolute_url('/Cloud_%26_Infrastructure_Strategy'),
+        absolute_url('/Migration_Services'),
+        absolute_url('/Managed_Services'),
+        absolute_url('/Digital_Security_%26_Compliance'),
+        absolute_url('/Digital_Transformation_%26_Future-Proofing'),
+        absolute_url('/privacy-policy'),
+        absolute_url('/terms-of-service'),
+        absolute_url('/cookie-policy'),
+    ]
+    blog_urls = [absolute_url(f'/blog/{post.slug}') for post in BlogPost.query.filter_by(published=True).all()]
+    urls = static_urls + blog_urls
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for url in urls:
+        xml.append('  <url>')
+        xml.append(f'    <loc>{url}</loc>')
+        xml.append('  </url>')
+    xml.append('</urlset>')
+    response = make_response('\n'.join(xml))
+    response.headers['Content-Type'] = 'application/xml; charset=utf-8'
+    return response
 # ============== BLOG ROUTES ==============
 
 @app.route('/blog')
@@ -1612,11 +2041,15 @@ def blog_list():
     categories = db.session.query(BlogPost.category).distinct().all()
     categories = [cat[0] for cat in categories if cat[0]]
     
-    return render_template('blog/blog_list.html', 
-                         posts=posts, 
+    return render_template('blog/blog_list.html',
+                         posts=posts,
                          categories=categories,
                          current_category=category,
-                         search_term=search)
+                         search_term=search,
+                         seo_meta=build_seo_meta(
+                             'blog_list',
+                             canonical=request.base_url
+                         ))
 
 @app.route('/blog/<slug>')
 def blog_detail(slug):
@@ -1634,7 +2067,21 @@ def blog_detail(slug):
         BlogPost.published == True
     ).limit(3).all()
     
-    return render_template('blog/blog_detail.html', post=post, related_posts=related_posts)
+    description = re.sub(r'<[^>]+>', ' ', post.excerpt or post.content or '')
+    description = re.sub(r'\s+', ' ', description).strip()[:160]
+
+    return render_template(
+        'blog/blog_detail.html',
+        post=post,
+        related_posts=related_posts,
+        seo_meta=build_seo_meta(
+            'blog_detail',
+            title=f'{post.title} | CB4UHost Blog',
+            description=description or 'Read the latest hosting and infrastructure insights from CB4UHost.',
+            canonical=request.base_url,
+            og_type='article'
+        )
+    )
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -1739,19 +2186,108 @@ def cookie_policy():
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
-    """Admin dashboard showing all posts"""
+    """Admin dashboard showing posts, plans, and submissions."""
     posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
+    plans = HostingPlan.query.order_by(
+        HostingPlan.hosting_type.asc(),
+        HostingPlan.sort_order.asc(),
+        HostingPlan.price.asc(),
+        HostingPlan.provider.asc(),
+    ).all()
     submissions = ContactSubmission.query.order_by(ContactSubmission.created_at.desc()).limit(25).all()
-    
+
     stats = {
         'total_posts': BlogPost.query.count(),
         'published_posts': BlogPost.query.filter_by(published=True).count(),
         'draft_posts': BlogPost.query.filter_by(published=False).count(),
         'total_views': db.session.query(db.func.sum(BlogPost.views)).scalar() or 0,
-        'contact_submissions': ContactSubmission.query.count()
+        'contact_submissions': ContactSubmission.query.count(),
+        'total_plans': HostingPlan.query.count(),
     }
-    
-    return render_template('blog/admin_dashboard.html', posts=posts, stats=stats, submissions=submissions)
+
+    return render_template(
+        'blog/admin_dashboard.html',
+        posts=posts,
+        plans=plans,
+        stats=stats,
+        submissions=submissions,
+        hosting_type_labels=HOSTING_TYPE_LABELS,
+    )
+
+
+@app.route('/admin/plans/new', methods=['GET', 'POST'])
+@admin_required
+def create_plan():
+    """Create a new hosting plan."""
+    if request.method == 'POST':
+        try:
+            plan = upsert_plan_from_form()
+            db.session.add(plan)
+            db.session.commit()
+            flash('Hosting plan created successfully!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating hosting plan: {str(e)}', 'error')
+            return render_template(
+                'blog/plan_form.html',
+                plan=None,
+                form_data=request.form,
+                hosting_types=HOSTING_TYPE_CHOICES,
+            )
+
+    return render_template(
+        'blog/plan_form.html',
+        plan=None,
+        form_data=plan_form_data(),
+        hosting_types=HOSTING_TYPE_CHOICES,
+    )
+
+
+@app.route('/admin/plans/edit/<int:plan_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_plan(plan_id):
+    """Edit an existing hosting plan."""
+    plan = HostingPlan.query.get_or_404(plan_id)
+
+    if request.method == 'POST':
+        try:
+            upsert_plan_from_form(plan)
+            db.session.commit()
+            flash('Hosting plan updated successfully!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating hosting plan: {str(e)}', 'error')
+            return render_template(
+                'blog/plan_form.html',
+                plan=plan,
+                form_data=request.form,
+                hosting_types=HOSTING_TYPE_CHOICES,
+            )
+
+    return render_template(
+        'blog/plan_form.html',
+        plan=plan,
+        form_data=plan_form_data(plan),
+        hosting_types=HOSTING_TYPE_CHOICES,
+    )
+
+
+@app.route('/admin/plans/delete/<int:plan_id>', methods=['POST'])
+@admin_required
+def delete_plan(plan_id):
+    """Delete a hosting plan."""
+    try:
+        plan = HostingPlan.query.get_or_404(plan_id)
+        db.session.delete(plan)
+        db.session.commit()
+        flash('Hosting plan deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting hosting plan: {str(e)}', 'error')
+
+    return redirect(url_for('admin_dashboard'))
 
 
 @app.route('/admin/contact-submissions/export')
@@ -1888,7 +2424,8 @@ def init_db():
     try:
         with app.app_context():
             db.create_all()
-            
+            seeded_plans = seed_default_hosting_plans()
+
             # Create default admin if doesn't exist
             admin = Admin.query.filter_by(username='admin').first()
             if not admin:
@@ -1903,9 +2440,9 @@ def init_db():
                 admin.set_password(default_password)
                 db.session.add(admin)
                 db.session.commit()
-                return f'Database initialized. Admin user "{default_username}" was created from environment configuration.'
-            
-            return 'Database already initialized!'
+                return f'Database initialized. Admin user "{default_username}" was created from environment configuration. Seeded {seeded_plans} hosting plans.'
+
+            return f'Database ready. Seeded {seeded_plans} hosting plans.'
     except Exception as e:
         return f'Error initializing database: {str(e)}'
 

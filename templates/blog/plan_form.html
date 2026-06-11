@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if plan %}Edit Hosting Plan{% else %}New Hosting Plan{% endif %} - CB4UHost Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: 'Orbitron', sans-serif;
+        margin-bottom: 0.5rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary);
+        text-decoration: none;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        background: rgba(0, 217, 255, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(0, 217, 255, 0.3);
+        transition: all 0.3s;
+    }
+
+    .back-link:hover {
+        background: rgba(0, 217, 255, 0.2);
+        transform: translateX(-5px);
+        box-shadow: 0 4px 15px var(--glow-blue);
+    }
+
+    .form-container {
+        background: rgba(0, 217, 255, 0.05);
+        padding: 2.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        box-shadow: 0 10px 30px var(--glow-blue);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--light);
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(0, 217, 255, 0.05);
+        border: 1px solid rgba(0, 217, 255, 0.3);
+        border-radius: 8px;
+        color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-group select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image:
+            linear-gradient(45deg, transparent 50%, var(--primary) 50%),
+            linear-gradient(135deg, var(--primary) 50%, transparent 50%);
+        background-position:
+            calc(100% - 20px) calc(50% - 3px),
+            calc(100% - 14px) calc(50% - 3px);
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
+        padding-right: 44px;
+        color: var(--light);
+    }
+
+    .form-group select option {
+        background: var(--darker);
+        color: var(--light);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 96px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--glow-blue);
+        background: rgba(0, 217, 255, 0.1);
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 0.5rem;
+        color: var(--gray);
+        font-size: 0.85rem;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .checkbox-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: rgba(0, 217, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+    }
+
+    .checkbox-card input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin: 0;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(0, 217, 255, 0.2);
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        color: white;
+        border: 1px solid var(--primary);
+        box-shadow: 0 4px 15px var(--glow-blue);
+    }
+
+    .btn-secondary {
+        background: rgba(0, 217, 255, 0.1);
+        color: var(--light);
+        border: 1px solid rgba(0, 217, 255, 0.3);
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-error {
+        background: rgba(255, 0, 128, 0.1);
+        color: #fca5a5;
+        border: 1px solid rgba(255, 0, 128, 0.3);
+    }
+
+    .alert-success {
+        background: rgba(0, 255, 183, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(0, 255, 183, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+
+        .form-container {
+            padding: 1.5rem;
+        }
+
+        .grid-2,
+        .checkbox-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="page-header">
+        <h1>{% if plan %}<i class="fas fa-edit"></i> Edit Hosting Plan{% else %}<i class="fas fa-plus-circle"></i> Create Hosting Plan{% endif %}</h1>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="form-container">
+        <form method="POST">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="provider">Provider *</label>
+                    <input type="text" id="provider" name="provider" required value="{{ form_data.get('provider', '') }}" placeholder="Namecheap">
+                </div>
+                <div class="form-group">
+                    <label for="name">Plan Name *</label>
+                    <input type="text" id="name" name="name" required value="{{ form_data.get('name', '') }}" placeholder="Stellar">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="hosting_type">Hosting Type *</label>
+                    <select id="hosting_type" name="hosting_type" required>
+                        {% for value, label in hosting_types %}
+                        <option value="{{ value }}" {% if form_data.get('hosting_type', 'shared') == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sort_order">Sort Order</label>
+                    <input type="number" id="sort_order" name="sort_order" value="{{ form_data.get('sort_order', 0) }}" min="0">
+                </div>
+            </div>
+
+            <div class="section-title">Pricing</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="price">Monthly Price (INR) *</label>
+                    <input type="number" id="price" name="price" required value="{{ form_data.get('price', '') }}" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="regular_price">Regular Price (INR)</label>
+                    <input type="number" id="regular_price" name="regular_price" value="{{ form_data.get('regular_price', '') }}" min="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="billing_text">Billing Text</label>
+                <input type="text" id="billing_text" name="billing_text" value="{{ form_data.get('billing_text', '') }}" placeholder="₹127/mo billed annually">
+            </div>
+
+            <div class="section-title">Resources</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="storage">Storage *</label>
+                    <input type="text" id="storage" name="storage" required value="{{ form_data.get('storage', '') }}" placeholder="20 GB">
+                </div>
+                <div class="form-group">
+                    <label for="storage_type">Storage Type</label>
+                    <input type="text" id="storage_type" name="storage_type" value="{{ form_data.get('storage_type', '') }}" placeholder="SSD">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="storage_value">Storage Value for Matching</label>
+                    <input type="text" id="storage_value" name="storage_value" value="{{ form_data.get('storage_value', '') }}" placeholder="20 or Infinity">
+                    <small>Use a number for GB or `Infinity` for unlimited storage.</small>
+                </div>
+                <div class="form-group">
+                    <label for="bandwidth">Bandwidth *</label>
+                    <input type="text" id="bandwidth" name="bandwidth" required value="{{ form_data.get('bandwidth', '') }}" placeholder="Unmetered">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="bandwidth_value">Bandwidth Value for Matching</label>
+                    <input type="text" id="bandwidth_value" name="bandwidth_value" value="{{ form_data.get('bandwidth_value', '') }}" placeholder="100 or Infinity">
+                </div>
+                <div class="form-group">
+                    <label for="websites_value">Websites / Domains Count</label>
+                    <input type="number" id="websites_value" name="websites_value" value="{{ form_data.get('websites_value', '') }}" min="0">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="websites_text">Website Label Override</label>
+                    <input type="text" id="websites_text" name="websites_text" value="{{ form_data.get('websites_text', '') }}" placeholder="3 domains">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email / Mailboxes</label>
+                    <input type="text" id="email" name="email" value="{{ form_data.get('email', '') }}" placeholder="30 Mailboxes">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="cpu_cores">CPU Cores</label>
+                    <input type="number" id="cpu_cores" name="cpu_cores" value="{{ form_data.get('cpu_cores', '') }}" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="ram">RAM (GB)</label>
+                    <input type="number" id="ram" name="ram" value="{{ form_data.get('ram', '') }}" min="0">
+                </div>
+            </div>
+
+            <div class="section-title">Benefits & Messaging</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="ssl">SSL</label>
+                    <input type="text" id="ssl" name="ssl" value="{{ form_data.get('ssl', '') }}" placeholder="Free SSL">
+                </div>
+                <div class="form-group">
+                    <label for="backup">Backup</label>
+                    <input type="text" id="backup" name="backup" value="{{ form_data.get('backup', '') }}" placeholder="Basic Backup">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="best_for">Best For</label>
+                    <input type="text" id="best_for" name="best_for" value="{{ form_data.get('best_for', '') }}" placeholder="Small websites">
+                </div>
+                <div class="form-group">
+                    <label for="buy_link">Provider Link</label>
+                    <input type="url" id="buy_link" name="buy_link" value="{{ form_data.get('buy_link', '') }}" placeholder="https://www.namecheap.com/hosting/shared/">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="uptime">Uptime Text</label>
+                    <input type="text" id="uptime" name="uptime" value="{{ form_data.get('uptime', '') }}" placeholder="99.9% uptime">
+                </div>
+                <div class="form-group">
+                    <label for="money_back">Money-back Text</label>
+                    <input type="text" id="money_back" name="money_back" value="{{ form_data.get('money_back', '') }}" placeholder="30 day money-back">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="ips">IP Details</label>
+                    <input type="text" id="ips" name="ips" value="{{ form_data.get('ips', '') }}" placeholder="1 Dedicated IP">
+                </div>
+                <div class="form-group">
+                    <label for="migration">Migration Details</label>
+                    <input type="text" id="migration" name="migration" value="{{ form_data.get('migration', '') }}" placeholder="Free migration">
+                </div>
+            </div>
+
+            <div class="section-title">Publishing</div>
+            <div class="checkbox-grid">
+                <label class="checkbox-card">
+                    <input type="checkbox" name="free_domain" {% if form_data.get('free_domain') in [True, 'on', 'true', '1', 1] %}checked{% endif %}>
+                    <span>Includes free domain</span>
+                </label>
+                <label class="checkbox-card">
+                    <input type="checkbox" name="websites_unlimited" {% if form_data.get('websites_unlimited') in [True, 'on', 'true', '1', 1] %}checked{% endif %}>
+                    <span>Unlimited websites / domains</span>
+                </label>
+                <label class="checkbox-card">
+                    <input type="checkbox" name="popular" {% if form_data.get('popular') in [True, 'on', 'true', '1', 1] %}checked{% endif %}>
+                    <span>Mark as featured / popular</span>
+                </label>
+                <label class="checkbox-card">
+                    <input type="checkbox" name="active" {% if form_data.get('active', True) in [True, 'on', 'true', '1', 1] %}checked{% endif %}>
+                    <span>Show in calculator results</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <span>{% if plan %}Update Plan{% else %}Create Plan{% endif %}</span>
+                </button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

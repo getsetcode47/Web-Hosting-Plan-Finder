@@ -11,11 +11,21 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Add to base.html <head> -->
-    <link rel="canonical" href="{{ request.base_url }}">
-    <title>{% block title %}CB4UHost - Find Your Perfect Hosting Solution{% endblock %}</title>
+    <title>{% block title %}{{ seo_meta.title }}{% endblock %}</title>
+    <meta name="description" content="{{ seo_meta.description }}">
+    <meta name="robots" content="{{ seo_meta.robots }}">
+    <link rel="canonical" href="{{ seo_meta.canonical }}">
+    <meta property="og:type" content="{{ seo_meta.og_type }}">
+    <meta property="og:title" content="{{ seo_meta.title }}">
+    <meta property="og:description" content="{{ seo_meta.description }}">
+    <meta property="og:url" content="{{ seo_meta.canonical }}">
+    <meta property="og:site_name" content="{{ seo_meta.site_name }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_meta.title }}">
+    <meta name="twitter:description" content="{{ seo_meta.description }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
     <style>
         :root {
             --primary: #00D9FF;
@@ -424,23 +434,31 @@ footer {
             align-items: center;
         }
 
-        .nav-links a {
+        .nav-links > a,
+        .dropdown-toggle {
             color: var(--text-silver);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
             position: relative;
+            background: transparent;
+            border: 0;
+            font-size: 1rem;
+            cursor: pointer;
         }
 
-        .nav-links a:hover {
+        .nav-links > a:hover,
+        .dropdown-toggle:hover {
             color: var(--cyan-accent);
         }
 
-        .nav-links a.active {
+        .nav-links > a.active,
+        .nav-dropdown.active .dropdown-toggle {
             color: var(--cyan-accent);
         }
 
-        .nav-links a.active::after {
+        .nav-links > a.active::after,
+        .nav-dropdown.active .dropdown-toggle::after {
             content: '';
             position: absolute;
             bottom: -8px;
@@ -449,6 +467,83 @@ footer {
             height: 2px;
             background: var(--cyan-accent);
             box-shadow: 0 0 10px var(--cyan-glow);
+        }
+
+        .nav-dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .dropdown-toggle i {
+            font-size: 0.7rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-dropdown:hover .dropdown-toggle i,
+        .nav-dropdown.open .dropdown-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 1rem);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            min-width: 280px;
+            padding: 0.85rem 0;
+            background: rgba(0, 0, 0, 0.96);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-line);
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 240, 255, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+            z-index: 1001;
+        }
+
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.96);
+            border-left: 1px solid var(--border-line);
+            border-top: 1px solid var(--border-line);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .dropdown-menu a {
+            padding: 0.75rem 1.25rem;
+            color: var(--text-silver);
+            text-decoration: none;
+            transition: background 0.25s ease, color 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a:hover {
+            color: var(--cyan-accent);
+            background: rgba(0, 240, 255, 0.08);
+        }
+
+        .nav-dropdown:hover .dropdown-menu,
+        .nav-dropdown:focus-within .dropdown-menu,
+        .nav-dropdown.open .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(-4px);
         }
 
         .nav-cta {
@@ -710,15 +805,67 @@ footer {
                 border-bottom: 1px solid var(--border-line);
             }
 
+            .nav-links > a,
+            .dropdown-toggle {
+                width: 100%;
+                text-align: left;
+            }
+
             .nav-links a:last-child {
                 border-bottom: none;
             }
 
-            .nav-links a.active::after {
+            .nav-links > a.active::after,
+            .nav-dropdown.active .dropdown-toggle::after {
                 bottom: 0;
                 left: 0;
                 width: 4px;
                 height: 100%;
+            }
+
+            .nav-dropdown {
+                width: 100%;
+                border-bottom: 1px solid var(--border-line);
+            }
+
+            .dropdown-toggle {
+                justify-content: space-between;
+                padding: 1rem 0;
+            }
+
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                min-width: 100%;
+                margin: 0 0 0.75rem;
+                border-radius: 12px;
+                box-shadow: none;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                display: none;
+            }
+
+            .dropdown-menu::before {
+                display: none;
+            }
+
+            .nav-dropdown:hover .dropdown-menu,
+            .nav-dropdown:focus-within .dropdown-menu {
+                transform: none;
+            }
+
+            .nav-dropdown.open .dropdown-menu {
+                display: flex;
+            }
+
+            .dropdown-menu a {
+                padding: 0.85rem 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .dropdown-menu a:last-child {
+                border-bottom: none;
             }
 
             .nav-cta {
@@ -769,8 +916,19 @@ footer {
         </div>
         <div class="nav-links" id="navbarMenu">
             <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
-            
             <a href="{{ url_for('calculator') }}" class="{% if request.endpoint == 'calculator' %}active{% endif %}">Compare Plans</a>
+            <div class="nav-dropdown">
+                <button type="button" class="dropdown-toggle" id="servicesDropdownToggle" aria-expanded="false" aria-controls="servicesDropdownMenu">
+                    Services <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-menu" id="servicesDropdownMenu">
+                    <a href="{{ url_for('service1') }}">Cloud & Infrastructure Strategy</a>
+                    <a href="{{ url_for('service2') }}">Migration Services</a>
+                    <a href="{{ url_for('service3') }}">Managed Services</a>
+                    <a href="{{ url_for('service4') }}">Digital Security & Compliance</a>
+                    <a href="{{ url_for('service5') }}">Digital Transformation & Future-Proofing</a>
+                </div>
+            </div>
             <a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About Us</a>
             <a href="{{ url_for('blog_list') }}" class="{% if request.endpoint == 'blog_list' or request.endpoint == 'blog_detail' %}active{% endif %}">Blog</a>
             <a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contact</a>
@@ -804,6 +962,8 @@ footer {
         // Mobile menu toggle
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const navbarMenu = document.getElementById('navbarMenu');
+        const servicesDropdownToggle = document.getElementById('servicesDropdownToggle');
+        const servicesDropdown = servicesDropdownToggle ? servicesDropdownToggle.closest('.nav-dropdown') : null;
 
         if (mobileMenuToggle && navbarMenu) {
             mobileMenuToggle.addEventListener('click', function() {
@@ -824,14 +984,29 @@ footer {
             });
 
             // Close menu when clicking on a link
-            const navLinksItems = navbarMenu.querySelectorAll('a:not(.nav-cta)');
+            const navLinksItems = navbarMenu.querySelectorAll('a:not(.nav-cta), .dropdown-menu a');
             navLinksItems.forEach(link => {
                 link.addEventListener('click', function() {
                     if (window.innerWidth <= 768) {
                         navbarMenu.classList.remove('active');
+                        if (servicesDropdown) {
+                            servicesDropdown.classList.remove('open');
+                            servicesDropdownToggle.setAttribute('aria-expanded', 'false');
+                        }
                         mobileMenuToggle.textContent = '☰';
                     }
                 });
+            });
+        }
+
+        if (servicesDropdownToggle && servicesDropdown) {
+            servicesDropdownToggle.addEventListener('click', function() {
+                if (window.innerWidth > 768) {
+                    return;
+                }
+
+                const isOpen = servicesDropdown.classList.toggle('open');
+                servicesDropdownToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
         }
 

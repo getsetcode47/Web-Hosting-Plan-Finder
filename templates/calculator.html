@@ -83,7 +83,7 @@
     .checkbox-container input[type="checkbox"]:hover{background:rgba(0,240,255,.1);border-color:var(--cyan-accent);}
     .checkbox-container input[type="checkbox"]:checked{background:var(--cyan-accent);border-color:var(--cyan-accent);box-shadow:0 0 18px var(--cyan-glow);}
     .checkbox-container input[type="checkbox"]:checked::after{content:"✓";position:absolute;color:var(--bg-pure-black);font-size:15px;font-weight:900;left:3px;top:0;}
-    .checkbox-container label{font-size:clamp(.85rem,2vw,.95rem);color:var(--text-silver);font-weight:500;cursor:pointer;}
+    .checkbox-text{font-size:clamp(.85rem,2vw,.95rem);color:var(--text-silver);font-weight:500;cursor:pointer;}
 
     .btn{background:linear-gradient(135deg,var(--cyan-accent),#00A8E8);color:var(--bg-pure-black);border:none;padding:clamp(.95rem,3vw,1.2rem) clamp(2rem,6vw,3.25rem);font-size:clamp(.95rem,2.5vw,1.15rem);font-weight:900;border-radius:50px;cursor:pointer;transition:all .4s ease;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,240,255,.4);position:relative;overflow:hidden;letter-spacing:.5px;width:100%;max-width:380px;}
     .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transition:left .6s ease;}
@@ -284,7 +284,6 @@
 {% endblock %}
 
 {% block content %}
-<body>
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -388,11 +387,11 @@
                         <div class="checkbox-group">
                             <label class="checkbox-container">
                                 <input type="checkbox" name="email" {% if form_data.email %}checked{% endif %}>
-                                <label>Windows</label>
+                                <span class="checkbox-text">Windows</span>
                             </label>
                             <label class="checkbox-container">
                                 <input type="checkbox" name="domain" {% if form_data.domain %}checked{% endif %}>
-                                <label>Linux</label>
+                                <span class="checkbox-text">Linux</span>
                             </label>
                         </div>
                     </div>
@@ -446,7 +445,7 @@
                                     <span class="plan-price">₹{{ plan.price }}</span>
                                     <span class="plan-price-unit">/mo</span>
                                 </div>
-                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                                <div class="plan-billing">{{ plan.billing_text }}</div>
                             </div>
                             <div class="plan-meta-grid">
                                 <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
@@ -462,8 +461,8 @@
                                 <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (results.all_plans[0].score * 10)|round(0, 'floor') }}%"></div></div>
                             </div>
                             <div class="plan-substats">
-                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
-                                <div class="substat"><i class="far fa-calendar-alt"></i><span>7 day money-back</span></div>
+                                <div class="substat"><i class="far fa-clock"></i><span>{{ plan.uptime }}</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{{ plan.money_back }}</span></div>
                             </div>
                             <ul class="plan-highlights">
                                 <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
@@ -501,7 +500,7 @@
                                     <span class="plan-price">₹{{ plan.price }}</span>
                                     <span class="plan-price-unit">/mo</span>
                                 </div>
-                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                                <div class="plan-billing">{{ plan.billing_text }}</div>
                             </div>
                             <div class="plan-meta-grid">
                                 <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
@@ -517,8 +516,8 @@
                                 <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (plan_data.score * 10)|round(0, 'floor') }}%"></div></div>
                             </div>
                             <div class="plan-substats">
-                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
-                                <div class="substat"><i class="far fa-calendar-alt"></i><span>7 day money-back</span></div>
+                                <div class="substat"><i class="far fa-clock"></i><span>{{ plan.uptime }}</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{{ plan.money_back }}</span></div>
                             </div>
                             <ul class="plan-highlights">
                                 <li><i class="fas fa-check"></i><span>{{ plan.cpu_cores }} vCPU</span></li>
@@ -563,7 +562,7 @@
                                     <span class="plan-price">₹{{ plan.price }}</span>
                                     <span class="plan-price-unit">/mo</span>
                                 </div>
-                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                                <div class="plan-billing">{{ plan.billing_text }}</div>
                             </div>
                             <div class="plan-meta-grid">
                                 <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
@@ -579,8 +578,8 @@
                                 <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (results.all_plans[0].score * 10)|round(0, 'floor') }}%"></div></div>
                             </div>
                             <div class="plan-substats">
-                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
-                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{% if results.hosting_type == 'dedicated' %}7 day money-back{% else %}30 day money-back{% endif %}</span></div>
+                                <div class="substat"><i class="far fa-clock"></i><span>{{ plan.uptime }}</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{{ plan.money_back }}</span></div>
                             </div>
                             <ul class="plan-highlights">
                                 {% if results.hosting_type == 'dedicated' %}
@@ -630,7 +629,7 @@
                                     <span class="plan-price">₹{{ plan.price }}</span>
                                     <span class="plan-price-unit">/mo</span>
                                 </div>
-                                <div class="plan-billing">₹{{ plan.price }}/mo billed annually</div>
+                                <div class="plan-billing">{{ plan.billing_text }}</div>
                             </div>
                             <div class="plan-meta-grid">
                                 <div class="meta-item"><span class="meta-icon"><i class="fas fa-hdd"></i></span><span>{{ plan.storage }} {{ plan.type }}</span></div>
@@ -646,8 +645,8 @@
                                 <div class="plan-score-bar"><div class="plan-score-fill" style="width: {{ (plan_data.score * 10)|round(0, 'floor') }}%"></div></div>
                             </div>
                             <div class="plan-substats">
-                                <div class="substat"><i class="far fa-clock"></i><span>99.9% uptime</span></div>
-                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{% if results.hosting_type == 'dedicated' %}7 day money-back{% else %}30 day money-back{% endif %}</span></div>
+                                <div class="substat"><i class="far fa-clock"></i><span>{{ plan.uptime }}</span></div>
+                                <div class="substat"><i class="far fa-calendar-alt"></i><span>{{ plan.money_back }}</span></div>
                             </div>
                             <ul class="plan-highlights">
                                 {% if results.hosting_type == 'dedicated' %}
@@ -1080,5 +1079,4 @@
         if (modal) { modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); }); }
     });
     </script>
-</body>
 {% endblock %}

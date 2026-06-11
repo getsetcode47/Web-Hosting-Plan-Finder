@@ -101,6 +101,64 @@
         box-shadow: 0 6px 20px var(--glow-blue);
         background: rgba(0, 217, 255, 0.2);
     }
+
+    .dashboard-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-tabs {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin: 0 0 2rem;
+    }
+
+    .dashboard-tab {
+        appearance: none;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: rgba(0, 217, 255, 0.08);
+        color: var(--text-silver);
+        border-radius: 999px;
+        padding: 0.85rem 1.2rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        transition: all 0.25s ease;
+    }
+
+    .dashboard-tab:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 217, 255, 0.45);
+        box-shadow: 0 8px 20px rgba(0, 128, 255, 0.15);
+    }
+
+    .dashboard-tab.active {
+        background: linear-gradient(135deg, rgba(0, 128, 255, 0.3), rgba(0, 217, 255, 0.22));
+        color: var(--light);
+        border-color: var(--primary);
+        box-shadow: 0 10px 24px rgba(0, 217, 255, 0.18);
+    }
+
+    .dashboard-tab i {
+        color: var(--primary);
+    }
+
+    .dashboard-panels {
+        position: relative;
+    }
+
+    .dashboard-panel {
+        display: none;
+    }
+
+    .dashboard-panel.active {
+        display: block;
+    }
     
     /* Alert Messages */
     .alert {
@@ -472,6 +530,20 @@
             width: 100%;
             justify-content: center;
         }
+
+        .dashboard-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .dashboard-tabs {
+            flex-direction: column;
+        }
+
+        .dashboard-tab {
+            width: 100%;
+            justify-content: center;
+        }
         
         .stats-grid {
             grid-template-columns: 1fr;
@@ -572,9 +644,14 @@
             <i class="fas fa-chart-line"></i>
             Dashboard
         </h1>
-        <a href="{{ url_for('create_blog') }}" class="btn-new">
-            <i class="fas fa-plus"></i> New Post
-        </a>
+        <div class="dashboard-actions">
+            <a href="{{ url_for('create_plan') }}" class="btn-secondary">
+                <i class="fas fa-server"></i> New Plan
+            </a>
+            <a href="{{ url_for('create_blog') }}" class="btn-new">
+                <i class="fas fa-plus"></i> New Post
+            </a>
+        </div>
     </div>
     
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -613,160 +690,309 @@
             <h3>Contact Leads</h3>
             <div class="stat-value">{{ stats.contact_submissions }}</div>
         </div>
-    </div>
-    
-    <div class="posts-table">
-        <div class="table-header">
-            <h2>
-                <i class="fas fa-list"></i>
-                All Blog Posts
-            </h2>
+        <div class="stat-card">
+            <i class="fas fa-server stat-icon"></i>
+            <h3>Hosting Plans</h3>
+            <div class="stat-value">{{ stats.total_plans }}</div>
         </div>
-        
-        {% if posts %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Views</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for post in posts %}
-                    <tr>
-                        <td>
-                            <div class="post-title">{{ post.title }}</div>
-                        </td>
-                        <td>
-                            {% if post.category %}
-                                <span class="category-badge">{{ post.category }}</span>
-                            {% else %}
-                                <span class="category-uncategorized">Uncategorized</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <span class="status-badge {% if post.published %}status-published{% else %}status-draft{% endif %}">
-                                {% if post.published %}
-                                    <i class="fas fa-check"></i> Published
-                                {% else %}
-                                    <i class="fas fa-clock"></i> Draft
-                                {% endif %}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="view-count">
-                                <i class="fas fa-eye"></i>
-                                {{ post.views }}
-                            </span>
-                        </td>
-                        <td style="color: var(--gray);">
-                            {{ post.created_at.strftime('%b %d, %Y') }}
-                        </td>
-                        <td>
-                            <div class="actions">
-                                <a href="/admin/blog/edit/{{ post.id }}" class="btn-action btn-edit">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <form method="POST" action="/admin/blog/delete/{{ post.id }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
-                                    <button type="submit" class="btn-action btn-delete">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="no-posts">
-            <i class="fas fa-inbox"></i>
-            <h3>No blog posts yet</h3>
-            <p>Click "New Post" above to create your first blog post!</p>
-        </div>
-        {% endif %}
     </div>
 
-    <div class="posts-table">
-        <div class="table-header">
-            <h2>
-                <i class="fas fa-inbox"></i>
-                Recent Contact Submissions
-            </h2>
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
-                <p>Messages submitted from the site contact form are stored here.</p>
-                <a href="{{ url_for('export_contact_submissions') }}" class="btn-secondary">
-                    <i class="fas fa-file-csv"></i> Download CSV
+    <div class="dashboard-tabs" role="tablist" aria-label="Admin dashboard sections">
+        <button type="button" class="dashboard-tab active" data-tab-target="plans-panel" role="tab" aria-selected="true">
+            <i class="fas fa-server"></i>
+            Posting Plans
+        </button>
+        <button type="button" class="dashboard-tab" data-tab-target="blog-panel" role="tab" aria-selected="false">
+            <i class="fas fa-file-alt"></i>
+            Blog Post
+        </button>
+        <button type="button" class="dashboard-tab" data-tab-target="submissions-panel" role="tab" aria-selected="false">
+            <i class="fas fa-envelope-open-text"></i>
+            Recent Contact Submission
+        </button>
+    </div>
+
+    <div class="dashboard-panels">
+    <section class="dashboard-panel active" id="plans-panel" role="tabpanel">
+        <div class="posts-table">
+            <div class="table-header">
+                <div>
+                    <h2>
+                        <i class="fas fa-server"></i>
+                        Hosting Plans
+                    </h2>
+                    <p>Plans created here are used by the calculator and comparison results.</p>
+                </div>
+                <a href="{{ url_for('create_plan') }}" class="btn-secondary">
+                    <i class="fas fa-plus"></i> Add Hosting Plan
                 </a>
             </div>
-        </div>
 
-        {% if submissions %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Company</th>
-                        <th>Service</th>
-                        <th>Subject</th>
-                        <th>Message</th>
-                        <th>Received</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for submission in submissions %}
-                    <tr>
-                        <td>
-                            <div class="post-title">{{ submission.name }}</div>
-                            <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.email }}</div>
-                            {% if submission.phone %}
-                            <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.phone }}</div>
-                            {% endif %}
-                        </td>
-                        <td style="color: var(--gray);">
-                            {{ submission.company or 'Not provided' }}
-                        </td>
-                        <td>
-                            {% if submission.service %}
-                                <span class="category-badge">{{ submission.service }}</span>
-                            {% else %}
-                                <span class="category-uncategorized">General</span>
-                            {% endif %}
-                        </td>
-                        <td style="color: var(--light); font-weight: 600;">
-                            {{ submission.subject }}
-                        </td>
-                        <td style="max-width: 360px; color: var(--gray);">
-                            {{ submission.message[:140] }}{% if submission.message|length > 140 %}...{% endif %}
-                        </td>
-                        <td style="color: var(--gray);">
-                            {{ submission.created_at.strftime('%b %d, %Y %I:%M %p') }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if plans %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Resources</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in plans %}
+                        <tr>
+                            <td>
+                                <div class="post-title">{{ plan.name }}</div>
+                                <div style="color: var(--gray); font-size: 0.9rem;">by {{ plan.provider|title }}</div>
+                                {% if plan.best_for %}
+                                <div style="color: var(--gray); font-size: 0.9rem;">{{ plan.best_for }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="category-badge">{{ hosting_type_labels.get(plan.hosting_type, plan.hosting_type|title) }}</span>
+                            </td>
+                            <td style="color: var(--light); font-weight: 600;">
+                                ₹{{ plan.price }}/mo
+                                <div style="color: var(--gray); font-size: 0.9rem;">Regular ₹{{ plan.regular_price }}</div>
+                            </td>
+                            <td style="color: var(--gray);">
+                                <div>{{ plan.storage }} {{ plan.storage_type }}</div>
+                                <div>{{ plan.bandwidth }}</div>
+                                {% if plan.cpu_cores or plan.ram %}
+                                <div>{{ plan.cpu_cores or 0 }} CPU / {{ plan.ram or 0 }} GB RAM</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge {% if plan.active %}status-published{% else %}status-draft{% endif %}">
+                                    {% if plan.active %}
+                                        <i class="fas fa-check"></i> Active
+                                    {% else %}
+                                        <i class="fas fa-clock"></i> Hidden
+                                    {% endif %}
+                                </span>
+                                {% if plan.popular %}
+                                <div style="margin-top: 0.5rem;">
+                                    <span class="status-badge status-published"><i class="fas fa-star"></i> Featured</span>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="{{ url_for('edit_plan', plan_id=plan.id) }}" class="btn-action btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_plan', plan_id=plan.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this hosting plan? This action cannot be undone.');">
+                                        <button type="submit" class="btn-action btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-posts">
+                <i class="fas fa-server"></i>
+                <h3>No hosting plans yet</h3>
+                <p>Create your first plan and it will immediately become available in the calculator.</p>
+            </div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="no-posts">
-            <i class="fas fa-envelope-open"></i>
-            <h3>No contact submissions yet</h3>
-            <p>New website inquiries will appear here automatically.</p>
+    </section>
+    
+    <section class="dashboard-panel" id="blog-panel" role="tabpanel">
+        <div class="posts-table">
+            <div class="table-header">
+                <h2>
+                    <i class="fas fa-list"></i>
+                    All Blog Posts
+                </h2>
+            </div>
+        
+            {% if posts %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr>
+                            <td>
+                                <div class="post-title">{{ post.title }}</div>
+                            </td>
+                            <td>
+                                {% if post.category %}
+                                    <span class="category-badge">{{ post.category }}</span>
+                                {% else %}
+                                    <span class="category-uncategorized">Uncategorized</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge {% if post.published %}status-published{% else %}status-draft{% endif %}">
+                                    {% if post.published %}
+                                        <i class="fas fa-check"></i> Published
+                                    {% else %}
+                                        <i class="fas fa-clock"></i> Draft
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="view-count">
+                                    <i class="fas fa-eye"></i>
+                                    {{ post.views }}
+                                </span>
+                            </td>
+                            <td style="color: var(--gray);">
+                                {{ post.created_at.strftime('%b %d, %Y') }}
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="/admin/blog/edit/{{ post.id }}" class="btn-action btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/admin/blog/delete/{{ post.id }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? This action cannot be undone.');">
+                                        <button type="submit" class="btn-action btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-posts">
+                <i class="fas fa-inbox"></i>
+                <h3>No blog posts yet</h3>
+                <p>Click "New Post" above to create your first blog post!</p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+    </section>
+
+    <section class="dashboard-panel" id="submissions-panel" role="tabpanel">
+        <div class="posts-table">
+            <div class="table-header">
+                <h2>
+                    <i class="fas fa-inbox"></i>
+                    Recent Contact Submissions
+                </h2>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+                    <p>Messages submitted from the site contact form are stored here.</p>
+                    <a href="{{ url_for('export_contact_submissions') }}" class="btn-secondary">
+                        <i class="fas fa-file-csv"></i> Download CSV
+                    </a>
+                </div>
+            </div>
+
+            {% if submissions %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Service</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Received</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions %}
+                        <tr>
+                            <td>
+                                <div class="post-title">{{ submission.name }}</div>
+                                <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.email }}</div>
+                                {% if submission.phone %}
+                                <div style="color: var(--gray); font-size: 0.9rem;">{{ submission.phone }}</div>
+                                {% endif %}
+                            </td>
+                            <td style="color: var(--gray);">
+                                {{ submission.company or 'Not provided' }}
+                            </td>
+                            <td>
+                                {% if submission.service %}
+                                    <span class="category-badge">{{ submission.service }}</span>
+                                {% else %}
+                                    <span class="category-uncategorized">General</span>
+                                {% endif %}
+                            </td>
+                            <td style="color: var(--light); font-weight: 600;">
+                                {{ submission.subject }}
+                            </td>
+                            <td style="max-width: 360px; color: var(--gray);">
+                                {{ submission.message[:140] }}{% if submission.message|length > 140 %}...{% endif %}
+                            </td>
+                            <td style="color: var(--gray);">
+                                {{ submission.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-posts">
+                <i class="fas fa-envelope-open"></i>
+                <h3>No contact submissions yet</h3>
+                <p>New website inquiries will appear here automatically.</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
     </div>
 </div>
 
 <script>
     // Auto-hide alerts after 5 seconds
     document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        const panels = document.querySelectorAll('.dashboard-panel');
+
+        function activateTab(targetId) {
+            tabs.forEach(tab => {
+                const isActive = tab.dataset.tabTarget === targetId;
+                tab.classList.toggle('active', isActive);
+                tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            panels.forEach(panel => {
+                panel.classList.toggle('active', panel.id === targetId);
+            });
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetId = this.dataset.tabTarget;
+                activateTab(targetId);
+                window.location.hash = targetId;
+            });
+        });
+
+        if (window.location.hash) {
+            const targetId = window.location.hash.slice(1);
+            if (document.getElementById(targetId)) {
+                activateTab(targetId);
+            }
+        }
+
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(alert => {
             setTimeout(() => {
