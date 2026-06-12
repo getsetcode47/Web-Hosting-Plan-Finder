@@ -18,11 +18,16 @@
     <meta property="og:description" content="{{ seo_meta.description }}">
     <meta property="og:url" content="{{ seo_meta.canonical }}">
     <meta property="og:site_name" content="{{ seo_meta.site_name }}">
+    <meta property="og:image" content="{{ seo_meta.og_image }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ seo_meta.title }}">
     <meta name="twitter:description" content="{{ seo_meta.description }}">
+    <meta name="twitter:image" content="{{ seo_meta.og_image }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ seo_meta.title }}</title>
+    {% if seo_meta.structured_data %}
+    <script type="application/ld+json">{{ seo_meta.structured_data | tojson }}</script>
+    {% endif %}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
         

@@ -1,9 +1,11 @@
 import csv
 import os
 import re
+from email.utils import formatdate
 from io import StringIO
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from functools import wraps
+from urllib.parse import urlsplit, urlunsplit
 
 from flask import Flask, abort, flash, jsonify, make_response, redirect, render_template, request, session, url_for
 from flask_sitemap import Sitemap
@@ -21,6 +23,7 @@ def env_flag(name, default=False):
 
 IS_PRODUCTION = env_flag('FLASK_ENV') or env_flag('APP_ENV') or env_flag('PRODUCTION')
 SITE_URL = os.environ.get('SITE_URL', '').rstrip('/')
+DEFAULT_OG_IMAGE_PATH = '/static/images/pc-bg.jpg'
 
 app = Flask(__name__, instance_relative_config=True)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-change-me')
@@ -75,7 +78,7 @@ PLAN_BUDGET_RULES = {
 SEO_PAGE_DEFAULTS = {
     'home': {
         'title': 'CB4UHost - Hosting Comparison Platform & IT Services',
-        'description': 'Compare hosting providers, review pricing, and discover IT services from CB4UHost and W-Tech.',
+        'description': 'Compare hosting providers, pricing, performance, and infrastructure services with CB4UHost and W-Tech to choose the right platform for your website or business.',
     },
     'calculator': {
         'title': 'Hosting Plan Calculator & Comparison Tool | CB4UHost',
@@ -140,6 +143,66 @@ def absolute_url(path=''):
     return f"{request.url_root.rstrip('/')}{path}"
 
 
+def preferred_host_url():
+    if not SITE_URL:
+        return None
+    parsed = urlsplit(SITE_URL)
+    return parsed
+
+
+def build_structured_data(endpoint, meta):
+    canonical = meta.get('canonical')
+    site_root = absolute_url('')
+    graph = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            '@id': f'{site_root}#organization',
+            'name': 'CB4UHost',
+            'url': site_root,
+            'logo': absolute_url(DEFAULT_OG_IMAGE_PATH),
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            '@id': f'{site_root}#website',
+            'url': site_root,
+            'name': 'CB4UHost',
+            'publisher': {'@id': f'{site_root}#organization'},
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            '@id': f'{canonical}#webpage',
+            'url': canonical,
+            'name': meta.get('title'),
+            'description': meta.get('description'),
+            'isPartOf': {'@id': f'{site_root}#website'},
+            'about': {'@id': f'{site_root}#organization'},
+            'primaryImageOfPage': {
+                '@type': 'ImageObject',
+                'url': meta.get('og_image'),
+            },
+        },
+    ]
+
+    if endpoint == 'blog_detail':
+        graph.append(
+            {
+                '@context': 'https://schema.org',
+                '@type': 'Article',
+                '@id': f'{canonical}#article',
+                'headline': meta.get('title'),
+                'description': meta.get('description'),
+                'mainEntityOfPage': {'@id': f'{canonical}#webpage'},
+                'image': [meta.get('og_image')],
+                'publisher': {'@id': f'{site_root}#organization'},
+            }
+        )
+
+    return graph
+
+
 def build_seo_meta(endpoint=None, **overrides):
     endpoint = endpoint or request.endpoint or ''
     defaults = {
@@ -149,9 +212,11 @@ def build_seo_meta(endpoint=None, **overrides):
         'og_type': 'website',
         'site_name': 'CB4UHost',
         'canonical': request.base_url,
+        'og_image': absolute_url(DEFAULT_OG_IMAGE_PATH),
     }
     defaults.update(SEO_PAGE_DEFAULTS.get(endpoint, {}))
     defaults.update(overrides)
+    defaults['structured_data'] = build_structured_data(endpoint, defaults)
     return defaults
 
 
@@ -163,12 +228,40 @@ def inject_provider_assets():
     }
 
 
+@app.before_request
+def redirect_to_canonical_host():
+    preferred = preferred_host_url()
+    if not preferred or not request or not request.host:
+        return None
+
+    preferred_host = preferred.netloc
+    current_host = request.host
+    if current_host == preferred_host:
+        return None
+
+    redirect_target = urlunsplit(
+        (
+            preferred.scheme or request.scheme,
+            preferred_host,
+            request.path,
+            request.query_string.decode('utf-8'),
+            '',
+        )
+    )
+    return redirect(redirect_target, code=301)
+
+
 @app.after_request
 def set_security_headers(response):
     response.headers.setdefault('X-Content-Type-Options', 'nosniff')
     response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
     response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
     response.headers.setdefault('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    static_image_extensions = ('.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.avif')
+    if request.path.startswith('/static/') and request.path.lower().endswith(static_image_extensions):
+        max_age = 31536000
+        response.headers['Cache-Control'] = f'public, max-age={max_age}, immutable'
+        response.headers['Expires'] = formatdate((datetime.now(timezone.utc) + timedelta(seconds=max_age)).timestamp(), usegmt=True)
     return response
 
 @sitemap.register_generator
@@ -2069,6 +2162,9 @@ def blog_detail(slug):
     
     description = re.sub(r'<[^>]+>', ' ', post.excerpt or post.content or '')
     description = re.sub(r'\s+', ' ', description).strip()[:160]
+    og_image = post.featured_image.strip() if post.featured_image else absolute_url(DEFAULT_OG_IMAGE_PATH)
+    if og_image and og_image.startswith('/'):
+        og_image = absolute_url(og_image)
 
     return render_template(
         'blog/blog_detail.html',
@@ -2079,7 +2175,8 @@ def blog_detail(slug):
             title=f'{post.title} | CB4UHost Blog',
             description=description or 'Read the latest hosting and infrastructure insights from CB4UHost.',
             canonical=request.base_url,
-            og_type='article'
+            og_type='article',
+            og_image=og_image,
         )
     )
 

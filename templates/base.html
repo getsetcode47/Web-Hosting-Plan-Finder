@@ -20,12 +20,17 @@
     <meta property="og:description" content="{{ seo_meta.description }}">
     <meta property="og:url" content="{{ seo_meta.canonical }}">
     <meta property="og:site_name" content="{{ seo_meta.site_name }}">
+    <meta property="og:image" content="{{ seo_meta.og_image }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ seo_meta.title }}">
     <meta name="twitter:description" content="{{ seo_meta.description }}">
+    <meta name="twitter:image" content="{{ seo_meta.og_image }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
     {% block extra_head %}{% endblock %}
+    {% if seo_meta.structured_data %}
+    <script type="application/ld+json">{{ seo_meta.structured_data | tojson }}</script>
+    {% endif %}
     <style>
         :root {
             --primary: #00D9FF;

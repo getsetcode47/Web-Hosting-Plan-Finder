@@ -148,8 +148,7 @@
     }
 
     .contact-info,
-    .contact-form,
-    .faq-section {
+    .contact-form {
         background: rgba(0, 0, 0, 0.6);
         border: 1px solid var(--border-line);
         border-radius: 28px;
@@ -158,8 +157,7 @@
     }
 
     .contact-info::before,
-    .contact-form::before,
-    .faq-section::before {
+    .contact-form::before {
         content: '';
         position: absolute;
         top: 0;
@@ -181,22 +179,14 @@
         box-shadow: 0 20px 60px rgba(0, 240, 255, 0.12);
     }
 
-    .faq-section {
-        margin-top: 2rem;
-        padding: clamp(1.5rem, 3vw, 2.25rem);
-        box-shadow: 0 20px 60px rgba(0, 240, 255, 0.06);
-    }
-
     .contact-info > *,
-    .contact-form > *,
-    .faq-section > * {
+    .contact-form > * {
         position: relative;
         z-index: 1;
     }
 
     .contact-info h2,
-    .contact-form h2,
-    .faq-section h2 {
+    .contact-form h2 {
         font-size: clamp(1.8rem, 3vw, 2.4rem);
         font-weight: 900;
         color: var(--text-white);
@@ -314,27 +304,6 @@
         box-shadow: 0 10px 40px rgba(0, 240, 255, 0.5);
     }
 
-    .faq-item {
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        background: rgba(0, 240, 255, 0.04);
-        border-radius: 18px;
-        border: 1px solid rgba(0, 240, 255, 0.1);
-        border-left: 4px solid var(--cyan-accent);
-    }
-
-    .faq-question {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-white);
-    }
-
-    .faq-answer {
-        color: var(--text-silver);
-        line-height: 1.8;
-    }
-
     .contact-note {
         color: var(--text-silver);
         font-size: 0.95rem;
@@ -373,8 +342,7 @@
             padding-right: 0.9rem;
         }
         .contact-info,
-        .contact-form,
-        .faq-section {
+        .contact-form {
             padding: 1rem;
         }
         .info-item {
@@ -526,51 +494,5 @@
             </form>
         </div>
     </div>
-
-    <!-- FAQ Section -->
-    <div class="faq-section">
-        <h2>Frequently Asked Questions</h2>
-        
-        <div class="faq-item">
-            <div class="faq-question">
-                <i class="fas fa-question-circle" style="color: var(--secondary); margin-right: 0.5rem;"></i>
-                How accurate are your pricing comparisons?
-            </div>
-            <div class="faq-answer">
-                We update our pricing data regularly to ensure accuracy. However, prices may vary based on promotions and special offers. We recommend verifying final prices on the provider's website before making a purchase.
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <i class="fas fa-question-circle" style="color: var(--secondary); margin-right: 0.5rem;"></i>
-                Is CB4UHost free to use?
-            </div>
-            <div class="faq-answer">
-                Yes! CB4UHost is completely free for users. We may earn commissions from hosting providers when you make a purchase through our links, but this never affects our comparisons or recommendations.
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <i class="fas fa-question-circle" style="color: var(--secondary); margin-right: 0.5rem;"></i>
-                Which hosting providers do you compare?
-            </div>
-            <div class="faq-answer">
-                We currently compare plans from Hostinger, Bluehost, GoDaddy, BigRock, and Namecheap. We're constantly working to add more providers to our platform.
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <div class="faq-question">
-                <i class="fas fa-question-circle" style="color: var(--secondary); margin-right: 0.5rem;"></i>
-                How quickly will I receive a response?
-            </div>
-            <div class="faq-answer">
-                We typically respond to all inquiries within 24 hours during business days. For urgent technical issues, please call our support line for immediate assistance.
-            </div>
-        </div>
-    </div>
-
 </div>
 {% endblock %}
